@@ -1,0 +1,42 @@
+* 27/06/2011 *
+
+ - Change password allowed now as registered user
+ - Added browsing support to every patch list page...
+ - Added page for latest obsoleted and withdrawn patches.
+ - Added support for piwik statistics into RSS feeds.
+ - Refurbished and merged the last XXXX patches released into one page.
+ - Added support for per-user settings, managing them dynamically.
+ - Added patch per page and bug per page as user settings.
+
+* 24/06/2011 *
+
+ - Started the work on parseRaw for bugids
+ - Implemented bsearch functions to allow searching on textfields
+ - Implemented a browsing of bug ids.
+ - Minor changes to batchJob to enhance memory consumption
+ - Log of failed login attempts
+
+* 23/06/2011 *
+
+ - Added option to batchjob to browse directory containing patches
+
+* 22/06/2011 *
+
+ - Stored bugs html raw data inside database
+ - Integrated old opensolaris bug database
+
+* 15/06/2011 *
+
+ - Extraction and parsing of bundles' readme files
+
+* 14/06/2011 *
+
+ - Added bundle object
+ - Inventory of checksums
+ - Added the download of bundles
+
+* 30/05/2011 *
+
+ - Starting Changelog to keep track of changes.
+ - Added colors to patches lists.
+ - Added option to download patches for granted users.

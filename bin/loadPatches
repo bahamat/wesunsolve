@@ -1,0 +1,44 @@
+#!/usr/bin/php
+<?php
+/**
+ * Load patches into database
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  echo "[-] Connecting to MySQL...";
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+  echo "done\n";
+
+  if (count($argv) == 2) {
+    $pid = $argv[1];
+    if (empty($pid) || !preg_match("/[0-9]{6}-[0-9]{2}/", $pid)) {
+      echo "[!] Incorrect patch ID\n";
+      exit;
+    }
+    $dir1 = substr($pid, 0, 2);
+    $dir2 = substr($pid, 2, 2);
+    $dir = $config['ppath']."/$dir1/$dir2";
+    $file = "README.".$pid;
+    Patch::treatPatch($file, $dir);
+    exit;
+  }
+
+  echo "[-] Updating patch database..\n";
+  $ret = Patch::browseDirectory($config['ppath']);
+
+  echo "[-] $ret new patches have been inserted\n";
+?>

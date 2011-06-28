@@ -1,0 +1,236 @@
+body {
+  background-color: #758393;
+  font-family: sans-serif;
+  padding: 1%
+}
+
+h1 {
+  color: #cccccc;
+  background-color: #687584;
+  border: solid 1px #000000;
+  text-align: center;
+  font-variant: small-caps;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: small
+}
+
+h3 {
+  font-size: small;
+  font-weight: normal;
+  font-style:italic;
+  text-align: center;
+}
+
+.nav {
+  float: left;
+  width: 15%;
+  border: solid 1px #000000;
+  padding: 10px;
+  ;background-color: #8D98A5;
+  margin-right: 5px;
+  background-color: #B4BAC2;
+  min-width: 80px;
+}
+
+.nav p {
+  font-size: x-small;
+}
+
+p.warning {
+  color: red;
+  border: solid 1px red;
+  text-align: center;
+}
+
+.red {
+  color: red;
+}
+
+.orange {
+  color: #ff9900;
+}
+
+.green {
+  color: green;
+}
+
+.greentd {
+  background-color: green;
+}
+
+.orangetd {
+  background-color: #ff9900;
+}
+
+.browntd {
+  background-color: brown;
+}
+
+.redtd {
+  background-color: red;
+}
+
+.content {
+  float: right;
+  width: 80%;
+  border: solid 1px #000000;
+  padding: 10px;
+  ;background-color: #758393;
+  ;background-color: #8D98A5;
+  background-color: #B4BAC2;
+  font-size: 0.9em;
+  min-width: 424px;
+}
+
+.content p {
+  padding-left: 60px;
+  font-size: 0.9em;
+}
+
+.ttable {
+  font-size: 0.7em;
+  text-align: center;
+}
+
+table.ttable {
+  margin-left:auto;
+  margin-right:auto;
+  border-style: hidden;
+}
+
+
+.ctable {
+  font-size: 0.9em;
+  text-align: center;
+}
+
+table.slist {
+  margin-left:auto;
+  margin-right:auto;
+  width: 80%;
+}
+
+.slist td {
+  border-style: solid;
+  border-width: 1px;
+}
+
+table.ctable {
+  margin-left:auto;
+  margin-right:auto;
+  border-style: hidden;
+}
+
+table.dtable, td.dtable {
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 1px;
+  border-style: solid;
+  border-collapse:collapse;
+}
+
+td.red {
+  background-color: red;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 1px;
+  border-style: solid;
+  border-collapse:collapse;
+}
+
+td.orange {
+  background-color: #ff9900;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 1px;
+  border-style: solid;
+  border-collapse:collapse;
+}
+
+td.green {
+  background-color: green;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 1px;
+  border-style: solid;
+  border-collapse:collapse;
+}
+
+.ctable {
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.topmenu {
+  text-align: center;
+  font-size: small;
+}
+
+.topmenu a {
+  font-size: small;
+}
+
+a {
+  color: #333333;
+}
+
+a:hover {
+  color: #cccccc;
+}
+
+address {
+  font-size: x-small;
+  padding-left: 60px;
+}
+
+hr {
+  color: #4b545f;
+  height: 1px
+}
+
+select {
+  border: 0;
+  font-family: sans-serif;
+  font-size: 0.8em;
+}
+
+textarea {
+  width: 500px;
+  height: 500px;
+  border: 0;
+  font-family: sans-serif;
+  font-size: 0.8em;
+}
+
+input {
+  border: 0;
+  font-family: sans-serif;
+  font-size: 0.8em;
+}
+
+#foot {
+  float: right;
+  width: 80%;
+  border: solid 1px #000000;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  text-align: center;
+  background-color: #B4BAC2;
+  font-size: 0.8em;
+}
+
+#foot p {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+#bug_details {
+  width: 80%;
+  background-color: #ffffff;
+  margin-right: auto;
+  margin-left: auto;
+}

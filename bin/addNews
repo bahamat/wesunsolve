@@ -1,0 +1,44 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add news Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "s::l::hn";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h']) || !isset($opts['s']) || empty($opts['s'])) {
+    echo $argv[0]." [-s=<synopsis>] [-l=<link>] [-n]\n";
+    exit();
+  }
+
+  echo "[-] Connecting to MySQL...";
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+  echo "done\n";
+
+  $syn = $opts['s'];
+  $lin = $opts['l'];
+  if (empty($syn)) die("Empty synopsis\n");
+  $news = new News();
+  $news->synopsis = $syn;
+  $news->link = $lin;
+  $news->date = time();
+  $news->insert();
+  if (!isset($opts['n'])) IrcMsg::add("[NEWS] ".$news->synopsis." (".$news->link.")");
+  echo "[-] Inserted.\n";
+?>

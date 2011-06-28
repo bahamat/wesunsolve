@@ -1,0 +1,94 @@
+#!/usr/bin/php
+<?php
+/**
+ * Load bugids data into database
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+
+  echo "[-] Connecting to MySQL...";
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+  echo "done\n";
+  
+  $link = mysql_connect('push.vpn.espix.org', 'wildcat', 'rootahph');
+  mysql_select_db("opensolaris",$link);
+
+  $r = mysql_query("SELECT * FROM bugs");
+  while ($row = mysql_fetch_assoc($r)) {
+    $bid = $row['bug_id'];
+    $q = "SELECT * from fulltext_content where docid='$bid'";
+    $r2 = mysql_query($q);
+    $ft = mysql_fetch_assoc($r2);
+    $b = new Bugid($bid);
+    if ($b->fetchFromId()) {
+      $b->insert();
+      echo "[-] New bug inserted: $bid\n";
+    }
+    $b->fetchFulltext();
+    if (empty($b->synopsis) || strcmp($b->synopsis, $ft['c4synopsis'])) {
+      $b->synopsis = $ft['c4synopsis'];
+      echo "  > Updated synopsis for $bid\n";
+    }
+    if (strcmp($b->ft("comments"), $ft['c0comments'])) {
+      $b->setft("comments", $ft['c0comments']);
+      echo "  > Updated comments for $bid\n";
+    }
+    if (strcmp($b->ft("description"), $ft['c1description'])) {
+      $b->setft("description", $ft['c1description']);
+      echo "  > Updated description for $bid\n";
+    }
+    if (strcmp($b->ft("keywords"), $ft['c2keywords'])) {
+      $b->setft("keywords", $ft['c2keywords']) ;
+      echo "  > Updated keywords for $bid\n";
+    }
+    if (strcmp($b->ft("responsible_engineer"), $ft['c3responsible_engineer'])) {
+      $b->setft("responsible_engineer", $ft['c3responsible_engineer']);
+      echo "  > Updated reponsible for $bid\n";
+    }
+    if (strcmp($b->ft("synopsis"), $ft['c4synopsis'])) {
+      $b->setft("synopsis", $ft['c4synopsis']);
+      echo "  > Updated synopsis text for $bid\n";
+    }
+    if (strcmp($b->ft("workaround"), $ft['c5work_around'])) {
+      $b->setft("workaround", $ft['c5work_around']);
+      echo "  > Updated workaround for $bid\n";
+    }
+    $b->setft("is_raw", 0);
+    $b->updateDate($row['last_update_date']);
+    $b->createDate($row['date']);
+    $b->submitDate($row['submit_date']);
+    $b->state = $row['state'];
+    $b->category = $row['category'];
+    $b->subcat = $row['subcategory'];
+    $b->product = $row['product'];
+    $b->substate = $row['substate'];
+    $b->submitter = $row['submitter'];
+    $b->sponsor = $row['sponsor'];
+    $b->type = $row['type'];
+    $b->commit_tf = $row['commit_to_fix'];
+    $b->duplicate_of = $row['duplicate_of'];
+    $b->first_reported_bug_id = $row['first_reported_bug_id'];
+    $b->fixed_in = $row['fixed_in'];
+    $b->introduced_in = $row['introduced_in'];
+    $b->related_bugs = $row['related_bugs'];
+    $b->reported_against = $row['reported_against'];
+    echo "[-] Updated bugid $bid\n";
+    $b->update();
+  }
+
+  echo "[-] Disonnecting from MySQL...";
+  $m->disconnect();
+  echo "done\n";
+?>

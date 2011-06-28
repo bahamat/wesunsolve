@@ -1,0 +1,87 @@
+#!/usr/bin/php
+<?php
+/**
+ * Load patches into database
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+
+  echo "[-] Connecting to MySQL...";
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+  echo "done\n";
+
+  $bugids = array();
+  $table = "`bugids`";
+  $index = "`id`";
+  $where = "";
+
+  echo "[-] Fetching BugID's ..";
+
+  $i = 0;
+  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+  { 
+    foreach($idx as $t) {
+      if ($i==1000) { $i=0; echo "."; }
+      $i++;
+
+      $g = new Bugid($t['id']);
+      $g->fetchFromId();
+      array_push($bugids, $g);
+    }
+  }
+  echo "done\n";
+
+  foreach ($bugids as $bug) {
+    $dir1 = substr($bug->id, 0, 2);
+    $dir2 = substr($bug->id, 2, 2);
+    if (!is_dir($config['bidpath']."/".$dir1)) {
+      mkdir($config['bidpath']."/".$dir1);
+    }
+    if (!is_dir($config['bidpath']."/".$dir1."/".$dir2)) {
+      mkdir($config['bidpath']."/".$dir1."/".$dir2);
+    }
+
+    echo "[-] Checking for ".$config['bidpath']."/".$dir1."/".$dir2."/".$bug->id.".html\n";
+    if (file_exists($config['bidpath']."/$dir1/$dir2/".$bug->id.".html")) {
+      $bidhtml = file_get_contents($config['bidpath']."/$dir1/$dir2/".$bug->id.".html");
+      $bidhtml = explode(PHP_EOL, $bidhtml);
+      foreach($bidhtml as $line) {
+	$line = trim($line);
+	if (empty($line)) continue;
+        if (preg_match("/^<TD VALIGN=TOP ALIGN=\"left\" COLSPAN=4><STRONG>/", $line)) {
+          $synopsis = explode("<TD VALIGN=TOP ALIGN=\"left\" COLSPAN=4><STRONG>", $line);
+	  $synopsis = $synopsis[1];
+          $synopsis = explode("</STRONG></TD>", $synopsis);
+	  $synopsis = $synopsis[0];
+          $synopsis = substr($synopsis, strpos($synopsis, ":") + 2);
+	  $synopsis = mysql_escape_string($synopsis);
+          if (strcmp($bug->synopsis, $synopsis)) {
+            echo "[-] Found synopsis for BugID ".$bug->id.": $synopsis\n";
+	    $bug->synopsis = $synopsis;
+            $bug->update();
+          }
+	  if (!$bug->available) {
+	    $bug->available = 1;
+	    $bug->update();
+          }
+	}
+      }
+    }
+  }
+
+  echo "[-] Disonnecting from MySQL...";
+  $m->disconnect();
+  echo "done\n";
+?>

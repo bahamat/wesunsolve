@@ -1,0 +1,77 @@
+#!/usr/bin/php
+<?php
+/**
+ * Load bugids data into database
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+
+  echo "[-] Connecting to MySQL...";
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+  echo "done\n";
+
+  $bugids = array();
+  $table = "`bugids`,`bugids_fulltext`";
+  $index = "`id`";
+  $where = "WHERE bugids.id=bugids_fulltext.bugid AND bugids_fulltext.is_raw='1'";
+//  $where = "LIMIT 0,1000";
+
+  echo "[-] Fetching BugID's ..";
+
+  $i = 0;
+  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+  { 
+    foreach($idx as $t) {
+      if ($i==1000) { $i=0; echo "."; }
+      $i++;
+
+      $g = new Bugid($t['id']);
+      array_push($bugids, $g);
+    }
+  }
+  echo "done\n";
+
+  foreach ($bugids as $bug) {
+    $bug->fetchFromId();
+    $bug->fetchFulltext();
+    $is_raw = $bug->ft("is_raw");
+    $description = $bug->ft("description");
+    $raw = $bug->ft("raw");
+// reload!    if ($is_raw && !empty($raw)) continue; // already loaded
+    if (!$is_raw && !empty($description)) continue; // already loaded
+    
+    $dir1 = substr($bug->id, 0, 2);
+    $dir2 = substr($bug->id, 2, 2);
+    if (!is_dir($config['bidpath']."/".$dir1)) {
+      mkdir($config['bidpath']."/".$dir1);
+    }
+    if (!is_dir($config['bidpath']."/".$dir1."/".$dir2)) {
+      mkdir($config['bidpath']."/".$dir1."/".$dir2);
+    }
+
+    if (file_exists($config['bidpath']."/$dir1/$dir2/".$bug->id.".html") && filesize($config['bidpath']."/$dir1/$dir2/".$bug->id.".html") != 7997) {
+      echo "[-] Loading bug ".$bug->id."\n";
+      $bidhtml = file_get_contents($config['bidpath']."/$dir1/$dir2/".$bug->id.".html");
+      $bug->setft("is_raw", 1);
+      $bug->setft("raw", $bidhtml);
+      $bug->update();
+      echo "[-] Loaded ".$bug->id." contents into fulltext db...\n";
+    }
+  }
+
+  echo "[-] Disonnecting from MySQL...";
+  $m->disconnect();
+  echo "done\n";
+?>

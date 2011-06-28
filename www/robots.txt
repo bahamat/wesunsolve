@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /bugid.php*
+Disallow: /readme.php*
+Disallow: /files.php*

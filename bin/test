@@ -1,0 +1,40 @@
+#!/usr/bin/php
+<?php
+/**
+ * Big Batch Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../config.inc.php");
+  require_once("../autoload.lib.php");
+  require_once("../functions.lib.php");
+
+  $m = MysqlCM::getInstance();
+
+  for ($i=0; $i<28000; $i++) {
+   $p = new Patch($i, 0);
+   $patches[] = $p;
+  }
+
+  echo "[-] Memory usage: ".number_format(memory_get_usage()) . "\n";
+  echo "[-] Trying to treat ".count($patches)." patches:\n";
+
+  for ($i=0;$i<count($patches); $i++) {
+    
+      $p = $patches[$i];
+      $p->synopsis = "test";
+      $p = null;
+      $patches[$i] = null;
+  //    gc_collect_cycles();
+      echo "[-] Memory usage: ".number_format(memory_get_usage()) . "\n";
+  }
+
+
+?>
