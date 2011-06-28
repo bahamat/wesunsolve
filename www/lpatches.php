@@ -61,7 +61,7 @@
   if(isset($start) && !empty($start)) {
 
     if (preg_match("/[0-9]*/", $start)) {
-      if ($start > $nb) { /* could not start after the number of results... */
+      if ($start >= $nb) { /* could not start after the number of results... */
         $start = 0;
       }
     } else {

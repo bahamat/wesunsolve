@@ -2,8 +2,8 @@
       if ($start != 0 && $start >= $rpp) {
         $idprev = $start - $rpp;
       }
-      if (($start + 50) > $nb) {
-        $idnext = $nb;
+      if (($start + 50) >= $nb) {
+        $idnext = $nb - 1;
       } else {
         $idnext = $start + $rpp;
       }
