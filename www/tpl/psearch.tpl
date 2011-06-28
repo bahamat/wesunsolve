@@ -4,12 +4,14 @@
   <div class="ctable">
   <table class="ctable">
    <tr>
+    <?php if ($score) { ?><th>Score</th><?php } ?>
     <th>Patch ID</th>
     <th>Release date</th>
     <th>Synopsis</th>
    </tr>
 <?php foreach($patches as $p) { ?>
    <tr>
+    <?php if ($score) { ?><td><?php echo $p->score; ?></td><?php } ?>
     <td <?php echo $p->color(); ?>><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
     <td><?php echo date('d/m/Y', $p->releasedate); ?></td>
     <td style="text-align: left;"><?php echo $p->synopsis; ?></td>

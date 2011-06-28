@@ -34,6 +34,9 @@
 
   $title = "Patch search";
   $head->set("title", $title); 
+  $fts = false;
+
+  $my = mysqlCM::getInstance();
 
   if (isset($_GET['form']) && $_GET['form'] == 1) {
 
@@ -51,7 +54,9 @@
     if (isset($_POST['synopsis']) && !empty($_POST['synopsis'])) {
       $synopsis = $_POST['synopsis'];
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
-      $where .= "`synopsis` LIKE '$synopsis'";
+      $index .= ", MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") as score";
+      $where .= " MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") ";
+      $fts = true;
     }
 
     if (isset($_POST['status']) && !empty($_POST['status'])) {
@@ -86,18 +91,20 @@
   }
 
 
-  $where .= " ORDER BY `releasedate` DESC,`revision` DESC LIMIT 0,50";
+  if (!$fts) $where .= " ORDER BY `releasedate` DESC,`revision` DESC LIMIT 0,50";
   if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
   {
     foreach($idx as $t) {
       $g = new Patch($t['patch'], $t['revision']);
       $g->fetchFromId();
+      if (isset($t['score'])) $g->score = round($t['score']);
       array_push($patches, $g);
     }
   }
 
   $content = new Template("./tpl/psearch.tpl");
   $content->set("patches", $patches);
+  $content->set("score", $fts);
   $page->set("content", $content);
   echo $page->fetch();
 ?>
