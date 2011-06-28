@@ -1,3 +1,9 @@
+* 28/06/2011 *
+
+ - Moving everything to a Git repository,
+   This Changelog will be moved to the commit
+   log of the repos.
+
 * 27/06/2011 *
 
  - Change password allowed now as registered user
