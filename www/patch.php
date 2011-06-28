@@ -35,6 +35,7 @@
             $number = $id;
 	 } else {
            $patch->fetchAll(2);
+           $patch->fetchPrevious(2);
 	 }
 
 	$archive = null;

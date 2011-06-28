@@ -2,7 +2,7 @@
 	    <h2>Bug <?php echo $bug->id; ?></h2>
 	     <h3>General informations</h3>
 		<ul>
-		 <li>Synopsis: <?php echo $bug->synopsis; ?></li>
+		 <li>Synopsis: <?php echo htmlentities($bug->synopsis); ?></li>
 		</ul>
              <h3>Patches that fixes the bug</h3>
 	     <?php if (!count($bug->a_patches)) { echo "<p>There is no patch for this bug</p>"; } else { ?>

@@ -18,6 +18,7 @@ class Bugid extends mysqlObj
   public $id = -1;
   public $synopsis = "";
   public $available = 0;
+  public $tried = 0;
   public $category = "";
   public $subcat = "";
   public $product = "";
@@ -61,6 +62,7 @@ class Bugid extends mysqlObj
       if (!$size || $size == 2009) {
 	unlink($fp);
       }
+      echo "Existing!";
       return -1;
     }
 
@@ -70,12 +72,22 @@ class Bugid extends mysqlObj
     $cmd .= "--save-cookies /srv/sunsolve/bin/cookies.txt --keep-session-cookies ";
     $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."\"";
     passthru($cmd);
+
+    $this->tried = 1;
+    $this->update();
+
     if (file_exists($fp)) {
       $size = filesize($fp);
+      echo "($size bytes)";
       if (!$size || $size == 2009) {
 	unlink($fp);
+        echo "403";
+      }
+      if($size == 7997) {
+        echo "404";
       }
     } else {
+      echo "exist";
       return -1;
     }
     
@@ -95,6 +107,9 @@ class Bugid extends mysqlObj
     $content = preg_replace('/<link .*>/i', '', $content); 
     $content = preg_replace('/<!DOCTYPE .*>/i', '', $content); 
     $content = preg_replace('/<!--.*-->/i', '', $content); 
+
+    if (empty($content)) return -1;
+
     $this->setft("is_raw", 1);
     $this->setft("raw", $content);
     $this->available = 1;
@@ -400,6 +415,7 @@ class Bugid extends mysqlObj
                         "related_bugs" => SQL_PROPE,
                         "reported_against" => SQL_PROPE,
                         "severity" => SQL_PROPE,
+                        "tried" => SQL_PROPE,
                         "available" => SQL_PROPE
                  );
 
@@ -407,6 +423,7 @@ class Bugid extends mysqlObj
                         "id" => "id",
                         "synopsis" => "synopsis",
                         "category" => "category",
+                        "tried" => "tried",
                         "subcat" => "subcat",
                         "product" => "product",
                         "state" => "state",

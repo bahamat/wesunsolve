@@ -63,9 +63,19 @@
 		<?php if (!count($patch->a_bugids)) { echo "<p>There is no detected bugid fixed with this patch</p>"; } else { ?>
 		<ul>
 		<?php foreach($patch->a_bugids as $bug) { ?>
-		 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".$bug->synopsis; } ?></li>
+		 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
 		<?php } ?>
 		</ul>
 		<?php } ?>
+		<h3>Bug IDs fixed with included patches:</h3>
+		<?php foreach($patch->a_previous as $p) { ?>
+		  <h4>from <?php echo $p->name(); ?></h4>
+		  <ul>
+  		<?php   foreach($p->a_bugids as $bug) { ?>
+		   <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+		<?php   } ?>
+		  </ul>
+		<?php } ?>
+		
 
 	   </div>

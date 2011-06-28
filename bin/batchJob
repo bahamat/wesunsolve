@@ -71,7 +71,7 @@
     $bugs = array();
     $table = "`bugids`";
     $index = "`id`";
-    $where = "WHERE `available`='0'";
+    $where = "WHERE `available`='0' and `tried`='0'";
     if (isset($bid)) {
       $where = "WHERE `id`='$bid'";
     }
@@ -87,7 +87,7 @@
     
     for ($i=0,$cnt=0, $c = count($bugs); $i<$c; $i++,$cnt++) {
       $bug = $bugs[$i];
-      echo "[-] Trying to download ".$bug->id."..";
+      echo "[-] (left: ".($c - $i).") Trying to download ".$bug->id."..";
       $bug->fetchFromId();
       $bug->fetchFulltext();
       $rc = $bug->dl();

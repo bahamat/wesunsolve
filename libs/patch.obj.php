@@ -45,6 +45,52 @@ class Patch extends mysqlObj
   public $a_obso = array();
   public $a_conflicts = array();
 
+  public $a_previous = array();
+
+  public function fetchPrevious($all=2) {
+
+    $this->fetchObsolated();
+
+    /* First fetch previous revision of this patch */
+    $this->a_previous = array();
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $where = "WHERE `patch`='".$this->patch."' AND `revision`<".$this->revision;
+    $where .= " ORDER BY `releasedate` DESC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Patch($t['patch'], $t['revision']);
+        if ($all==2) $k->fetchBugids();
+        array_push($this->a_previous, $k);
+      }
+    }
+
+    /* Then, for each of obsolated patch, fetch patch and previous releases */
+    foreach ($this->a_obso as $op) {
+      array_push($this->a_previous, $op);
+      /* First fetch previous revision of this patch */
+      $table = "`patches`";
+      $index = "`patch`, `revision`";
+      $where = "WHERE `patch`='".$op->patch."' AND `revision`<".$op->revision;
+      $where .= " ORDER BY `releasedate` DESC";
+
+      if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+      {
+        foreach($idx as $t) {
+          $k = new Patch($t['patch'], $t['revision']);
+          if ($all) $k->fetchFromId();
+          if ($all==2) $k->fetchBugids();
+          array_push($this->a_previous, $k);
+        }
+      }
+    }
+
+    /* we should have everything we need ! */
+    return 0;
+  }
+
   public static function browseDir($dir) {
     if (is_dir($dir)) {
       // get subdirs
@@ -890,6 +936,7 @@ class Patch extends mysqlObj
 
     $this->fetchAll(0);
     $this->fetchFiles();
+    $this->fetchBugids();
 
     $u = 0;
 
@@ -899,11 +946,21 @@ class Patch extends mysqlObj
     }
 
     $stepFile = 0;
+    $stepBugs = false;
+    $cPatch = null;
     $c = explode(PHP_EOL, $c);
     foreach ($c as $line) {
       $line = trim($line);
       if (empty($line) && !$stepFile) {
         continue;
+      } else if (empty($line) && $stepBugs == 2) {
+	$stepBugs = false;
+	unset($cPatch);
+	$cPatch = null;
+	continue;
+      } else if (empty($line) && $stepBugs == 1) {
+	$stepBugs++;
+	continue;
       } else if (empty($line) && $stepFile == 2) {
         $stepFile = false;
         continue;
@@ -930,6 +987,10 @@ class Patch extends mysqlObj
 	  echo "\t* ".$file->name." linked to patch\n";
 	}
         continue;
+      }
+      if (preg_match('/^Problem Description:$/', $line)) { // link bugs below
+        $stepBugs = 1;
+	continue;
       }
 
       $f = explode(":", $line);
@@ -959,6 +1020,19 @@ class Patch extends mysqlObj
 	  $bo->update();
 	  echo "\t* Bugid $id updated: $synopsis\n";
         }
+	if ($stepBugs) {
+          if ($cPatch) {
+	    if (!$cPatch->isBugid($bo->id)) {
+	      $cPatch->addBugid($bo);
+	      echo "\t\t* bug $id linked to patch: ".$cPatch->name()."\n";
+            }
+	  } else {
+	    if (!$this->isBugid($bo->id)) {
+	      $this->addBugid($bo);
+	      echo "\t\t* bugid linked to this patch: $id\n";
+            }
+	  }
+	}
 	unset($bo);
 
       } else if (preg_match("/^\(from [0-9]{6}-[0-9]{2}\)$/", $line)) {
@@ -971,7 +1045,10 @@ class Patch extends mysqlObj
 	  $patch->insert();
           $nb++;
 	}
-	unset($patch); // will be fetched next time
+	$cPatch = $patch;
+	$stepBugs = 1;
+	$cPatch->fetchBugids();
+	//unset($patch); // will be fetched next time
       } else if (preg_match("/^OBSOLETE Patch-ID# ".$this->name()."$/", $line)) {
         $this->status = "OBSOLETE";
       } else if (count($f) > 1) {
@@ -1051,6 +1128,9 @@ class Patch extends mysqlObj
               $u++;
 	    }
           break;
+/*
+ ** Commented to avoid theses bugs be linked ...
+ *
 	  case "BugId's fixed with this patch":
 	    $bugs = trim(substr($line,strpos($line, ":")));
 	    $bugs = preg_split("/[\s,]+/", $bugs);
@@ -1064,10 +1144,10 @@ class Patch extends mysqlObj
 		  echo "\t\t* new bugid: $bug\n";
 		  $b->insert();
 		}
-		$this->addBugid($b);
 	      }
             }
 	  break;
+*/
           case "Patches required with this patch":
             $required = trim(substr($line,strpos($line, ":")));
             $required = preg_split("/[\s,]+/", $required);
