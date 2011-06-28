@@ -1,6 +1,4 @@
-- make a "diff" tool of current and future baseline
 - pkg list -u parser
-- change password page
 - better Architecture parsing and sorting
 - Bug ids presentation searching and so on...
 - Show/sort bugs by patch revision when showing patches details
