@@ -4,7 +4,7 @@
 
  $m = mysqlCM::getInstance();
  if ($m->connect()) {
-    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+    die(" Error with SQL db: ".$m->getError()."\n");
  }
  $lm = loginCM::getInstance();
  $lm->startSession();
@@ -38,6 +38,7 @@
  $indx = "`id`";
  $where = "";
  $w = 0;
+ $score = false;
 
  $my = mysqlCM::getInstance();
    if (isset($_POST['synopsis']) && !empty($_POST['synopsis'])) {
@@ -63,15 +64,35 @@
     $where .= "`id` LIKE ".$my->quote($bid);
     $search = true;
   }
-
+/*
+SELECT 	`bugid`, 
+       	MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`) 
+       	AGAINST('zfs') as score
+FROM 	bugids_fulltext ft,
+	bugids b
+WHERE 	MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`) 
+	AGAINST('zfs') 
+ 	AND b.`id`=ft.`bugid`
+LIMIT 0,20;
+*/
+ 
   if (isset($ftext) && !empty($ftext)) {
     if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
-    $where .= " `synopsis` LIKE ".$my->quote($ftext);
+//    $where .= " `synopsis` LIKE ".$my->quote($ftext);
+    $where .= " ft.`bugid`=b.`id` AND ";
+    $where .= " MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`)";
+    $where .= " AGAINST(".$my->quote($ftext).")";
+    $table .= " b, `bugids_fulltext` ft";
+    $indx .= ", MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`)";
+    $indx .= " AGAINST(".$my->quote($ftext).") AS score";
+    
     $search = true;
+    $score = true;
+    $idxcount = "count(b.`id`) as c";
   }
 
-  $where .= " ORDER BY `d_updated` DESC";
-  $idxcount = "count($indx) as c";
+  if (!isset($ftext)) $where .= " ORDER BY `d_updated` DESC";
+  if (!isset($idxcount)) $idxcount = "count(indx) as c";
 
   if (!$search) {
     $content = new Template("./tpl/fbsearch.tpl");
@@ -109,6 +130,9 @@
     foreach($idx as $t) {
       $g = new Bugid($t['id']);
       $g->fetchFromId();
+      if (isset($t['score'])) {
+	$g->score = round($t['score']);
+      }
       array_push($bugids, $g);
     }
   }
@@ -117,6 +141,7 @@
   $content->set("start", $start);
   $content->set("nb", $nb);
   $content->set("rpp", $rpp);
+  $content->set("score", $score);
   $str = "/bsearch/form/1";
   if (isset($ftext)) {
     $str .= "/synopsis/".urlencode($ftext);

@@ -25,6 +25,7 @@
 <?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="<?php echo $str; ?>/start/<?php echo $nb-$rpp; ?>">&gt;&gt;</a></td></tr>
    <tr>
+    <?php if ($score) { ?><th>Score</th><?php } ?>
     <th>Bug ID</th>
     <th>Synopsis</th>
     <th>Created</th>
@@ -34,6 +35,7 @@
    </tr>
 <?php foreach($bugids as $p) { ?>
    <tr>
+    <?php if ($score) { ?><td><?php echo $p->score; ?></td><?php } ?>
     <td><?php echo $p->id; ?></td>
     <td><?php echo $p->synopsis; ?></td>
     <td><?php echo date('d/m/Y', $p->d_created); ?></td>

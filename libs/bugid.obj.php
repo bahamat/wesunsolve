@@ -40,6 +40,7 @@ class Bugid extends mysqlObj
 
   /* Fulltext */
   private $_ft;
+  public $score = 0; // Score result from full text search
 
   /* Load bugids from MOS and store into db */
   public function dl() {
