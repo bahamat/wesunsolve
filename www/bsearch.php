@@ -92,7 +92,7 @@ LIMIT 0,20;
   }
 
   if (!isset($ftext)) $where .= " ORDER BY `d_updated` DESC";
-  if (!isset($idxcount)) $idxcount = "count(indx) as c";
+  if (!isset($idxcount)) $idxcount = "count($indx) as c";
 
   if (!$search) {
     $content = new Template("./tpl/fbsearch.tpl");
