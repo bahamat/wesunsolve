@@ -262,9 +262,14 @@ class Patch extends mysqlObj
     $d = explode("/", $str);
     if (count($d) != 3) return 0;
     // Oct/13/2000
-    $day = $d[1];
+    if (preg_match("/[0-9]*/", $d[0])) { // first is day
+      $day = $d[0];
+      $month = $d[1];
+    } else {
+      $day = $d[1];
+      $month = $d[0];
+    }
     $year = $d[2];
-    $month = $d[0];
     $m = array(
       "Jan" => 1,
       "Feb" => 2,
