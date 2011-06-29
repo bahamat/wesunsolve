@@ -359,6 +359,8 @@
     $patches[$i] = null;
   }
 
-  IrcMsg::add("[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.");
+  if (!isset($opts['i'])) {
+    IrcMsg::add("[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.");
+  }
 
 ?>
