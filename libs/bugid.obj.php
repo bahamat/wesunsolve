@@ -43,6 +43,31 @@ class Bugid extends mysqlObj
   private $_ft;
   public $score = 0; // Score result from full text search
 
+  public function unflag_update() {
+    $my = mysqlCM::getInstance();
+   
+    $table = "`bugs_update`";
+    $where = " WHERE `bugid`=".$my->quote($this->id);
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    return 0;
+  }
+
+  public function flag_update() {
+    $my = mysqlCM::getInstance();
+   
+    $table = "`bugs_update`";
+    $names = "`bugid`";
+    $values = $my->quote($this->id);
+
+    if ($my->insert($names, $values, $table)) {
+      return -1;
+    }
+    return 0;
+  }
+
   /* Load bugids from MOS and store into db */
   public function dl() {
     global $config;

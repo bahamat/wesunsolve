@@ -1016,6 +1016,7 @@ class Patch extends mysqlObj
 	$bo = new Bugid($id);
         if ($bo->fetchFromId()) {
 	  $bo->insert();
+          $bo->flag_update();
 	  echo "\t* New bugid $id\n";
         }
 	if (strlen($bo->synopsis) < 10 && strcmp($bo->synopsis, $synopsis)) {
@@ -1032,6 +1033,7 @@ class Patch extends mysqlObj
 	  } else {
 	    if (!$this->isBugid($bo->id)) {
 	      $this->addBugid($bo);
+              $bo->flag_update();
 	      echo "\t\t* bugid linked to this patch: $id\n";
             }
 	  }
@@ -1131,26 +1133,6 @@ class Patch extends mysqlObj
               $u++;
 	    }
           break;
-/*
- ** Commented to avoid theses bugs be linked ...
- *
-	  case "BugId's fixed with this patch":
-	    $bugs = trim(substr($line,strpos($line, ":")));
-	    $bugs = preg_split("/[\s,]+/", $bugs);
-	    foreach ($bugs as $bug) {
-	      if (empty($bug) || $bug < 1000)
-		continue;
- 	      $bug = Patch::strip($bug);
-	      if (!$this->isBugid($bug)) {
-		$b = new Bugid($bug);
-		if ($b->fetchFromId()) {
-		  echo "\t\t* new bugid: $bug\n";
-		  $b->insert();
-		}
-	      }
-            }
-	  break;
-*/
           case "Patches required with this patch":
             $required = trim(substr($line,strpos($line, ":")));
             $required = preg_split("/[\s,]+/", $required);
