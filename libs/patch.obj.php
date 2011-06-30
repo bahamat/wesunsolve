@@ -56,7 +56,7 @@ class Patch extends mysqlObj
     $table = "`patches`";
     $index = "`patch`, `revision`";
     $where = "WHERE `patch`='".$this->patch."' AND `revision`<".$this->revision;
-    $where .= " ORDER BY `revision` DESC";
+    $where .= " ORDER BY `patches`.`revision` DESC";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
@@ -74,7 +74,7 @@ class Patch extends mysqlObj
       $table = "`patches`";
       $index = "`patch`, `revision`";
       $where = "WHERE `patch`='".$op->patch."' AND `revision`<".$op->revision;
-      $where .= " ORDER BY `releasedate` DESC, `revision` DESC";
+      $where .= " ORDER BY `patches`.`releasedate` DESC, `patches`.`revision` DESC";
 
       if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
       {
