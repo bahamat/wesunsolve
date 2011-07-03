@@ -1,5 +1,3 @@
 - pkg list -u parser
 - better Architecture parsing and sorting
 - Bug ids presentation searching and so on...
-- Show/sort bugs by patch revision when showing patches details
-- When parsing new patches' readme, add bugids found to a "todo list" to update them
