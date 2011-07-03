@@ -37,7 +37,7 @@
     echo "\t -d\tDo not download anything\n";
     echo "\t -n\tDo not parse anything\n";
     echo "\t -r\tParse the readme anyway\n";
-    echo "\t -t\tTreat the To Add queue\n";
+    echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
@@ -359,8 +359,42 @@
     $patches[$i] = null;
   }
 
+  /* Bugs updates */
+  if (isset($opts['t'])) {
+    /* Fetch bugs id */
+    $bugs = array();
+    $table = "`bugs_update`";
+    $index = "`bugid`";
+    $where = "";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
+      foreach($idx as $t) {
+        $g = new Bugid($t['bugid']);
+        array_push($bugs, $g);
+      }
+    }
+    echo "done\n";
+
+    for ($i=0,$cnt=0, $c = count($bugs); $i<$c; $i++,$cnt++) {
+      $bug = $bugs[$i];
+      echo "[-] (left: ".($c - $i).") Trying to download ".$bug->id."..";
+      $bug->fetchFromId();
+      $bug->fetchFulltext();
+      $rc = $bug->dl();
+      if ($rc)
+        echo "failed\n";
+      else
+	echo "done\n";
+      /* Delete from the todo list */
+      $q = "DELETE FROM `bugs_update` WHERE `bugid`=".$m->quote($bug->id);
+      $m->rawQuery($q);
+      unset($bug);
+      $bugs[$i] = null;
+    }
+  }
+
   if (!isset($opts['i'])) {
     IrcMsg::add("[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.");
   }
+  $m->disconnect();
 
 ?>

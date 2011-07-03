@@ -1022,6 +1022,7 @@ class Patch extends mysqlObj
 	if (strlen($bo->synopsis) < 10 && strcmp($bo->synopsis, $synopsis)) {
 	  $bo->synopsis = $synopsis;
 	  $bo->update();
+          $bo->flag_update();
 	  echo "\t* Bugid $id updated: $synopsis\n";
         }
 	if ($stepBugs) {
