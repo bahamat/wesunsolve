@@ -392,7 +392,7 @@
     }
   }
 
-  if (!isset($opts['i'])) {
+  if (!isset($opts['i']) && !isset($opts['t'])) {
     IrcMsg::add("[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.");
   }
   $m->disconnect();
