@@ -1,4 +1,15 @@
 <?php
+/**
+ * Various functions
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2009-2011, Gouverneur Thomas
+ * @version 1.0
+ * @package includes
+ * @subpackage libraries
+ * @category libraries
+ * @filesource
+ */
+
 
 function getData($obj, $arg) {
 
