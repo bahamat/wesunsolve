@@ -61,6 +61,8 @@
  header('Content-Type: application/octet-stream');
  header("Content-Disposition: attachment; filename=\"$fn\""); 
  header('Content-Transfer-Encoding: binary');
+ header('Content-Length: '.filesize($archive));
+ header('Pragma: no-cache'); 
  $handle = fopen($archive, 'r'); 
  while (!feof($handle)) {
   echo fread($handle, 8192);

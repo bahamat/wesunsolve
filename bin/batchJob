@@ -384,6 +384,13 @@
         echo "failed\n";
       else
 	echo "done\n";
+
+      /* parse bug */
+      $bug->fetchFulltext();
+      echo "done\n";
+      echo "    > Trying to parse data from raw stuff..\n";
+      $bug->parseRaw();
+
       /* Delete from the todo list */
       $q = "DELETE FROM `bugs_update` WHERE `bugid`=".$m->quote($bug->id);
       $m->rawQuery($q);

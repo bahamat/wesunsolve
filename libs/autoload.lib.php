@@ -1,13 +1,18 @@
 <?php
- /**
-  * autoload.lib.php
-  *
-  * Autoload object libraries
-  *
-  * 2009 - Gouverneur Thomas
-  * thomas.gouverneur@belgacom.be
-  */
+/**
+ * Auto load of dependancies
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2009-2011, Gouverneur Thomas
+ * @version 1.0
+ * @package includes
+ * @subpackage libraries
+ * @category objects
+ */
 
+  /**
+   * Load file dependancies when they are needed.
+   * @return nothing
+   */
   function __autoload($name) {
     global $config;
 
