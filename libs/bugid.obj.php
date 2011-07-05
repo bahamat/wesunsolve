@@ -69,7 +69,7 @@ class Bugid extends mysqlObj
   }
 
   /* Load bugids from MOS and store into db */
-  public function dl() {
+  public function dl($force = 0) {
     global $config;
 
     $d = $config['bidpath']."/".substr($this->id, 0, 2);
@@ -88,7 +88,10 @@ class Bugid extends mysqlObj
 	unlink($fp);
       }
       echo "Existing!";
-      return -1;
+      if (!$force) {
+        return -1;
+      }
+      unlink($fp);
     }
 
     $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" --user=\"".$config['MOSuser']."\"";

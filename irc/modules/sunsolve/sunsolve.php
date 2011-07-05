@@ -74,6 +74,8 @@ class sunsolve extends module {
 		      $n = new Ircnp();
 		      $n->r = $t['r'];
 		      $n->p = $t['p'];
+  		      if (empty($g->synopsis)) 
+                        continue;
 		      $n->delete();
 		      array_push($patches, $g);
 		    }

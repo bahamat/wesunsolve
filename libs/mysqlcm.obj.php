@@ -111,7 +111,7 @@ class mysqlCM
    */
   private function _eprint($line, $args = null)
   {
-    if ($this->_errlog && $this->_efd) {
+    if ($this->_errlog && $this->_efd && !empty($line)) {
       return vfprintf($this->_efd, $line, $args);
     }
     return false;

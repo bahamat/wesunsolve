@@ -58,14 +58,69 @@
    $fn = $bundle->filename;
  }
 
- header('Content-Type: application/octet-stream');
+ $size = filesize($archive);
+ $fileinfo = pathinfo($archive);
+ $file_extension = strtolower($fileinfo['extension']);
+ switch($file_extension)
+ {
+	case 'Z':   $ctype='application/x-compress'; break;
+	case 'tar.Z':   $ctype='application/x-compress'; break;
+        case 'zip': $ctype='application/zip'; break;
+        default:    $ctype='application/force-download';
+ }
+ $range = '';
+
+ if(isset($_SERVER['HTTP_RANGE']))
+ {
+   list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+
+   if ($size_unit == 'bytes')
+   {
+     //multiple ranges could be specified at the same time, but for simplicity only serve the first range
+     //http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
+     list($range, $extra_ranges) = explode(',', $range_orig, 2);
+   }
+   else
+   {
+     $range = '';
+   }
+ }
+ else
+ {
+   $range = '';
+ }
+ $r = explode('-', $range, 2);
+ $seek_start = $r[0];
+ if (isset($r[1])) {
+   $seek_end = $r[1];
+ } else {
+   $seek_end = '';
+ }
+// list($seek_start, $seek_end) = explode('-', $range, 2);
+ $seek_end = (empty($seek_end)) ? ($size - 1) : min(abs(intval($seek_end)),($size - 1));
+ $seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
+
+ if ($seek_start > 0 || $seek_end < ($size - 1))
+ {
+   header('HTTP/1.1 206 Partial Content');
+ }
+ header('Accept-Ranges: bytes');
+ header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$size);
+ header('Content-Type: $ctype');
  header("Content-Disposition: attachment; filename=\"$fn\""); 
  header('Content-Transfer-Encoding: binary');
- header('Content-Length: '.filesize($archive));
+ //header('Content-Length: '.filesize($archive));
+ header('Content-Length: '.($seek_end - $seek_start + 1));
  header('Pragma: no-cache'); 
+
  $handle = fopen($archive, 'r'); 
+ fseek($handle, $seek_start);
+
  while (!feof($handle)) {
-  echo fread($handle, 8192);
+  set_time_limit(0);
+  print(fread($handle, 1024*8));
+  flush();
+  ob_flush();
  }
  fclose($handle); 
  //echo file_get_contents($archive);

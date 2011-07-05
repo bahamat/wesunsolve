@@ -379,14 +379,13 @@
       echo "[-] (left: ".($c - $i).") Trying to download ".$bug->id."..";
       $bug->fetchFromId();
       $bug->fetchFulltext();
-      $rc = $bug->dl();
+      $rc = $bug->dl(1);
       if ($rc)
         echo "failed\n";
       else
 	echo "done\n";
 
       /* parse bug */
-      $bug->fetchFulltext();
       echo "done\n";
       echo "    > Trying to parse data from raw stuff..\n";
       $bug->parseRaw();
