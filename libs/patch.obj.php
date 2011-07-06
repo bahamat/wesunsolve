@@ -971,7 +971,8 @@ class Patch extends mysqlObj
 	$stepFile++;
 	continue;
       }
-      if(($line[0] == "/"|| $line[0] == "<") && $stepFile) {
+      //if(($line[0] == "/"|| $line[0] == "<") && $stepFile) {
+      if($stepFile) {
         $fn = explode(" ", $line);
 	$deleted = 0;
 	if (count($fn) > 1 && !strcmp($fn[1], "(deleted)")) { // but we do nothing with that shit !@#)(*
