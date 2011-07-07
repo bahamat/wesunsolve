@@ -9,6 +9,8 @@
     echo "[Connected using IPv4]";
   }
 ?>
+        <a href="http://twitter.com/tgouverneur" class="twitter-follow-button" data-show-count="false">Follow @tgouverneur</a>
+        <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
 </p>
 <?php
   $lm = loginCM::getInstance();
