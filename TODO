@@ -1,3 +1,4 @@
 - pkg list -u parser
 - better Architecture parsing and sorting
 - Bug ids presentation searching and so on...
+- Flag patches to update readme file when needed

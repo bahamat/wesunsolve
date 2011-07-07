@@ -48,6 +48,7 @@
         <a href="/rss/bundles">RSS Last bundles</a><br/>
         <a href="/rss/patches">RSS Last patches</a><br/>
         <a href="/rss/news">RSS Site news</a><br/>
+        <a href="/help">Help us !</a><br/>
       </p>
      <h3>/search/patch</h3>
      <p>Use '%' as wildcard</p>
