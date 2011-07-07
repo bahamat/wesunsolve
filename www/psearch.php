@@ -138,9 +138,9 @@
 
   /* first count max results */
 
+  $nb = 0;
   if (($idx = $my->fetchIndex($idxcount, $table, $where)))
   { 
-    $nb = 0;
     if (isset($idx[0]) && isset($idx[0]['c'])) {
       $nb = $idx[0]['c'];
     }
