@@ -234,3 +234,16 @@ input {
   margin-right: auto;
   margin-left: auto;
 }
+
+#head_twit {
+  text-align: right;
+  margin-right: 15px;
+  margin-top: 2px;
+  margin-bottom: auto;
+  float: left;
+}
+
+#head_twit img {
+  width: 35px;
+  border: 0px;
+}
