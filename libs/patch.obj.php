@@ -317,7 +317,7 @@ class Patch extends mysqlObj
     $ret = `$cmd`;
 
     if (file_exists($out) && filesize($out)) {
-      IrcMsg::add("[BATCH] Updated patchdiag.xref (size: ".filesize($out).")");
+      Announce::getInstance()->msg(0, "[BATCH] Updated patchdiag.xref (size: ".filesize($out).")");
       return 0;
     } else {
       return -1;
@@ -364,10 +364,10 @@ class Patch extends mysqlObj
         $ip = new Ircnp();
 	$ip->p = $patch->patch;
 	$ip->r = $patch->revision;
-	$ip->insert();
+	Announce::getInstance()->nPatch($ip);
 	$patch->insert();
         $nb++;
-        IrcMsg::add("[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
+        Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
       }
       if ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad) {
         $patch->pca_rec = $pca_rec;

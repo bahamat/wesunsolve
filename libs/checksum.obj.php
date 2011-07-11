@@ -34,7 +34,7 @@ class Checksum extends mysqlObj
     $ret = `$cmd`;
 
     if (file_exists($out) && filesize($out)) {
-      IrcMsg::add("[BATCH] Updated CHECKSUMS (size: ".filesize($out).")");
+      Announce::getInstance()->msg(3, "[BATCH] Updated CHECKSUMS (size: ".filesize($out).")");
       return 0;
     } else {
       return -1;
@@ -131,7 +131,7 @@ class Checksum extends mysqlObj
       }
     }
     echo "[-] Done parsing CHECKSUMS, $nb new checksums\n";
-    IrcMsg::add("[BATCH] Parsed CHECKSUMS $nb new checksums, $mod updates");
+    Announce::getInstance()->msg(3, "[BATCH] Parsed CHECKSUMS $nb new checksums, $mod updates");
     if (isset($stats) && isset($stats['new']) && isset($stats['mod'])) {
       $stats['new'] += $nb;
       $stats['mod'] += $mod;

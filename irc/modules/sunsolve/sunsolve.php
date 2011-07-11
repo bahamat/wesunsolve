@@ -64,7 +64,7 @@ class sunsolve extends module {
 		  $patches = array();
 		  $table = "`irc_npatchs`";
 		  $index = "`p`, `r`";
-		  $where = " LIMIT 0,5";
+		  $where = "WHERE `f_irc`='0' OR `f_twitter`='0' LIMIT 0,5";
 
 		  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
 		  {
@@ -74,10 +74,20 @@ class sunsolve extends module {
 		      $n = new Ircnp();
 		      $n->r = $t['r'];
 		      $n->p = $t['p'];
+    		      $n->fetchFromId();
   		      if (empty($g->synopsis)) 
                         continue;
-		      $n->delete();
-		      array_push($patches, $g);
+   		      if (!$n->f_irc) {
+    		        $n->f_irc = 1;
+		        array_push($patches, $g);
+		      }
+  		      if (!$n->f_twitter) {
+   		        $rc = Announce::getInstance()->tweet($this->announce_patch($g, 1));
+  		        if ($rc = 200) {
+		          $n->f_twitter = 1;
+ 		        }
+		      }
+		      $n->update();
 		    }
 		  }
 		foreach($patches as $p) {

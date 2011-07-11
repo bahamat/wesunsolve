@@ -289,12 +289,12 @@ Apr/06/09
         if ($b->fetchFromField("filename")) {
           $b->insert();
 	  echo "[>] New bundle detected: ".$b->filename."\n";
-	  IrcMsg::add("[BATCH] Bundle ".$b->filename." has been added !");
+	  Announce::getInstance()->msg(2, "[BATCH] Bundle ".$b->filename." has been added !");
 	}
 	$b->fetchData();
 	if (strcmp($b->md5, $checksum->md5)) {
           echo "    > MD5 changed for ".$b->filename."\n";
-	  IrcMsg::add("[BATCH] Bundle ".$b->filename." has been updated!");
+	  Announce::getInstance()->msg(2, "[BATCH] Bundle ".$b->filename." has been updated!");
           $b->lastmod = time(); // New release of this bundle
 	  $b->md5 = $checksum->md5;
 	  $b->setData("readme_done", 0);

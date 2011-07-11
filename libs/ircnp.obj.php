@@ -18,6 +18,8 @@ class Ircnp extends mysqlObj
   public $p = -1;
   public $r = -1;
   
+  public $f_irc = 0;
+  public $f_twitter = 0;
 
  /**
   * Constructor
@@ -29,14 +31,17 @@ class Ircnp extends mysqlObj
     $this->_nfotable = "";
     $this->_my = array(
                         "p" => SQL_INDEX,
-                        "r" => SQL_INDEX
+                        "r" => SQL_INDEX,
+			"f_irc" => SQL_PROPE,
+			"f_twitter" => SQL_PROPE
                  );
 
     $this->_myc = array( /* mysql => class */
                         "p" => "p",
+                        "f_irc" => "f_irc",
+                        "f_twitter" => "f_twitter",
                         "r" => "r"
                  );
   }
-
 }
 ?>

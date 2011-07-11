@@ -16,11 +16,11 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "s::l::hn";
+  $shortopts = "s::l::hnt";
   $opts = getopt($shortopts);
 
   if (isset($opts['h']) || !isset($opts['s']) || empty($opts['s'])) {
-    echo $argv[0]." [-s=<synopsis>] [-l=<link>] [-n]\n";
+    echo $argv[0]." [-s=<synopsis>] [-l=<link>] [-t] [-n]\n";
     exit();
   }
 
@@ -39,6 +39,13 @@
   $news->link = $lin;
   $news->date = time();
   $news->insert();
-  if (!isset($opts['n'])) IrcMsg::add("[NEWS] ".$news->synopsis." (".$news->link.")");
+  if (empty($news->link)) {
+    $msg = "[NEWS] ".$news->synopsis;
+  } else {
+    $msg = "[NEWS] ".$news->synopsis." (".$news->link.")";
+  }
+  if (!isset($opts['n']) && isset($opts['t'])) echo "RC=".Announce::getInstance()->msg(1, $msg);
+  if (!isset($opts['n']) && !isset($opts['t'])) Announce::getInstance()->msg(0, $msg);
+  if (isset($opts['n']) && isset($opts['t'])) echo "RC=".Announce::getInstance()->msg(10, $msg);
   echo "[-] Inserted.\n";
 ?>
