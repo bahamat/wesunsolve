@@ -90,7 +90,7 @@
     if (isset($rev) && !empty($rev)) {
       $rev = sprintf("%d", $rev);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
-      $where .= "`revision` LIKE '$rev'";
+      $where .= "`patches`.`revision` LIKE '$rev'";
       $str .= "/rev/".urlencode($rev);
     }
     if (isset($synopsis) && !empty($synopsis)) {
@@ -134,7 +134,7 @@
 
     if (!isset($idxcount)) $idxcount = "count(`patches`.`patch`) as c";
 
-  if (!$fts) $where .= " ORDER BY `releasedate` DESC,`revision` DESC";
+  if (!$fts) $where .= " ORDER BY `patches`.`releasedate` DESC,`patches`.`revision` DESC";
 
   /* first count max results */
 

@@ -2,3 +2,5 @@
 - better Architecture parsing and sorting
 - Bug ids presentation searching and so on...
 - Flag patches to update readme file when needed
+- Readme BUG to fix !
+- Format tweets to ensure 140 char, add tags and url

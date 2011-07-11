@@ -82,7 +82,7 @@ class sunsolve extends module {
 		        array_push($patches, $g);
 		      }
   		      if (!$n->f_twitter) {
-   		        $rc = Announce::getInstance()->tweet($this->announce_patch($g, 1));
+   		        $rc = Announce::getInstance()->tweet(Announce::getInstance()->format($g));
   		        if ($rc = 200) {
 		          $n->f_twitter = 1;
  		        }

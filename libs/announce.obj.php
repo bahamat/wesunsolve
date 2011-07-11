@@ -38,6 +38,62 @@ class Announce
     return $connection->response['code'];
   }
 
+  public function getShortUrl($url) {
+    global $config;
+    
+    $ch = curl_init(sprintf('%s/url?key=%s', $config['googleShortUrl'], $config['googleApiKey']));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $requestData = array(
+       'longUrl' => $url
+    );
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
+ 
+    $result = curl_exec($ch);
+    curl_close($ch);
+ 
+    $ret = json_decode($result, true);
+    return $ret['id'];
+  }
+
+  public function format($p) {
+    $msg = '['.$p->name().']';
+
+    if ($p->pca_sec) {
+      $msg .= '[S]';
+    }
+    if ($p->pca_rec) {
+      $msg .= '[R]';
+    }
+    if ($p->pca_bad) {
+      $msg .= '[W]';
+    }
+
+    $url = 'http://sunsolve.espix.org/patch/id/'.$p->name();
+    $url = $this->getShortUrl($url);
+
+    $tags = "#solaris #oracle";
+
+    $len = 140;
+    $len -= strlen($msg);
+    $len -= strlen($url);
+    $len -= strlen($tags);
+    $len -= 2;
+    
+    $synopsis = $p->synopsis;
+    if (!empty($synopsis)) {
+      if (strlen($synopsis) > $len) {
+         // Strip synopsis
+         $synopsis = substr($synopsis, 0, $len);
+      }
+    } else return false;
+
+    $msg = "$msg $synopsis $url $tags";
+
+    return $msg;
+  }
+
   public function msg($p, $m) {
     switch($p) {
       case 1:
@@ -60,6 +116,7 @@ class Announce
     $p->f_twitter = 0;
     $p->insert();
   }
+
 
   /**
    * Returns the singleton instance

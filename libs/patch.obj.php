@@ -994,6 +994,7 @@ class Patch extends mysqlObj
       }
       if (preg_match('/^Problem Description:$/', $line)) { // link bugs below
         $stepBugs = 1;
+        $cPatch = null;
 	continue;
       }
 
