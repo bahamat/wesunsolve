@@ -1,3 +1,5 @@
+
+
 body {
   background-color: #758393;
   font-family: sans-serif;
@@ -33,6 +35,19 @@ h3 {
   margin-right: 5px;
   background-color: #B4BAC2;
   min-width: 80px;
+}
+
+.nav li {
+  font-size: x-small;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+}
+
+.nav ul {
+  list-style-type:none;
+  padding: 0;
+  margin: 0;
 }
 
 .nav p {

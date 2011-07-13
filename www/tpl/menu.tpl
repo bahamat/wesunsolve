@@ -20,37 +20,37 @@
 ?>
     <h2><a href="/">Home</a></h2>
      <h3>/infos</h3>
-      <p>
-        <a href="/bundles">Patch clusters</a><br/>
-        <a href="/lpatches">Last Patches</a><br/>
-        <a href="/lpatches/sec/1">Last Security Patches</a><br/>
-        <a href="/lpatches/bad/1">Last Invalidated Patches</a><br/>
-        <a href="/patch_search">Patches search</a><br/>
-        <a href="/plist_report">Patches report</a><br/>
-        <a href="/compare">Patches compare</a><br/>
-        <a href="/bsearch">Bug search</a><br/>
-      </p>
+      <ul>
+        <li><a href="/bundles">Patch clusters</a></li>
+        <li><a href="/lpatches">Last Patches</a></li>
+        <li><a href="/lpatches/sec/1">Last Security Patches</a></li>
+        <li><a href="/lpatches/bad/1">Last Invalidated Patches</a></li>
+        <li><a href="/patch_search">Patches search</a></li>
+        <li><a href="/plist_report">Patches report</a></li>
+        <li><a href="/compare">Patches compare</a></li>
+        <li><a href="/bsearch">Bug search</a></li>
+      </ul>
      <h3>/user</h3>
-     <p>
+     <ul>
 <?php if (!isset($lm->o_login) || !$lm->o_login) { ?>
-       <a href="/login">Login</a><br/>
-       <a href="/register">Register</a><br/>
+       <li><a href="/login">Login</a></li>
+       <li><a href="/register">Register</a></li>
 <?php } else { ?>
-       <a href="/panel">Panel</a><br/>
-       <a href="/register_srv">Add server</a><br/>
-       <br/><a href="/logout">Logout</a><br/>
-       <a href="/password">Change password</a><br/>
-       <a href="/settings">Change settings</a><br/>
+       <li><a href="/panel">Panel</a></li>
+       <li><a href="/register_srv">Add server</a><br/></li>
+       <li><a href="/logout">Logout</a></li>
+       <li><a href="/password">Change password</a></li>
+       <li><a href="/settings">Change settings</a></li>
 <?php } ?>
-     </p>
+     </ul>
      <h3>/various</h3>
-      <p>
-        <a href="/rss/bundles">RSS Last bundles</a><br/>
-        <a href="/rss/patches">RSS Last patches</a><br/>
-        <a href="/rss/news">RSS Site news</a><br/>
-        <a href="/help">Help us !</a><br/>
-        <a href="/changelog">Changelog</a><br/>
-      </p>
+      <ul>
+        <li><a href="/rss/bundles">RSS Last bundles</a></li>
+        <li><a href="/rss/patches">RSS Last patches</a></li>
+        <li><a href="/rss/news">RSS Site news</a></li>
+        <li><a href="/help">Help us !</a></li>
+        <li><a href="/changelog">Changelog</a></li>
+      </ul>
      <h3>/search/patch</h3>
      <p>Use '%' as wildcard</p>
      <p>Only enter Patch-ID and Bug-ID</p>
@@ -69,19 +69,18 @@
      </form>
      <p>For deeper search, use the dedicated search pages</p>
      <h3>/links+friends</h3>
-      <p>
-	<a href="http://support.oracle.com">My Oracle Support</a><br/>
-	<a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a><br/>
-	<a href="http://www.solarisinternals.com">Solaris Internal</a><br/>
-	<a href="http://www.sunfreeware.com/">Sun Freewares</a><br/>
-	<a href="http://www.opencsw.org/">OpenCSW</a><br/>
-
-      </p>
-      <p>
-	<a href="http://wildness.espix.org">wildcat's blog</a><br/>
-	<a href="http://www.espix.org">Espix Network</a><br/>
-	<a href="/notify">Contact us</a><br/>
-      </p>
+      <ul>
+	<li><a href="http://support.oracle.com">My Oracle Support</a></li>
+	<li><a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a></li>
+	<li><a href="http://www.solarisinternals.com">Solaris Internal</a></li>
+	<li><a href="http://www.sunfreeware.com/">Sun Freewares</a></li>
+	<li><a href="http://www.opencsw.org/">OpenCSW</a></li>
+      </ul>
+      <ul>
+	<li><a href="http://wildness.espix.org">wildcat's blog</a></li>
+	<li><a href="http://www.espix.org">Espix Network</a></li>
+	<li><a href="/notify">Contact us</a></li>
+      </ul>
   <br/>
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
       <fieldset style="border: 0px; text-align:center"><input type="hidden" name="cmd" value="_s-xclick"/>
