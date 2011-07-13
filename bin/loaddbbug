@@ -23,9 +23,9 @@
   echo "done\n";
 
   $bugids = array();
-  $table = "`bugids`,`bugids_fulltext`";
+  $table = "`bugids`";
   $index = "`id`";
-  $where = "WHERE bugids.id=bugids_fulltext.bugid AND bugids_fulltext.is_raw='1'";
+  $where = "WHERE bugids.id=bugids_fulltext.bugid AND bugids.is_raw='1'";
 //  $where = "LIMIT 0,1000";
 
   echo "[-] Fetching BugID's ..";
@@ -46,7 +46,7 @@
   foreach ($bugids as $bug) {
     $bug->fetchFromId();
     $bug->fetchFulltext();
-    $is_raw = $bug->ft("is_raw");
+    $is_raw = $bug->is_raw;
     $description = $bug->ft("description");
     $raw = $bug->ft("raw");
 // reload!    if ($is_raw && !empty($raw)) continue; // already loaded
@@ -64,7 +64,7 @@
     if (file_exists($config['bidpath']."/$dir1/$dir2/".$bug->id.".html") && filesize($config['bidpath']."/$dir1/$dir2/".$bug->id.".html") != 7997) {
       echo "[-] Loading bug ".$bug->id."\n";
       $bidhtml = file_get_contents($config['bidpath']."/$dir1/$dir2/".$bug->id.".html");
-      $bug->setft("is_raw", 1);
+      $bug->is_raw = 1;
       $bug->setft("raw", $bidhtml);
       $bug->update();
       echo "[-] Loaded ".$bug->id." contents into fulltext db...\n";

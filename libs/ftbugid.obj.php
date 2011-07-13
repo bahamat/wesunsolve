@@ -18,7 +18,6 @@ class FTBugid extends mysqlObj
   public $bugid = 0;
 
   /* Fulltext */
-  public $is_raw = 0;
   public $description = "";
   public $comments = "";
   public $keywords = "";
@@ -49,7 +48,6 @@ class FTBugid extends mysqlObj
     $this->_nfotable = "";
     $this->_my = array(
                         "bugid" => SQL_INDEX,
-                        "is_raw" => SQL_PROPE,
                         "raw" => SQL_PROPE,
                         "keywords" => SQL_PROPE,
                         "responsible_engineer" => SQL_PROPE,
@@ -68,7 +66,6 @@ class FTBugid extends mysqlObj
                         "workaround" => "workaround",
                         "description" => "description",
                         "comments" => "comments",
-                        "is_raw" => "is_raw"
                  );
   }
 

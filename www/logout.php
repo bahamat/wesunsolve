@@ -9,7 +9,7 @@
 
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
-    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+   HTTP::getInstance()->errMysql();
   }
 
   $lm = loginCM::getInstance();

@@ -38,6 +38,7 @@ class Bugid extends mysqlObj
   public $introduced_in = "";
   public $related_bugs = "";
   public $reported_against = "";
+  public $is_raw = 0;
 
   /* Fulltext */
   private $_ft;
@@ -138,7 +139,7 @@ class Bugid extends mysqlObj
 
     if (empty($content)) return -1;
 
-    $this->setft("is_raw", 1);
+    $this->is_raw = 1;
     $this->setft("raw", $content);
     $this->available = 1;
     return $this->update();
@@ -146,7 +147,7 @@ class Bugid extends mysqlObj
  
   public function parseRaw() {
     if ($this->_ft) {
-      if ($this->_ft->is_raw) {
+      if ($this->is_raw) {
         $raw_lines = explode(PHP_EOL, $this->_ft->raw);
 	if (!count($raw_lines)) {
 	  return false;
@@ -444,6 +445,7 @@ class Bugid extends mysqlObj
                         "reported_against" => SQL_PROPE,
                         "severity" => SQL_PROPE,
                         "tried" => SQL_PROPE,
+                        "is_raw" => SQL_PROPE,
                         "available" => SQL_PROPE
                  );
 
@@ -470,6 +472,7 @@ class Bugid extends mysqlObj
                         "related_bugs" => "related_bugs",
                         "reported_against" => "reported_against",
                         "severity" => "severity",
+                        "is_raw" => "is_raw",
                         "available" => "available"
                  );
   }

@@ -104,18 +104,19 @@
   /* Bugs parsing */
   if (isset($opts['e'])) {
     echo "[-] Fetching raw bug ids..";
+    $bugs = array();
+    $table = "`bugids`";
+    $index = "`id`";
+    $where = "WHERE bugids.is_raw=1";
     if (isset($opts['i'])) {
       $bid = $opts['i'];
-    }
-    $bugs = array();
-    $table = "`bugids`,`bugids_fulltext`";
-    $index = "`id`";
-    $where = "WHERE bugids.id=bugids_fulltext.bugid AND bugids_fulltext.is_raw='1'";
-    if (isset($bid)) {
       $where .= " AND bugids.id='$bid'";
     }
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
+      $i=0;
       foreach($idx as $t) {
+        $i++;
+        if ($i == 2000) { echo "."; $i=0; }
         $g = new Bugid($t['id']);
         array_push($bugs, $g);
       }

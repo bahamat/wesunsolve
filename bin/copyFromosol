@@ -65,7 +65,7 @@
       $b->setft("workaround", $ft['c5work_around']);
       echo "  > Updated workaround for $bid\n";
     }
-    $b->setft("is_raw", 0);
+    $b->is_raw = 0;
     $b->updateDate($row['last_update_date']);
     $b->createDate($row['date']);
     $b->submitDate($row['submit_date']);

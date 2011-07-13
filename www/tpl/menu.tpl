@@ -68,7 +68,7 @@
      </p>
      </form>
      <p>For deeper search, use the dedicated search pages</p>
-     <h3>/links</h3>
+     <h3>/links+friends</h3>
       <p>
 	<a href="http://support.oracle.com">My Oracle Support</a><br/>
 	<a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a><br/>
