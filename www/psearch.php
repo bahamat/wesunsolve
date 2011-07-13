@@ -28,7 +28,6 @@
   $foot = new Template("./tpl/foot.tpl");
   $foot->set("start_time", $start_time);
 
-  $page->set("head", $head);
   $page->set("menu", $menu);
   $page->set("foot", $foot);
 
@@ -44,8 +43,7 @@
   $h->sanitizeArray($_POST);
   $h->sanitizeArray($_GET);
 
-  $title = "Patch search";
-  $head->set("title", $title); 
+  $title = "Patch search results";
   $fts = false;
 
   $my = mysqlCM::getInstance();
@@ -161,6 +159,9 @@
   }
 
   $where .= " LIMIT $start,$rpp";
+  $title .= " from $start to ".($start + $rpp);
+  $head->set("title", $title);
+  $page->set("head", $head);
 
   if ($nb && ($idx = $my->fetchIndex($index, $table, $where)))
   {

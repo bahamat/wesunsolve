@@ -44,6 +44,7 @@
 screen:
   $page = new Template("./tpl/index.tpl");
   $head = new Template("./tpl/head.tpl");
+  $head->set("title", 'Please login with your username and password');
   $menu = new Template("./tpl/menu.tpl");
   $foot = new Template("./tpl/foot.tpl");
 

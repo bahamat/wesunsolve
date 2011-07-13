@@ -45,6 +45,7 @@
 
  $index->set("head", $head);
  $index->set("menu", $menu);
+ $head->set("title", "Panel for registered users of We Sun Solve!");
  $index->set("content", $content);
  $index->set("foot", $foot);
  echo $index->fetch();

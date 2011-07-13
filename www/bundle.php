@@ -45,7 +45,7 @@
 	  }
 	}
 
-         $title = "Bundle details: ".$bundle->filename;
+         $title = 'Bundle details for file '.$bundle->filename;
 
          $index = new Template("./tpl/index.tpl");
          $head = new Template("./tpl/head.tpl");

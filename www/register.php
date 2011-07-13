@@ -73,6 +73,7 @@
 screen:
   $page = new Template("./tpl/index.tpl");
   $head = new Template("./tpl/head.tpl");
+  $head->set("title", "Register yourself at We Sun Solve!");
   $menu = new Template("./tpl/menu.tpl");
   $foot = new Template("./tpl/foot.tpl");
   if (isset($_POST["fullname"])) $content->set("fullname", $_POST["fullname"]);

@@ -14,6 +14,7 @@
 
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
+ $head->set("title", 'Tool to compare different patching level);
  $menu = new Template("./tpl/menu.tpl");
  $foot = new Template("./tpl/foot.tpl");
  $foot->set("start_time", $start_time);

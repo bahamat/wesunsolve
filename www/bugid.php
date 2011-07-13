@@ -27,8 +27,7 @@
 	 }
          $bug->fetchAll();
 	 $bug->fetchFulltext();
-         $title = "We Sun Solve: Bug details: ".$bug->id;
-
+         $title = 'We Sun Solve: Bug details for '.$bug->id;
          $index = new Template("./tpl/index.tpl");
          $head = new Template("./tpl/head.tpl");
          $head->set("title", $title);

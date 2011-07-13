@@ -14,7 +14,7 @@
 
  $search = false;
 
- $title = "Bug search page...";
+ $title = "Solaris BUG search form";
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
  $head->set("title", $title);

@@ -12,7 +12,7 @@
  $h = HTTP::getInstance();
  $h->parseUrl();
 
- $title = "We Sun Solve - Advanced patch search";
+ $title = "We Sun Solve - Advanced patch search form";
 
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");

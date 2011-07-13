@@ -86,12 +86,12 @@
  if (!$bad) {
    $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://sunsolve.espix.org/rss/patches" />';
  }
- $title = "Last patches released";
+ $title = 'Latest Solaris released patches - results from '.$start.' to '.($start+$rpp);
  if ($bad) {
-   $title = "Last invalidated patches released";
+   $title = 'Latest Solaris invalidated patches - results from '.$start.' to '.($start+$rpp);
  }
  if ($sec) {
-   $title = "Last security patches released";
+   $title = 'Latest Solaris security released patches - results from '.$start.' to '.($start+$rpp);
  }
 
   $index = new Template("./tpl/index.tpl");
