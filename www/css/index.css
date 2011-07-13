@@ -1,7 +1,7 @@
 body {
   background-color: #758393;
   font-family: sans-serif;
-  padding: 1%
+  padding: 5px
 }
 
 h1 {
@@ -10,7 +10,7 @@ h1 {
   border: solid 1px #000000;
   text-align: center;
   font-variant: small-caps;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 h2 {
@@ -217,7 +217,9 @@ input {
   border: solid 1px #000000;
   padding-left: 10px;
   padding-right: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
+  padding-top: 5px;
+  margin-bottom: 5px;
   text-align: center;
   background-color: #B4BAC2;
   font-size: 0.8em;
@@ -235,15 +237,12 @@ input {
   margin-left: auto;
 }
 
-#head_twit {
-  text-align: right;
+#head_twit img {
+  width: 35px;
+  border: 0px;
+  text-align: left;
   margin-right: 15px;
   margin-top: 2px;
   margin-bottom: auto;
   float: left;
-}
-
-#head_twit img {
-  width: 35px;
-  border: 0px;
 }

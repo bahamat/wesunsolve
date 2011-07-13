@@ -28,19 +28,19 @@
    $start = $_GET['start'];
  }
 
- $where = " WHERE `releasedate`!='' ORDER BY `releasedate` DESC";
+ $where = " WHERE `releasedate`!='' ORDER BY `patches`.`releasedate` DESC,`patches`.`patch` DESC,`patches`.`revision` DESC";
  $bad = 0;
  $sec = 0;
 
  if ((isset($_POST['sec']) && !empty($_POST['sec'])) ||
      (isset($_GET['sec']) && !empty($_GET['sec']))) {
    $sec = 1;
-   $where = " WHERE `pca_sec`='1' AND `releasedate`!='' ORDER BY `releasedate` DESC";
+   $where = " WHERE `pca_sec`='1' AND `releasedate`!='' ORDER BY `releasedate` DESC,`patches`.`patch` DESC,`patches`.`revision` DESC";
  }
 
  if ((isset($_POST['bad']) && !empty($_POST['bad'])) ||
      (isset($_GET['bad']) && !empty($_GET['bad']))) {
-   $where = " WHERE `releasedate`!='' AND (`pca_bad`='1' OR status='OBSOLETE') ORDER BY `releasedate` DESC";
+   $where = " WHERE `releasedate`!='' AND (`pca_bad`='1' OR status='OBSOLETE') ORDER BY `releasedate` DESC,`patches`.`patch` DESC,`patches`.`revision` DESC";
    $bad = 1;
  }
 

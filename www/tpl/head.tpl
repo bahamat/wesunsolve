@@ -12,4 +12,4 @@
 <?php if (isset($head_add)) echo $head_add; ?>
   </head>
   <body>
-   <h1>We Sun Solve !<span id="head_twit"><a href="http://twitter.com/wesunsolve"><img src="./img/twitter-button.jpg" alt="Follow We Sun Solve on twitter"/></a></span></h1>
+   <h1>We Sun Solve !<span id="head_twit"><a href="http://twitter.com/wesunsolve"><img src="/img/twitter-button.jpg" alt="Follow We Sun Solve on twitter"/></a></span></h1>
