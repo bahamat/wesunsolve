@@ -83,24 +83,32 @@ class Bugid extends mysqlObj
     }
     $fp = $d."/".$this->id.".html";
 
+    $there = 0;
     if (file_exists($fp)) {
       $size = filesize($fp);
       if (!$size || $size == 2009) {
 	unlink($fp);
       }
       echo "Existing!";
-      if (!$force) {
+      $raw = $this->ft("raw");
+      if (!$force && !empty($raw)) {
         return -1;
       }
-      unlink($fp);
+      $there = 1;
+      if ($force) {
+        unlink($fp);
+        $there = 0;
+      }
     }
 
-    $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" --user=\"".$config['MOSuser']."\"";
-    $cmd .= " --password=\"".$config['MOSpass']."\"";
-    $cmd .= " --load-cookies /srv/sunsolve/bin/cookies.txt ";
-    $cmd .= "--save-cookies /srv/sunsolve/bin/cookies.txt --keep-session-cookies ";
-    $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."\"";
-    passthru($cmd);
+    if (!$there) {
+      $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" --user=\"".$config['MOSuser']."\"";
+      $cmd .= " --password=\"".$config['MOSpass']."\"";
+      $cmd .= " --load-cookies /srv/sunsolve/bin/cookies.txt ";
+      $cmd .= "--save-cookies /srv/sunsolve/bin/cookies.txt --keep-session-cookies ";
+      $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."\"";
+      passthru($cmd);
+    }
 
     $this->tried = 1;
     $this->update();
@@ -116,7 +124,7 @@ class Bugid extends mysqlObj
         echo "404";
       }
     } else {
-      echo "exist";
+      echo "dont exist";
       return -1;
     }
     

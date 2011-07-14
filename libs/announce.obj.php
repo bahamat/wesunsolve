@@ -40,6 +40,23 @@ class Announce
 
   public function getShortUrl($url) {
     global $config;
+
+    $ch = curl_init(sprintf($config['ws2ShortUrl'], $url));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+ 
+    if (!empty($result) && preg_match("@^http://@i", $result)) {
+      return $result;
+    }
+    return FALSE;
+  }
+
+/**
+ * Google tiny url service
+ */
+  public function getGoogleShortUrl($url) {
+    global $config;
     
     $ch = curl_init(sprintf('%s/url?key=%s', $config['googleShortUrl'], $config['googleApiKey']));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -71,7 +88,11 @@ class Announce
     }
 
     $url = 'http://sunsolve.espix.org/patch/id/'.$p->name();
-    $url = $this->getShortUrl($url);
+    $surl = $this->getShortUrl($url);
+    if ($surl === FALSE) {
+      $surl = $this->getGoogleShortUrl($url);
+    }
+    
 
     $tags = "#solaris #oracle";
 
