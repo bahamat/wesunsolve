@@ -84,7 +84,7 @@
 
  $head_add = '';
  if (!$bad) {
-   $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://sunsolve.espix.org/rss/patches" />';
+   $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://wesunsolve.net/rss/patches" />';
  }
  $title = 'Latest Solaris released patches - results from '.$start.' to '.($start+$rpp);
  if ($bad) {

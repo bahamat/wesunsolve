@@ -87,7 +87,7 @@ class Announce
       $msg .= '[W]';
     }
 
-    $url = 'http://sunsolve.espix.org/patch/id/'.$p->name();
+    $url = 'http://wesunsolve.net/patch/id/'.$p->name();
     $surl = $this->getShortUrl($url);
     if ($surl === FALSE) {
       $surl = $this->getGoogleShortUrl($url);

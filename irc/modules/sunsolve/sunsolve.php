@@ -384,7 +384,7 @@ class sunsolve extends module {
 			  return;
 			}
 			if (!empty($p->synopsis)) {
-			  $msg = "Bug: ".$p->id." (http://sunsolve.espix.org/bugid/id/".$p->id.") ".$p->synopsis;
+			  $msg = "Bug: ".$p->id." (http://wesunsolve.net/bugid/id/".$p->id.") ".$p->synopsis;
 			} else {
 			  $msg = "Bug: ".$p->id." - ".$p->synopsis;
 			}

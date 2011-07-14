@@ -26,7 +26,7 @@
     }
   }
 
- $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Bundles" href="http://sunsolve.espix.org/rss/bundles" />';
+ $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Bundles" href="http://wesunsolve.net/rss/bundles" />';
  $title = 'Latest updates of bundles for Solaris';
 
   $index = new Template("./tpl/index.tpl");
