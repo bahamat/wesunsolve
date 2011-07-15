@@ -92,13 +92,15 @@ class Announce
     if ($surl === FALSE) {
       $surl = $this->getGoogleShortUrl($url);
     }
+    if ($surl === FALSE) {
+      $surl = $url;
+    }
     
-
     $tags = "#solaris #oracle";
 
     $len = 140;
     $len -= strlen($msg);
-    $len -= strlen($url);
+    $len -= strlen($surl);
     $len -= strlen($tags);
     $len -= 2;
     
@@ -110,7 +112,7 @@ class Announce
       }
     } else return false;
 
-    $msg = "$msg $synopsis $url $tags";
+    $msg = "$msg $synopsis $surl $tags";
 
     return $msg;
   }

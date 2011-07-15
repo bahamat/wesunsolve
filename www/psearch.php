@@ -157,7 +157,7 @@
   } else { /* otherwise start from scratch */
     $start = 0;
   }
-
+  if ($start < 0) $start = 0;
   $where .= " LIMIT $start,$rpp";
   $title .= " from $start to ".($start + $rpp);
   $head->set("title", $title);

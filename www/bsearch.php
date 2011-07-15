@@ -123,6 +123,7 @@ LIMIT 0,20;
     $start = 0;
   }
  
+  if ($start < 0) $start = 0;
   $where .= " LIMIT $start,$rpp";
 
   if ($nb && ($idx = mysqlCM::getInstance()->fetchIndex($indx, $table, $where)))
