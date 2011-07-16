@@ -9,6 +9,4 @@
         <tr><td></td><td><input type="submit" class="submit" name="save" value="Save changes"/></td></tr>
       </table>
      </form>
-    <hr/>
-     <address></address>
    </div>

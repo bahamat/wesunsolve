@@ -33,5 +33,4 @@
       <tr><td></td><td><input type="submit" value="Register" name="save"></td></tr>
     </table>
     </form>
-    <hr/>
    </div>

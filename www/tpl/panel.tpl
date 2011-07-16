@@ -19,6 +19,4 @@
      </tr>
 <?php } ?>
     </table>
-    <hr/>
-     <address></address>
    </div>

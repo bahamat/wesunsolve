@@ -2,3 +2,6 @@
 - better Architecture parsing and sorting
 - Bug ids presentation searching and so on...
 - Flag patches to update readme file when needed
+- Mysql iterator for fetching big big tables
+- Mysql disconnection detection and reconnection if possible...
+- Try to improve browsing experience (main page refurbishing mainly+menu searches)

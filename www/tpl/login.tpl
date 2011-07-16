@@ -10,5 +10,4 @@
       <tr><td></td><td><input type="submit" value="Login" name="save"></td></tr>
     </table>
     </form>
-    <hr/>
    </div>

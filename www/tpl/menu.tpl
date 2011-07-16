@@ -52,8 +52,8 @@
         <li><a href="/changelog">Changelog</a></li>
       </ul>
      <h3>/search/patch</h3>
-     <p>Use '%' as wildcard</p>
-     <p>Only enter Patch-ID and Bug-ID</p>
+     <p>Use '%' as wildcard
+     <br/>Only enter Patch-ID and Bug-ID</p>
      <form method="post" action="/psearch">
      <p>
       <input type="text" size="10" name="pid" value=""/>

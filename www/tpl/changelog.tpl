@@ -4,6 +4,4 @@
     <pre>
 <?php passthru("cd /srv/sunsolve/;/usr/bin/git log"); ?>
     </pre>
-    <hr/>
-     <address></address>
    </div>

@@ -3,8 +3,13 @@
     <span class="red">Error, the <?php echo $what; ?> that you have requested has not been found.</span>
     <p>If the error persist, please fill the form below to notify the error!</p>
     <?php } else { ?>
-    <p>If you wish to contact the author, please use the form below...</p>
-    <p>You could also discuss with us on IRC at #sunsolve @ irc.freenode.net</p>
+    <p>You can contact us by:</p>
+    <ul>
+     <li><a href="irc://#sunsolve@irc.freenode.net">IRC</a> on <b>#sunsolve</b> @ <b>irc.freenode.org</b></li>
+     <li>Twitter: <a href="http://twitter.com/wesunsolve">@WeSunSolve</a></li>
+     <li><a href="mailto:info@wesunsolve.net">E-Mail</a></li>
+     <li>With the form below...</li>
+    </ul>
     <?php } ?>
     <form method="POST" action="notify.php?form=1">
     <table class="ctable">
@@ -14,5 +19,4 @@
       <tr><td></td><td style="text-align: left;"><input type="submit" value="Submit" name="submit"></td></tr>
     </table>
     </form>
-    <hr/>
    </div>

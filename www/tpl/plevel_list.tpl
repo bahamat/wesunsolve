@@ -20,6 +20,4 @@
 <?php } ?>
     </table>
     <p><a href="/add_plevel/s/<?php echo $s->id; ?>">Add patch level</a></p>
-    <hr/>
-     <address></address>
    </div>
