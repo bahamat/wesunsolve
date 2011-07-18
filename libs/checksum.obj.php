@@ -35,6 +35,11 @@ class Checksum extends mysqlObj
 
     if (file_exists($out) && filesize($out)) {
       Announce::getInstance()->msg(3, "[BATCH] Updated CHECKSUMS (size: ".filesize($out).")");
+      $fn = $config['ckpath']."/CHECKSUM-".date('dmY');
+      if (file_exists($fn)) {
+	unlink ($fn);
+      }
+      copy($out, $fn);
       return 0;
     } else {
       return -1;
