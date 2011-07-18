@@ -1,0 +1,5 @@
+User-agent: *mobile*
+Disallow: 
+
+User-agent: *
+Disallow: /
