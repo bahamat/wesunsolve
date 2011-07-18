@@ -317,6 +317,10 @@ class Patch extends mysqlObj
     $ret = `$cmd`;
 
     if (file_exists($out) && filesize($out)) {
+      $fn = $config['pdiagpath']."/patchdiag.xref-".(date("dmY"));
+      if (file_exists($fn))
+	unlink($fn);
+      copy($out, $fn);
       Announce::getInstance()->msg(0, "[BATCH] Updated patchdiag.xref (size: ".filesize($out).")");
       return 0;
     } else {
