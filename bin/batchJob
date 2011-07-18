@@ -63,31 +63,20 @@
 
   /* new bugs */
   if (isset($opts['l'])) {
-    echo "[-] Fetching bug ids..";
     if (isset($opts['i'])) {
       $bid = $opts['i'];
     }
     $i=0;
-    $bugs = array();
     $table = "`bugids`";
     $index = "`id`";
+    $cindex = "COUNT(`id`)";
     $where = "WHERE `available`='0' and `tried`='0'";
     if (isset($bid)) {
       $where = "WHERE `id`='$bid'";
     }
-    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
-      foreach($idx as $t) {
-        $i++;
-        if ($i == 2000) { echo "."; $i=0; }
-        $g = new Bugid($t['id']);
-        array_push($bugs, $g);
-      }
-    }
-    echo "done\n";
-    
-    for ($i=0,$cnt=0, $c = count($bugs); $i<$c; $i++,$cnt++) {
-      $bug = $bugs[$i];
-      echo "[-] (left: ".($c - $i).") Trying to download ".$bug->id."..";
+    $it = new mIterator("Bugid", $index, $table, $where, $cindex);
+    while(($bug = $it->next())) {
+      echo "[-] (left: ".$it->left().") Trying to download ".$bug->id."..";
       $bug->fetchFromId();
       $bug->fetchFulltext();
       $rc = $bug->dl();
@@ -96,7 +85,6 @@
       else
 	echo "done\n";
       unset($bug);
-      $bugs[$i] = null;
     }
     return;
   }
@@ -104,26 +92,16 @@
   /* Bugs parsing */
   if (isset($opts['e'])) {
     echo "[-] Fetching raw bug ids..";
-    $bugs = array();
     $table = "`bugids`";
     $index = "`id`";
+    $cindex = "COUNT(`id`)";
     $where = "WHERE bugids.is_raw=1";
     if (isset($opts['i'])) {
       $bid = $opts['i'];
       $where .= " AND bugids.id='$bid'";
     }
-    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
-      $i=0;
-      foreach($idx as $t) {
-        $i++;
-        if ($i == 2000) { echo "."; $i=0; }
-        $g = new Bugid($t['id']);
-        array_push($bugs, $g);
-      }
-    }
-    echo "done\n";
-    for ($i=0,$cnt=0, $c = count($bugs); $i<$c; $i++,$cnt++) {
-      $bug = $bugs[$i];
+    $it = new mIterator("Bugid", $index, $table, $where, $cindex);
+    while(($bug = $it->next())) {
       echo "[-] Treating ".$bug->id."...\n";
       echo "    > fetching datas ...";
       $bug->fetchFromId();
@@ -132,9 +110,7 @@
       echo "    > Trying to parse data from raw stuff..\n";
       $bug->parseRaw();
       unset($bug);
-      $bugs[$i] = null;
     }
-
     return;
   }
 
@@ -249,9 +225,9 @@
     }
     echo "done\n";
   } else {
-    echo "[-] Fetching patches from databases.";
     $table = "`patches`";
     $index = "`patch`, `revision`";
+    $cindex = "COUNT(`patch`)";
     $where = "";
     if (isset($opts['i'])) {
       $p = explode("-", $opts['i']);
@@ -259,105 +235,88 @@
       $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
     }
     $where .= " ORDER BY `releasedate` DESC";
-  
-    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
-    {
-      $i=0;
-      foreach($idx as $t) {
-        if ($i==1000) { echo "."; $i=0; }
-        $i++;
-        $g = new Patch($t['patch'], $t['revision']);
-        array_push($patches, $g);
-      }
-    }
-    echo "done\n";
-  }
 
-  echo "[-] Trying to treat ".count($patches)." patches:\n";
-  for ($i=0,$cnt=0, $c = count($patches); $i<$c; $i++,$cnt++) {
-    if ($cnt == 100) {
-       echo "[-] Still left ".($c-$i)." to treat...\n";
-       $cnt=0;
-    }
-    $p = $patches[$i];
-    if ($p->fetchFromId() && isset($opts['t'])) {
-      echo "[-] Added new patch: ".$p->name()."\n";
-      $p->insert();
-    }
+    $it = new mIterator("Patch", $index, $table, $where, $cindex);
 
-    $archive = $p->findArchive();
-    if ($archive == null && !$p->isAlreadyTried()) { /* New patch to download */
-      if (!isset($opts['d'])) {
-        $p->checkPath();
-        $p->tryDownload();
-      }
-    }
-    if (!$archive) $archive = $p->findArchive();
-    if ($archive != null) {
-      
-      if ($p->updateArchiveSize($archive)) {
-        echo "[-] Updated filesize: ".$p->filesize."\n";
-	$p->update();
+    echo "[-] Trying to treat ".$it->count()." patches:\n";
+    while(($p = $it->next())) {
+      if ($p->fetchFromId() && isset($opts['t'])) {
+        echo "[-] Added new patch: ".$p->name()."\n";
+        $p->insert();
       }
 
-      if (!file_exists($archive.".md5sum")) {
-        echo "[-] Generating MD5..";
-        $p->makeMD5($archive, $archive.".md5sum");
-        echo "done\n";
-      }
-      if (!file_exists($archive.".sha512sum")) {
-        echo "[-] Generating SHA512..";
-        $p->makeSHA512($archive, $archive.".sha512sum");
-        echo "done\n";
-      }
-      if (!file_exists($p->readmePath())) {
-        echo "[-] Trying to extract README for ".$p->name()."..";
-	$ret = $p->extractReadme();
-	if (!$ret) {
-	  echo "done\n";
-        } else {
-	  echo "failed\n";
+      $archive = $p->findArchive();
+      if ($archive == null && !$p->isAlreadyTried()) { /* New patch to download */
+        if (!isset($opts['d'])) {
+          $p->checkPath();
+          $p->tryDownload();
         }
       }
-    }
-    if (file_exists($p->readmePath()) && !filesize($p->readmePath())) {
-      unlink($p->readmePath());
-    }
-    if (!file_exists($p->readmePath()) && (!file_exists($p->path()."/.README.".$p->name()) || isset($opts['f']))) { /* try to download the readme file */
-      if (!isset($opts['d'])) {
-        echo "[-] Trying to download README for ".$p->name()."..";
-        $ret = $p->downloadReadme();
-        if ($ret) {
-    	  echo "failed\n";
-        } else {
-  	  echo "done\n";
+      if (!$archive) $archive = $p->findArchive();
+      if ($archive != null) {
+        
+        if ($p->updateArchiveSize($archive)) {
+          echo "[-] Updated filesize: ".$p->filesize."\n";
+          $p->update();
+        }
+        if (!file_exists($archive.".md5sum")) {
+          echo "[-] Generating MD5..";
+          $p->makeMD5($archive, $archive.".md5sum");
+          echo "done\n";
+        }
+        if (!file_exists($archive.".sha512sum")) {
+          echo "[-] Generating SHA512..";
+          $p->makeSHA512($archive, $archive.".sha512sum");
+          echo "done\n";
+        }
+        if (!file_exists($p->readmePath())) {
+          echo "[-] Trying to extract README for ".$p->name()."..";
+  	  $ret = $p->extractReadme();
+	  if (!$ret) {
+  	    echo "done\n";
+          } else {
+	    echo "failed\n";
+          }
         }
       }
-    }
-    if (file_exists($p->readmePath()) && !isset($opts['n'])) {
-      $p->fetchData();
-      if ($p->data("readme_done") != 1 || isset($opts['r']) || isset($opts['f'])) {
-        echo "[-] Loading ".$p->name()." patch datas...";
-        $p->fetchFromId();
-        $p->fetchAll();
-        echo "done\n";
-        echo "[-] Parsing the readme file...\n";
-	$fc = file_get_contents($p->readmePath());
-        $ret = $p->readme($fc);
-        unset($fc);
-        if ($ret > 0) {
-	  $p->setData("readme_done", 1);
-	  $p->update();
-	}
+      if (file_exists($p->readmePath()) && !filesize($p->readmePath())) {
+        unlink($p->readmePath());
       }
+      if (!file_exists($p->readmePath()) && (!file_exists($p->path()."/.README.".$p->name()) || isset($opts['f']))) { /* try to download the readme file */
+        if (!isset($opts['d'])) {
+          echo "[-] Trying to download README for ".$p->name()."..";
+          $ret = $p->downloadReadme();
+          if ($ret) {
+    	    echo "failed\n";
+          } else {
+  	    echo "done\n";
+          }
+        }
+      }
+      if (file_exists($p->readmePath()) && !isset($opts['n'])) {
+        $p->fetchData();
+        if ($p->data("readme_done") != 1 || isset($opts['r']) || isset($opts['f'])) {
+          echo "[-] Loading ".$p->name()." patch datas...";
+          $p->fetchFromId();
+          $p->fetchAll();
+          echo "done\n";
+          echo "[-] Parsing the readme file...\n";
+  	  $fc = file_get_contents($p->readmePath());
+          $ret = $p->readme($fc);
+          unset($fc);
+          if ($ret > 0) {
+	    $p->setData("readme_done", 1);
+	    $p->update();
+  	  }
+        }
+      }
+      if (isset($opts['t'])) {
+        /* Remove from toadd */
+        $q = "DELETE FROM `toadd` WHERE `patch`='".$p->patch."' AND `rev`='".$p->revision."'";
+        $m->rawQuery($q);
+      }
+      unset($p);
     }
-    if (isset($opts['t'])) {
-      /* Remove from toadd */
-      $q = "DELETE FROM `toadd` WHERE `patch`='".$p->patch."' AND `rev`='".$p->revision."'";
-      $m->rawQuery($q);
-    }
-    unset($p);
-    $patches[$i] = null;
   }
 
   /* Bugs updates */
