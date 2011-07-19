@@ -26,6 +26,7 @@ class Patch extends mysqlObj
   public $pca_rec = 0;
   public $pca_sec = 0;
   public $pca_bad = 0;
+  public $to_update = 0;
   public $updated = 0;
   public $added = 0;
 
@@ -1406,6 +1407,7 @@ class Patch extends mysqlObj
                         "pca_rec" => SQL_PROPE,
                         "pca_sec" => SQL_PROPE,
                         "pca_bad" => SQL_PROPE,
+                        "to_update" => SQL_PROPE,
                         "updated" => SQL_PROPE,
                         "added" => SQL_PROPE
                  );
@@ -1423,6 +1425,7 @@ class Patch extends mysqlObj
                         "pca_rec" => "pca_rec",
                         "pca_sec" => "pca_sec",
                         "pca_bad" => "pca_bad",
+                        "to_update" => "to_update",
                         "updated" => "updated",
                         "added" => "added"
                  );

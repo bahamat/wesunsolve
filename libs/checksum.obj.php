@@ -81,6 +81,7 @@ class Checksum extends mysqlObj
       if (preg_match('/^========================================================$/', $line)) {
         $trash++;
       }
+      $p = null;
       if ($trash == 2) { /* post header */
         if (!$pp && !strpos($line, ":")) { /* this is the name of the file here... */
 	  $pp = true;
@@ -100,6 +101,8 @@ class Checksum extends mysqlObj
  	      echo "  >>> New patch detected ".$p->name()."\n";
 	      $p->insert();
 	    }
+	  } else {
+	    $p = null;
 	  }
 	} else if ($pp && strpos($line, ":")) {
 	  $f = explode(":", $line);
@@ -111,6 +114,7 @@ class Checksum extends mysqlObj
               if (strcmp($csum->md5, $f[1])) {
 	        $csum->md5 = $f[1];
 		$csum->update();
+ 		if ($p) { $p->to_update = 1; $p->update(); }
 	        echo "  > Updated MD5 checksum entry for ".$csum->name." to ".$f[1]."\n";
 		$mod++;
 	      }
