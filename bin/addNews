@@ -39,13 +39,11 @@
   $news->link = $lin;
   $news->date = time();
   $news->insert();
-  if (empty($news->link)) {
-    $msg = "[NEWS] ".$news->synopsis;
-  } else {
-    $msg = "[NEWS] ".$news->synopsis." (".$news->link.")";
+  if (!isset($opts['t'])) {
+    $news->is_twitter = 0;
   }
-  if (!isset($opts['n']) && isset($opts['t'])) echo "RC=".Announce::getInstance()->msg(1, $msg);
-  if (!isset($opts['n']) && !isset($opts['t'])) Announce::getInstance()->msg(0, $msg);
-  if (isset($opts['n']) && isset($opts['t'])) echo "RC=".Announce::getInstance()->msg(10, $msg);
+  if (isset($opts['n'])) {
+    $news->is_irc = 0;
+  }
   echo "[-] Inserted.\n";
 ?>

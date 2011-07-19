@@ -10,7 +10,7 @@ class sunsolve extends module {
 	public $author = "wildcat";
 	public $version = "0.1";
 
-	public $channels = array("#sunsolve", "#opensolaris-fr", "#solaris");
+	public $channels = array("#sunsolve", "#opensolaris-fr");
         public $admchan = "#sunsolve";
         public $first = 0;
 
@@ -51,6 +51,39 @@ class sunsolve extends module {
 		foreach($msgs as $msg) {
 			$this->ircClass->privMsg($this->admchan, $msg->msg);
 		}
+
+		/* Do site news */
+		$news = array();
+                  $table = "`rss_news`";
+                  $index = "`id`";
+                  $where = " WHERE `is_twitter`='1' OR `is_irc`='1' ORDER BY `date` ASC LIMIT 0,5";
+
+                  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+                  {
+                    foreach($idx as $t) {
+                      $g = new News($t['id']);
+                      $g->fetchFromId();
+                      array_push($news, $g);
+                    }
+                  }
+	        foreach($news as $n) {
+		  if ($n->is_irc == 1) {
+                    $n->is_irc = 2;
+		    $msg = "[NEWS] ".$n->synopsis;
+   		    if (!empty($n->link)) {
+			$msg .= " (".$n->link.")";
+		    }
+		    $this->ircClass->privMsg($this->admchan, $msg);
+                  }
+                  if ($n->is_twitter == 1) {
+                    $rc = Announce::getInstance()->tweet(Announce::getInstance()->news($n));
+                    if ($rc == 200) {
+                      $n->is_twitter = 2;
+                    }
+                  }
+		  $n->update();
+		}
+
 	        $m->disconnect();
 		return true;
 	}
@@ -83,7 +116,7 @@ class sunsolve extends module {
 		      }
   		      if (!$n->f_twitter) {
    		        $rc = Announce::getInstance()->tweet(Announce::getInstance()->format($g));
-  		        if ($rc = 200) {
+  		        if ($rc == 200) {
 		          $n->f_twitter = 1;
  		        }
 		      }

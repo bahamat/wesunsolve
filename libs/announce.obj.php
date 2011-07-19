@@ -35,6 +35,7 @@ class Announce
                          $connection->url('1/statuses/update'),
                          array('status' => $m));
 
+var_dump($connection->response);
     return $connection->response['code'];
   }
 
@@ -72,6 +73,36 @@ class Announce
  
     $ret = json_decode($result, true);
     return $ret['id'];
+  }
+
+  public function news($n) {
+    $msg = "[NEWS]";
+    if (!empty($n->link)) {
+      $url = $n->link;
+      $surl = $this->getShortUrl($url);
+      if ($surl === FALSE) {
+        $surl = $this->getGoogleShortUrl($url);
+      }
+      if ($surl === FALSE) {
+        $surl = $url;
+      }
+    }
+    $len = 140;
+    $len -= strlen($msg);
+    $len -= strlen($surl);
+    $len -= 2;
+    
+    $synopsis = $n->synopsis;
+    if (!empty($synopsis)) {
+      if (strlen($synopsis) > $len) {
+         // Strip synopsis
+         $synopsis = substr($synopsis, 0, $len);
+      }
+    } else return false;
+
+    $msg = "$msg $synopsis $surl";
+
+    return $msg;
   }
 
   public function format($p) {

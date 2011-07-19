@@ -18,6 +18,8 @@ class News extends mysqlObj
   public $id = -1;
   public $synopsis = "";
   public $date = 0;
+  public $is_twitter = 1;
+  public $is_irc = 1;
   public $link = "";
   
 
@@ -34,6 +36,8 @@ class News extends mysqlObj
                         "id" => SQL_INDEX,
                         "synopsis" => SQL_PROPE,
                         "date" => SQL_PROPE,
+                        "is_twitter" => SQL_PROPE,
+                        "is_irc" => SQL_PROPE,
                         "link" => SQL_PROPE
                  );
 
@@ -41,6 +45,8 @@ class News extends mysqlObj
                         "id" => "id",
                         "synopsis" => "synopsis",
                         "date" => "date",
+                        "is_twitter" => "is_twitter",
+                        "is_irc" => "is_irc",
                         "link" => "link"
                  );
   }
