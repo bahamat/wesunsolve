@@ -32,7 +32,6 @@
    }
  }
 
- 
  $bugids = array();
  $table = "`bugids`";
  $indx = "`id`";
@@ -59,10 +58,49 @@
     $start = $_GET['start'];
   }
 
+  if (isset($_POST['df']) && !empty($_POST['df'])) {
+   $df = $_POST['df'];
+  } else if (isset($_GET['df']) && !empty($_GET['df'])) {
+   $df = $_GET['df'];
+  }
+
+
   if (isset($bid) && !empty($bid)) {
     if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
     $where .= "`id` LIKE ".$my->quote($bid);
     $search = true;
+  }
+
+  if (isset($df) && !empty($df)) {
+    $now = time();
+    switch($df) {
+      case "1d":
+	$df = $now - (3600*24);
+      break;
+      case "1w";
+	$df = $now - (3600*24*7);
+      break;
+      case "2w";
+	$df = $now - (3600*24*14);
+      break;
+      case "1m";
+	$df = $now - (3600*24*31);
+      break;
+      case "2m";
+	$df = $now - (3600*24*62);
+      break;
+      case "6m";
+	$df = $now - (3600*24*31*6);
+      break;
+      case "1y";
+	$df = $now - (3600*24*365);
+      break;
+      default:
+	unset($df);
+      break;
+    }
+    if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
+    $where .= "(`d_created` > $df OR `d_updated` > $df OR `d_submit` > $df)";
   }
 /*
 SELECT 	`bugid`, 
@@ -75,6 +113,7 @@ WHERE 	MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_eng
  	AND b.`id`=ft.`bugid`
 LIMIT 0,20;
 */
+
  
   if (isset($ftext) && !empty($ftext)) {
     if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }

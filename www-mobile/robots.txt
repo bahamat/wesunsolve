@@ -1,5 +1,11 @@
-User-agent: *mobile*
-Disallow: 
-
-User-agent: *
+User-agent: Googlebot
 Disallow: /
+
+User-agent: Googlebot-Image
+Disallow: /
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+User-agent: *mobile*
+Allow: /
