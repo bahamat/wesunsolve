@@ -42,6 +42,8 @@ class UCList extends mysqlObj
         $k = new Patch($t['patch'], $t['rev']);
         if ($all) { 
           $k->fetchFromId();
+          $k->o_latest = Patch::pLatest($k->patch);
+          if ($k->o_latest && $k->o_latest->patch == $k->patch && $k->o_latest->revision == $k->revision) $k->o_latest = false;
         }
         
         array_push($this->a_patches, $k);

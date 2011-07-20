@@ -54,7 +54,6 @@ function delUCList(patch, lid, callback) {
 function showDelMsg(patch, xmlDoc)
 {
   var divid = "p_"+patch;
-alert(divid+' '+xmlDoc);
   document.getElementById(divid).innerHTML = xmlDoc;
 }
 
