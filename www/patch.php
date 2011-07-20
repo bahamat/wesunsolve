@@ -59,6 +59,14 @@
 	 $content->set("archive", $archive);
 	 $content->set("is_dl", $is_dl);
 
+        if ($lm->o_login) {
+	  $lm->o_login->fetchUCLists();
+	  $content->set("l", $lm->o_login);
+	  $head_add = "<script type=\"text/javascript\" src=\"/js/ax_main.js\"></script>";
+	  $head_add .= "<script type=\"text/javascript\" src=\"/js/ax_patch.js\"></script>";
+	  $head->set("head_add", $head_add);
+	}
+
          $index->set("head", $head); 
          $index->set("menu", $menu);
          $index->set("foot", $foot);

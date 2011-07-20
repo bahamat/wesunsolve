@@ -39,7 +39,7 @@
    <tr>
     <td <?php echo $p->color(); ?>><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
     <td><?php echo date('d/m/Y', $p->releasedate); ?></td>
-    <td style="text-align: left"><?php echo $p->synopsis; ?></td>
+    <td style="text-align: left"><?php echo substr($p->synopsis,0,100); ?></td>
    </tr>
 <?php } ?>
  <tr><td colspan="3"><a href="<?php echo $str; ?>/start/0">&lt;&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;

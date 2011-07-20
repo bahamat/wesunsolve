@@ -1,4 +1,22 @@
    <div class="content">
+    <h4>Custom Lists</h4>
+    <p>You have <?php echo count($uclists); ?> custom list of patches</p>
+    <table class="slist">
+     <tr>
+      <th>List Name</th>
+      <th># of Patchs</th>
+      <th></th>
+      <th></th>
+     </tr>
+<?php foreach($uclists as $l) { ?>
+     <tr>
+      <td><?php echo $l->name; ?></td>
+      <td style="text-align: center;"><?php echo count($l->a_patches); ?></td>
+      <td style="text-align: center;"><a href="/uclist/i/<?php echo $l->id; ?>">View</a></td>
+      <td style="text-align: center;"><a href="/del_uclist/i/<?php echo $l->id; ?>">Del</a></td>
+     </tr>
+<?php } ?>
+    </table>
     <h4>Servers</h4>
     <p>You have <?php echo count($servers); ?> server registered</p>
     <table class="slist">

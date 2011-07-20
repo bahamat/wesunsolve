@@ -26,9 +26,9 @@ class Login extends mysqlObj
   public $_plist;
 
   public $a_servers = array();
-  public $a_uclist = array();
+  public $a_uclists = array();
 
-  public function fetchUCList() {
+  public function fetchUCLists() {
     $table = "`u_clist`";
     $index = "`id`";
     $where = "WHERE `id_login`='".$this->id."'";
@@ -38,7 +38,7 @@ class Login extends mysqlObj
       foreach($idx as $t) {
         $g = new UCList($t['id']);
         $g->fetchFromId();
-        array_push($this->a_uclist, $g);
+        array_push($this->a_uclists, $g);
       }
       return true;
     }

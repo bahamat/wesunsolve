@@ -37,6 +37,7 @@
        <li><a href="/register">Register</a></li>
 <?php } else { ?>
        <li><a href="/panel">Panel</a></li>
+       <li><a href="/add_clist">Add custom list</a><br/></li>
        <li><a href="/register_srv">Add server</a><br/></li>
        <li><a href="/logout">Logout</a></li>
        <li><a href="/password">Change password</a></li>

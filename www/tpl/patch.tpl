@@ -1,5 +1,17 @@
 	   <div class="content">
 	    <h2>Patch <?php echo $patch->name(); ?></h2>
+    <?php if (isset($l)) { ?>
+	    <div id="add_to_clist">
+		  <select id="selectAddUCList" name="i">
+		    <option value="-1" selected>Add to Custom List</option>
+		    <?php foreach($l->a_uclists as $l) { ?>
+		      <option value="<?php echo $l->id; ?>"><?php echo $l->name; ?></option>
+		    <?php } ?>
+		  </select>
+		  <input type="button" name="Add" value="Add" onclick="addUCList('<?php echo $patch->name(); ?>', showMessage)"/>
+		<div id="msg_uclist"></div>
+	    </div>
+     <?php } ?>
              <?php if ($patch->pca_bad) { ?>
 		<p class="warning">You should consider NOT installing this patch, as it is WITHDRAWN !</p>
              <?php } ?>
@@ -32,7 +44,7 @@
                  <?php } ?>
                  <li><a href="https://getupdates.oracle.com/all_unsigned/<?php echo $patch->name().".zip"; ?>">Download</a> at Oracle MOS</li>
 <?php if ($is_dl && $archive) { ?>
-		<li><a href="/pdl/p/<?php echo $patch->name(); ?>">Download</a> locally</a>
+	 	 <li><a href="/pdl/p/<?php echo $patch->name(); ?>">Download</a> locally</a>
 <?php } ?>
 		</ul>
 		<h3>Patch Requirements</h3>

@@ -17,6 +17,9 @@
    $content = new Template("./tpl/denied.tpl");
  } else {
    $lo->fetchServers();
+   $lo->fetchUCLists();
+
+   foreach($lo->a_uclists as $l) $l->fetchPatches(0);
    foreach($lo->a_servers as $srv) $srv->fetchPLevels();
   
     $news = array();
@@ -34,6 +37,7 @@
     }
    $content = new Template("./tpl/panel.tpl");
    $content->set("servers", $lo->a_servers);
+   $content->set("uclists", $lo->a_uclists);
    $content->set("news", $news);
  }
 

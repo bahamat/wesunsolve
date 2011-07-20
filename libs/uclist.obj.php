@@ -104,7 +104,7 @@ class UCList extends mysqlObj
   public function __construct($id=-1)
   {
     $this->id = $id;
-    $this->_table = "u_plevel";
+    $this->_table = "u_clist";
     $this->_nfotable = NULL;
     $this->_my = array(
                         "id" => SQL_INDEX,
