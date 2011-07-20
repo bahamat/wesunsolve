@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::hxpdrntfcbusel";
+  $shortopts = "a::i::hxpdrntfcbuselk";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -39,6 +39,7 @@
     echo "\t -r\tParse the readme anyway\n";
     echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
+    echo "\t -k\tCheck for patches checksums\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
   }
@@ -49,6 +50,38 @@
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
   echo "done\n";
+
+  /* check for patches checksumming */
+  if (isset($opts['k'])) {
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $cindex = "COUNT(`patch`)";
+    $where = "";
+    if (isset($opts['i'])) {
+      $p = explode("-", $opts['i']);
+      if (count($p) != 2) { die("Malformed patch id\n"); }
+      $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
+    }
+    $where .= " ORDER BY `releasedate` DESC";
+
+    $it = new mIterator("Patch", $index, $table, $where, $cindex);
+    while(($p = $it->next())) {
+      $p->fetchFromId();
+      $rc = $p->checkSum();
+      if ($rc == -3) {
+        echo "[CSUM] Not OK for ".$p->name()."\n";
+      } else if ($rc == 0) {
+        echo "[CSUM] OK for ".$p->name()."\n";
+	continue;
+      } else {
+        echo "[CSUM] problem for ".$p->name()."\n";
+      }
+
+    }
+
+
+    return;
+  }
 
   /* add patches from dir */
   if (isset($opts['a'])) {

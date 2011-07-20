@@ -156,6 +156,11 @@ class Bugid extends mysqlObj
   public function parseRaw() {
     if ($this->_ft) {
       if ($this->is_raw) {
+	// remove images
+	$raw = preg_replace('/(<.+?\/CSP\/.+?)+(\/>)/i', '', $this->_ft->raw);	
+	$raw = preg_replace('/(<.+?\/CSP\/.+?)+(\/[a-z]*>)/i', '', $raw);	
+	$this->setft("raw", $raw);
+	$this->update();
         $raw_lines = explode(PHP_EOL, $this->_ft->raw);
 	if (!count($raw_lines)) {
 	  return false;

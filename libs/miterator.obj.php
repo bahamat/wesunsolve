@@ -79,7 +79,7 @@ class mIterator {
       * next ones if needed.
       */
      public function next() {
-       if ($this->_pos >= $this->_num)
+       if ($this->_cur >= $this->_num)
          return false;
 
        if ($this->_cur == -1 || $this->_num == -1)

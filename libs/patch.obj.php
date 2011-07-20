@@ -36,6 +36,7 @@ class Patch extends mysqlObj
   /* Others */
   public $o_latest = null;
   public $o_current = null;
+  public $o_csum = null;
   
   /* Lists */
   public $a_files = array();
@@ -47,6 +48,24 @@ class Patch extends mysqlObj
   public $a_conflicts = array();
 
   public $a_previous = array();
+
+  public function fetchCSum() {
+    $this->o_csum = null;
+    $table = "`checksums`";
+    $index = "`id`";
+    $where = "WHERE `name` LIKE '".$this->name()."%'";
+    $where .= " LIMIT 0,1";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset ($idx[0]['id'])) {
+	$this->o_csum = new Checksum($idx[0]['id']);
+	$this->o_csum->fetchFromId();
+	return true;
+      }
+    }
+    return false;
+  }
 
   public function fetchPrevious($all=2) {
 
@@ -959,7 +978,7 @@ class Patch extends mysqlObj
     $c = explode(PHP_EOL, $c);
     foreach ($c as $line) {
       $line = trim($line);
-      if (empty($line) && !$stepFile) {
+      if (empty($line) && !$stepBugs && !$stepFile) {
         continue;
       } else if (empty($line) && $stepBugs == 2) {
 	$stepBugs = false;
@@ -1004,20 +1023,19 @@ class Patch extends mysqlObj
       }
 
       $f = explode(":", $line);
-      if (preg_match("/^[0-9]{7}[\s:]/", $line) && strlen($line) > 7) { // Bugid desc !
+      if ($stepBugs && preg_match("/^[0-9]{6,8}[\s:]/", $line) && strlen($line) > 7) { // Bugid desc !
 	$u++;
-        if ($line[7] == ":") {
-          $synopsis = substr($line, strpos($line, ":") + 2);
-          $id = trim($f[0]);
-        } else if ($line[7] == " ") {
-	  $synopsis = substr($line, strpos($line, " ") + 1);
-	  $id = trim(substr($line, 0, strpos($line, " ")));
-	} else if ($line[7] == "\t") {
-	  $synopsis = substr($line, strpos($line, "\t") + 1);
-	  $id = trim(substr($line, 0, strpos($line, "\t")));
+        $a = preg_split("/[:\s]/", $line, 2);
+        $id = trim($a[0]);
+        if (isset($a[1])) { 
+          $synopsis = trim($a[1]);
         } else {
 	  echo "[!] Wrong bugid line: $line\n";
-	  continue;
+          continue;
+	}
+        if (strlen($id) < 6 || !preg_match('/^[0-9]*$/', $id)) {
+	  echo "[!] Wrong bugid line: $line\n";
+          continue;
 	}
 
 	$bo = new Bugid($id);
@@ -1026,7 +1044,7 @@ class Patch extends mysqlObj
           $bo->flag_update();
 	  echo "\t* New bugid $id\n";
         }
-	if (strlen($bo->synopsis) < 10 && strcmp($bo->synopsis, $synopsis)) {
+	if (strlen($bo->synopsis) < 15 && strcmp($bo->synopsis, $synopsis)) {
 	  $bo->synopsis = $synopsis;
 	  $bo->update();
           $bo->flag_update();
@@ -1382,6 +1400,22 @@ class Patch extends mysqlObj
     if ($this->pca_rec) {
       return "class=\"greentd\"";
     }
+  }
+
+  public function checkSum() {
+    global $config;
+    $this->fetchCSum();
+    if (!$this->o_csum)
+      return -1;
+
+    $archive = $this->findArchive();
+    if (!$archive)
+      return -2;
+
+    if (!strcmp($this->md5sum, $this->o_csum->md5))
+      return 0;
+    else
+      return -3;
   }
 
 

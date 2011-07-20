@@ -258,27 +258,18 @@ Apr/06/09
 
   public static function detectBundles() {
 
-    echo "[-] Loading checksums .";
     $bundles = array();
-    $checksums = array();
     $table = "`checksums`";
     $index = "`id`";
+    $cindex = "COUNT(`id`)";
     $where = "";
-    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
-    {
-      $i=0;
-      foreach($idx as $t) {
-        if ($i==1000) { echo "."; $i=0; }
-        $i++;
-        $g = new Checksum($t['id']);
-        $g->fetchFromId();
-	$g->fetchData();
-        array_push($checksums, $g);
-      }
-    }
-    echo "done\n";
+    $it = new mIterator("Checksum", $index, $table, $where, $cindex);
     echo "[-] Detecting potential bundles...\n";
-    foreach($checksums as $checksum) {
+    while(($checksum = $it->next())) {
+
+      $checksum->fetchFromId();
+      $checksum->fetchData();
+
       if (!preg_match('/[0-9]{6}-[0-9]{2}/', $checksum->name)
       && (preg_match('/\.zip$/', $checksum->name)
       || preg_match('/\.tar\.Z$/', $checksum->name))
@@ -342,6 +333,7 @@ Apr/06/09
       switch($ext) {
         case "zip":
           $cmd = "/usr/bin/unzip -o -j $archive \"*README*\" -x */*/* -d $op > /dev/null 2>&1";
+//9_Recommended_CPU_2011-07.README
 	break;
 	case "Z":
 	  $cmd = "/bin/gzip -dc $archive | /bin/tar --wildcards --no-recursion -C $op -xf - \"*README*\" > /dev/null 2>&1"; 
@@ -353,11 +345,18 @@ Apr/06/09
       $ret = `$cmd`;
       if(isset($cmd2)) $ret = `$cmd2`;
 
+      /* New readme file name scheme, thx oracle */
+      $rfn = explode(".", $this->filename);
+      $rfn = $rfn[0].".README";
+
       if (file_exists($op."CLUSTER_README")) {
         rename($op."CLUSTER_README", $rp);
         echo "done\n";
       } else if (file_exists($op."README")) {
 	rename($op."README", $rp);
+	echo "done\n";
+      } else if (file_exists($op.$rfn)) {
+	rename($op.$rfn, $rp);
 	echo "done\n";
       } else {
         /* TODO: Add mechanism not to retry readme extraction each time batch runs */
