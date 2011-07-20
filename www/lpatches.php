@@ -15,6 +15,7 @@
  $rpp = $config['patchPerPage'];
  if ($lm->isLogged) {
    $lo = $lm->o_login;
+   $lo->fetchUCLists();
    if ($lo) {
      $lo->fetchData();
      $val = $lo->data('patchPerPage');
@@ -115,7 +116,12 @@
   $content->set("nb", $nb);
   $content->set("rpp", $rpp);
   $content->set("str", $str);
-  $content->set("title", $title);
+  if (isset($lo) && $lo) {
+    $content->set("l", $lo);
+    $head_add = "<script type=\"text/javascript\" src=\"/js/ax_main.js\"></script>";
+    $head_add .= "<script type=\"text/javascript\" src=\"/js/ax_patch.js\"></script>";
+    $head->set("head_add", $head_add);
+  }
 
   $index->set("head", $head);
   $index->set("menu", $menu);

@@ -24,9 +24,7 @@
  $index->set("menu", $menu);
 
  if (!isset($lm->o_login) || !$lm->o_login) {
-   $content = new Template("./tpl/error.tpl");
-   $error = "You should be logged in to access this page...";
-   $content->set("error", $error);
+   $content = new Template("./tpl/denied.tpl");
    goto screen;
  }
 

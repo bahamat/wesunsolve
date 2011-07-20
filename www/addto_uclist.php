@@ -33,7 +33,34 @@
  }
  if (!$li) { die("This list does not belong to your user!"); }
 
- if (!isset($_GET['p']) || empty($_GET['p'])) {
+ if (isset($_GET['pl']) && !empty($_GET['pl'])) {
+   $pl = $_GET['pl'];
+   $pl = explode("+", $pl);
+   $error = 0;
+   foreach($pl as $p) {
+         $p = trim($p);
+	 if (empty($p)) continue;
+	 if(!preg_match("/[0-9]{6}-[0-9]{2}/", $p)) {
+	  continue;
+	 }
+
+	 $p = explode('-', $p);
+	 if (count($p) != 2) {
+	   $error++;
+	 }
+	 $p = new Patch($p[0], $p[1]);
+	 if ($p->fetchFromId()) {
+	   $error++;
+	 }
+	 if (!$ul->isPatch($p)) {
+	   $ul->addPatch($p);
+	 } else {
+	   $error++;
+	 }
+   }
+   if ($error) die("Failed");
+   die("Added to list!");
+ } else if (!isset($_GET['p']) || empty($_GET['p'])) {
    die("No patch specified");
  }
  $p = $_GET['p'];

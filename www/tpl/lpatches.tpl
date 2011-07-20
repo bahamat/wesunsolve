@@ -17,7 +17,19 @@
 				<td class="redtd">WITHDRAWN</td>
 				<td class="browntd">OBSOLETE</td>
 			</tr></table>
-  <table class="ctable">
+ <?php if (isset($l)) { ?>
+  <div id="add_uclist_form">
+   <select id="selectAddUCList" name="i">
+    <option value="-1" selected>Add to Custom List</option>
+    <?php foreach($l->a_uclists as $l) { ?>
+    <option value="<?php echo $l->id; ?>"><?php echo $l->name; ?></option>
+    <?php } ?>
+   </select>
+   <input type="button" name="Add" value="Add" onclick="addManyUCList(showMessage)"/>
+   <div id="msg_uclist"></div>
+  </div>
+ <?php } ?>
+  <table id="tbl_patches" class="ctable">
  <tr><td colspan="3"><a href="<?php echo $str; ?>/start/0">&lt;&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <?php if (isset($idprev)) { ?>
       <a href="<?php echo $str; ?>/start/<?php echo $idprev; ?>">[prev]</a>
@@ -31,17 +43,19 @@
 <?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="<?php echo $str; ?>/start/<?php echo $nb-$rpp; ?>">&gt;&gt;</a></td></tr>
    <tr>
+    <?php if (isset($l)) { ?><th></th><?php } ?>
     <th>Patch ID</th>
     <th>Release date</th>
     <th>Synopsis</th>
    </tr>
-<?php foreach($patches as $p) { ?>
+<?php $i=0; foreach($patches as $p) { ?>
    <tr>
+    <?php if (isset($l)) { ?><td><input type="checkbox" name="p[<?php echo $i; ?>]" value="<?php echo $p->name(); ?>"/></td><?php } ?>
     <td <?php echo $p->color(); ?>><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
     <td><?php echo date('d/m/Y', $p->releasedate); ?></td>
     <td style="text-align: left"><?php echo substr($p->synopsis,0,100); ?></td>
    </tr>
-<?php } ?>
+<?php $i++; } ?>
  <tr><td colspan="3"><a href="<?php echo $str; ?>/start/0">&lt;&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <?php if (isset($idprev)) { ?>
       <a href="<?php echo $str; ?>/start/<?php echo $idprev; ?>">[prev]</a>
