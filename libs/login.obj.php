@@ -26,6 +26,24 @@ class Login extends mysqlObj
   public $_plist;
 
   public $a_servers = array();
+  public $a_uclist = array();
+
+  public function fetchUCList() {
+    $table = "`u_clist`";
+    $index = "`id`";
+    $where = "WHERE `id_login`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $g = new UCList($t['id']);
+        $g->fetchFromId();
+        array_push($this->a_uclist, $g);
+      }
+      return true;
+    }
+    return false;
+  }
 
   public function fetchServers() {
     $table = "`u_servers`";

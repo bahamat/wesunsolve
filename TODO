@@ -9,3 +9,4 @@
 - Let the user post comments on patchs/bug, theses comments could be private or public
 - Let the user do saved search with notification when the results are changed.
 - History of patch/bug visited.
+- Management of custom patches lists
