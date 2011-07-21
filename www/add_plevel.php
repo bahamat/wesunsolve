@@ -114,7 +114,7 @@
 
 screen:
   $index->set("content", $content);
-  $content->set("s", $s);
+  if (isset($s)) $content->set("s", $s);
   $index->set("head", $head);
   $index->set("menu", $menu);
   $index->set("foot", $foot);

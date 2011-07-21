@@ -88,6 +88,7 @@
  if (!$bad) {
    $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://wesunsolve.net/rss/patches" />';
  }
+
  $title = 'Latest Solaris released patches - results from '.$start.' to '.($start+$rpp);
  if ($bad) {
    $title = 'Latest Solaris invalidated patches - results from '.$start.' to '.($start+$rpp);
@@ -115,6 +116,7 @@
   $content->set("start", $start);
   $content->set("nb", $nb);
   $content->set("rpp", $rpp);
+  $content->set("title", $title);
   $content->set("str", $str);
   if (isset($lo) && $lo) {
     $content->set("l", $lo);
