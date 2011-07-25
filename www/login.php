@@ -24,7 +24,12 @@
     $content->set("error", "Missing field");
     goto screen;
   } else {
-    if ($lm->login($_POST["username"], $_POST["password"])) {
+    if (isset($_POST['keep']) && $_POST['keep']) {
+      $keep = 1;
+    } else {
+      $keep = 0;
+    }
+    if ($lm->login($_POST["username"], $_POST["password"], $keep)) {
       $content = new Template("./tpl/login.tpl");
       $content->set("error", "Error in either login or password");
       $f = new LoginFailed();

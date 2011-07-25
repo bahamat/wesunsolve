@@ -11,6 +11,7 @@ Frontend:
 - Let the user do saved search with notification when the results are changed.
 - History of patch/bug visited.
 - Add the ability to share publicly custom lists of patches and rate them
+- Let the user download a pack of readme from a custom list
 
 Processing:
 
