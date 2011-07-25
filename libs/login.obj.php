@@ -23,6 +23,7 @@ class Login extends mysqlObj
   public $last_seen = -1;
   public $is_admin = 0;
   public $is_dl = 0;
+  public $is_log = 1;
   public $_plist;
 
   public $a_servers = array();
@@ -74,6 +75,21 @@ class Login extends mysqlObj
     $this->added = time();
     parent::insert();
   }
+
+  public function logAction($type, $id) {
+    $ul = new ULog();
+    $ul->id_login = $this->id;
+    $ul->what = $type;
+    $ul->id_link = $id;
+    if ($ul->fetchFromId()) {
+      $ul->insert();
+    } else {
+      $ul->fetchFromId();
+      $ul->when = time();
+      $ul->update();
+    }
+    return false;
+  }
   
 
  /**
@@ -104,6 +120,7 @@ class Login extends mysqlObj
                         "last_seen" => SQL_PROPE,
                         "is_admin" => SQL_PROPE,
                         "is_dl" => SQL_PROPE,
+                        "is_log" => SQL_PROPE,
                         "fullname" => SQL_PROPE
                  );
 
@@ -117,6 +134,7 @@ class Login extends mysqlObj
                         "last_seen" => "last_seen",
                         "is_admin" => "is_admin",
                         "is_dl" => "is_dl",
+                        "is_log" => "is_log",
                         "fullname" => "fullname"
                  );
   }

@@ -37,6 +37,7 @@
            $patch->fetchAll(2);
            $patch->fetchPrevious(2);
 	 }
+        $patch->viewed();
 
 	$archive = null;
 	$is_dl = false;
@@ -76,6 +77,9 @@
            $content->set("what", $what);
 	 } else {
            $content->set("patch", $patch);
+	   if ($lm->o_login && $lm->o_login->is_log) {
+	     $lm->o_login->logAction('patch', $patch->name());
+	   }
          }
    $index->set("content", $content);
    echo $index->fetch();  

@@ -27,6 +27,7 @@ class Patch extends mysqlObj
   public $pca_sec = 0;
   public $pca_bad = 0;
   public $to_update = 0;
+  public $views = 0;
   public $updated = 0;
   public $added = 0;
 
@@ -1418,6 +1419,11 @@ class Patch extends mysqlObj
       return -3;
   }
 
+  public function viewed() {
+     $q = 'UPDATE '.$this->_table.' SET `views`=`views`+1 WHERE `patch`='.$this->patch.' AND `revision`='.$this->revision;
+     return MysqlCM::getInstance()->rawQuery($q);
+  }
+
 
  /**
   * Constructor
@@ -1442,6 +1448,7 @@ class Patch extends mysqlObj
                         "pca_sec" => SQL_PROPE,
                         "pca_bad" => SQL_PROPE,
                         "to_update" => SQL_PROPE,
+                        "views" => SQL_PROPE,
                         "updated" => SQL_PROPE,
                         "added" => SQL_PROPE
                  );
@@ -1460,6 +1467,7 @@ class Patch extends mysqlObj
                         "pca_sec" => "pca_sec",
                         "pca_bad" => "pca_bad",
                         "to_update" => "to_update",
+                        "views" => "views",
                         "updated" => "updated",
                         "added" => "added"
                  );

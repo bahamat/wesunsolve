@@ -1,12 +1,20 @@
-- pkg list -u parser
-- better Architecture parsing and sorting
-- Bug ids presentation searching and so on...
-- Flag patches to update readme file when needed
+Backend:
+
 - Mysql disconnection detection and reconnection if possible...
+
+Frontend:
+
+- Bug ids presentation searching and so on...
 - Try to improve browsing experience (main page refurbishing mainly+menu searches)
-- Add checksum check when downloading patches
 - more searching field
 - Let the user post comments on patchs/bug, theses comments could be either private or public
 - Let the user do saved search with notification when the results are changed.
 - History of patch/bug visited.
 - Add the ability to share publicly custom lists of patches and rate them
+
+Processing:
+
+- pkg list -u parser
+- better Architecture parsing and sorting
+- Flag patches to update readme file when needed
+- Add checksum check when downloading patches

@@ -39,6 +39,7 @@ class Bugid extends mysqlObj
   public $related_bugs = "";
   public $reported_against = "";
   public $is_raw = 0;
+  public $views = 0;
 
   /* Fulltext */
   private $_ft;
@@ -158,6 +159,7 @@ class Bugid extends mysqlObj
       if ($this->is_raw) {
 	// remove images
 	$raw = preg_replace('/(<.+?\/CSP\/.+?)+(\/>)/i', '', $this->_ft->raw);	
+	$raw = preg_replace('/(<.+?\/CSP\/.+?)+(>)/i', '', $raw);	
 	$raw = preg_replace('/(<.+?\/CSP\/.+?)+(\/[a-z]*>)/i', '', $raw);	
 	$this->setft("raw", $raw);
 	$this->update();
@@ -427,6 +429,12 @@ class Bugid extends mysqlObj
     return 0;
   }
 
+  public function viewed() {
+     $q = 'UPDATE '.$this->_table.' SET `views`=`views`+1 WHERE `id`='.$this->id;
+     return MysqlCM::getInstance()->rawQuery($q);
+  }
+
+
  /**
   * Constructor
   */
@@ -485,6 +493,7 @@ class Bugid extends mysqlObj
                         "related_bugs" => "related_bugs",
                         "reported_against" => "reported_against",
                         "severity" => "severity",
+                        "views" => "views",
                         "is_raw" => "is_raw",
                         "available" => "available"
                  );

@@ -27,6 +27,10 @@
 	 }
          $bug->fetchAll();
 	 $bug->fetchFulltext();
+         if ($lm->o_login && $lm->o_login->is_log) {
+           $lm->o_login->logAction('bug', $bug->id);
+         }
+
          $title = 'We Sun Solve: Bug details for '.$bug->id;
          $index = new Template("./tpl/index.tpl");
          $head = new Template("./tpl/head.tpl");
@@ -43,4 +47,5 @@
          $index->set("content", $content);
 
          echo $index->fetch();
+
 ?>
