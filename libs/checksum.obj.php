@@ -60,14 +60,8 @@ class Checksum extends mysqlObj
     $pp = false;
     $csum = null;
     $cnt = 0;
-    $i = 0;
     $new = false;
     foreach ($lines as $line) {
-      $i++;
-      if ($cnt++ == 100) {
-        echo "[-] $i checksum parsed...\n";
-        $cnt = 0;
-      }
       $line = trim($line);
       if (empty($line)) {
         if($pp) {
