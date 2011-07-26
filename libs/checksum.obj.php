@@ -61,6 +61,7 @@ class Checksum extends mysqlObj
     $csum = null;
     $cnt = 0;
     $i = 0;
+    $new = false;
     foreach ($lines as $line) {
       $i++;
       if ($cnt++ == 100) {
@@ -72,6 +73,7 @@ class Checksum extends mysqlObj
         if($pp) {
           $pp = false;
 	  $csum = null;
+          $new = false;
         }
 	continue;
       }
@@ -91,6 +93,7 @@ class Checksum extends mysqlObj
 	    $csum->insert();
 	    echo "  > Added checksum entry for $line\n";
 	    $nb++;
+            $new = true;
 	  }
           if (preg_match("/[0-9]{6}-[0-9]{2}/", $csum->name)) { // Patch checksum
             $prev = explode(".", $csum->name);
@@ -100,6 +103,11 @@ class Checksum extends mysqlObj
             if ($p->fetchFromId()) {
  	      echo "  >>> New patch detected ".$p->name()."\n";
 	      $p->insert();
+	      // announce new patch
+              $ip = new Ircnp();
+              $ip->p = $p->patch;
+              $ip->r = $p->revision;
+              Announce::getInstance()->nPatch($ip);
 	    }
 	  } else {
 	    $p = null;

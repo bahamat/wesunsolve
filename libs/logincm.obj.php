@@ -81,7 +81,7 @@ class loginCM
           $this->o_login = $l;
           $this->isLogged = 1;
         }
-      } else if ($isset($_COOKIE[$config['sitename']])) {
+      } else if (isset($_COOKIE[$config['sitename']])) {
         $v = parse_str($_COOKIE[$config['sitename']]);
         $l = new Login();
         $l->username = $v['username'];
