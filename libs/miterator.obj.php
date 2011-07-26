@@ -36,16 +36,17 @@ class mIterator {
          $this->_pos += $this->_step;
        else
 	 $this->_pos = 0;
-       
+      
        if ($idx = $m->fetchIndex($this->_index, $this->_table, $this->_where.' LIMIT '.$this->_pos.','.$this->_step)) {
+         $this->_arr = array();
          foreach($idx as $v) {
 	   $o = new $this->_cc();
            foreach ($v as $k => $kv) {
 	     if (isset($o->{$k})) {
 	       $o->{$k} = $kv;
-	       array_push($this->_arr, $o);
 	     } else { continue; }
  	   }
+	   array_push($this->_arr, $o);
 	 }
          return true;
        }
@@ -79,16 +80,18 @@ class mIterator {
       * next ones if needed.
       */
      public function next() {
-       if ($this->_cur >= $this->_num)
+       if ($this->_cur >= $this->_num) {
          return false;
+       }
 
-       if ($this->_cur == -1 || $this->_num == -1)
+       if ($this->_cur == -1 || $this->_num == -1) {
          return false;
-
+       }
        if (!count($this->_arr)) {
 	 $rc = $this->_fetch();
-	 if (!$rc) 
+	 if (!$rc) {
 	   return false;
+         }
        }
        /* Return first elem of the array */
        $this->_cur++;
