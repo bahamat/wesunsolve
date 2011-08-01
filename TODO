@@ -4,14 +4,15 @@ Backend:
 
 Frontend:
 
+*DONE ON DEV* Let the user post comments on patchs/bug, theses comments could be either private or public
+*DONE ON DEV* History of patch/bug visited.
 - Bug ids presentation searching and so on...
 - Try to improve browsing experience (main page refurbishing mainly+menu searches)
 - more searching field
-- Let the user post comments on patchs/bug, theses comments could be either private or public
 - Let the user do saved search with notification when the results are changed.
-- History of patch/bug visited.
 - Add the ability to share publicly custom lists of patches and rate them
 - Let the user download a pack of readme from a custom list
+- When managing its patch list, user should have the opportunity to change patch to its latest release
 
 Processing:
 

@@ -1499,6 +1499,27 @@ class Patch extends mysqlObj
     return $res;
   }
 
+  public static function getLastviewed($l) {
+
+    $res = array();
+    $table = "`u_history`";
+    $index = "`id_link`";
+    $where = "WHERE `id_login`=".$l->id." AND `what`='patch'";
+    $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $w = $t['id_link'];
+        $w = explode('-', $w);
+        $k = new Patch($w[0], $w[1]);
+        $k->fetchFromId();
+        array_push($res, $k);
+      }
+    }
+    return $res;
+  }
+
 
  /**
   * Constructor

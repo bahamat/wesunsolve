@@ -484,6 +484,25 @@ class Bugid extends mysqlObj
     return 0;
   }
 
+  public static function getLastviewed($l) {
+
+    $res = array();
+    $table = "`u_history`";
+    $index = "`id_link`";
+    $where = "WHERE `id_login`=".$l->id." AND `what`='bug'";
+    $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
+ 
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Bugid($t['id_link']);
+        $k->fetchFromId();
+        array_push($res, $k);
+      }
+    }
+    return $res;
+  }
+
 
 
  /**
