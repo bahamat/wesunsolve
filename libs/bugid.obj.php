@@ -45,6 +45,8 @@ class Bugid extends mysqlObj
   private $_ft;
   public $score = 0; // Score result from full text search
 
+  public $a_comments = array();
+
   public function unflag_update() {
     $my = mysqlCM::getInstance();
    
@@ -398,6 +400,8 @@ class Bugid extends mysqlObj
 
   public function fetchAll() {
     $this->fetchPatches();
+    $this->fetchComments();
+
   }
 
   public function details() {
@@ -453,6 +457,33 @@ class Bugid extends mysqlObj
     }
     return $res;
   }
+
+  /* Users comments */
+  function fetchComments($all=1) {
+
+    $lm = loginCM::getInstance();
+    if (!isset($lm->o_login) || !$lm->o_login) {
+      $id = -1;
+    } else {
+      $id = $lm->o_login->id;
+    }
+
+    $this->a_comments = array();
+    $table = "`u_comments`";
+    $index = "`id`";
+    $where = "WHERE `type`='bug' AND `id_on`='".$this->id."' AND (`is_private`=0 OR (`id_login`=$id AND `is_private`=1)) ORDER BY `added` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UComment($t['id']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_comments, $k);
+      }
+    }
+    return 0;
+  }
+
 
 
  /**

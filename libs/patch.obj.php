@@ -47,6 +47,7 @@ class Patch extends mysqlObj
   public $a_depend = array();
   public $a_obso = array();
   public $a_conflicts = array();
+  public $a_comments = array();
 
   public $a_previous = array();
 
@@ -209,6 +210,7 @@ class Patch extends mysqlObj
       $this->fetchObsolated($all);
       $this->fetchRequired($all);
       $this->fetchConflicts($all);
+      $this->fetchComments($all);
     }
     $this->fetchData();
   }
@@ -627,6 +629,34 @@ class Patch extends mysqlObj
   public function name() {
     return sprintf("%d-%02d", $this->patch, $this->revision);
   }
+
+  /* Users comments */
+  function fetchComments($all=1) {
+
+    $lm = loginCM::getInstance();
+    if (!isset($lm->o_login) || !$lm->o_login) {
+      $id = -1;
+    } else {
+      $id = $lm->o_login->id;
+    }
+    
+
+    $this->a_comments = array();
+    $table = "`u_comments`";
+    $index = "`id`";
+    $where = "WHERE `type`='patch' AND `id_on`='".$this->name()."' AND (`is_private`=0 OR (`id_login`=$id AND `is_private`=1)) ORDER BY `added` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UComment($t['id']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_comments, $k);
+      }
+    }
+    return 0;
+  }
+
 
   /* Conflicts patches with patch */
   function fetchConflicts($all=1) {
