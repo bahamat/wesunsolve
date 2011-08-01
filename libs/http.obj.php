@@ -151,7 +151,12 @@ class HTTP
     }
   }
   return true;
-}
+  }
+
+  public static function getDateFormat() {
+    global $config;
+    return $config['dateFormat'];
+  } 
 
 }
 
