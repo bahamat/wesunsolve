@@ -62,6 +62,7 @@
     $l->password = md5($_POST["password"]);
     $l->fullname = $_POST["fullname"];
     $l->email = $_POST["email"];
+    $l->is_enabled = 0;
     $l->insert();
     IrcMsg::add("[WWW] New user registered: ".$l->username);
     $msg = "New user has been added: ".$l->username." / ".$l->fullname." / ".$l->email;

@@ -434,6 +434,26 @@ class Bugid extends mysqlObj
      return MysqlCM::getInstance()->rawQuery($q);
   }
 
+ /* static */
+
+  public static function getMostviewed($nb = 10) {
+
+    $res = array();
+    $table = "`bugids`";
+    $index = "`id`";
+    $where .= " ORDER BY `bugids`.`views` DESC LIMIT 0,$nb";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Bugid($t['id']);
+        $k->fetchFromId();
+        array_push($res, $k);
+      }
+    }
+    return $res;
+  }
+
 
  /**
   * Constructor
@@ -467,6 +487,7 @@ class Bugid extends mysqlObj
                         "severity" => SQL_PROPE,
                         "tried" => SQL_PROPE,
                         "is_raw" => SQL_PROPE,
+                        "views" => SQL_PROPE,
                         "available" => SQL_PROPE
                  );
 

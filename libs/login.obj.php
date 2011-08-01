@@ -24,7 +24,10 @@ class Login extends mysqlObj
   public $is_admin = 0;
   public $is_dl = 0;
   public $is_log = 1;
+  public $is_enabled = 1;
   public $_plist;
+
+  public $o_code = null;
 
   public $a_servers = array();
   public $a_uclists = array();
@@ -90,6 +93,42 @@ class Login extends mysqlObj
     }
     return false;
   }
+
+  public function sendConfirm() {
+    global $config;
+
+    $str = $this->username.$this->email.$config['sitename'];
+    $c = md5($str);
+
+    $co = new UConfirm();
+    $co->id_login = $this->id;
+    $co->code = $c;
+    $co->insert();
+    $this->o_code = $co;
+
+    Mail::getInstance()->sendConfirm($this, $c);
+
+    return true;
+  }
+
+  public function checkConfirm() {
+    global $config;
+
+    if (!$this->o_code) return false;
+
+    $str = $this->username.$this->email.$config['sitename'];
+    $c = md5($str);
+
+    if (!strcmp($c, $this->o_code->code)) {
+      // enable the account
+      $this->is_enabled = 1;
+      $this->update();
+      // self delete this code
+      $this->o_code->delete();
+      return true;
+    }
+    return false;
+  }
   
 
  /**
@@ -109,7 +148,11 @@ class Login extends mysqlObj
 						  "desc" => "Bugs per page to be shown",
 						 "max" => 200,
 						 "min" => 1
-						)
+						),
+		  	  "is_log" => array("type" => "B",
+                                                  "desc" => "Log your action for history purpose",
+                                                 "objvar" => 1
+                                                )
 			);
     $this->_my = array(
                         "id" => SQL_INDEX,
@@ -121,6 +164,7 @@ class Login extends mysqlObj
                         "is_admin" => SQL_PROPE,
                         "is_dl" => SQL_PROPE,
                         "is_log" => SQL_PROPE,
+                        "is_enabled" => SQL_PROPE,
                         "fullname" => SQL_PROPE
                  );
 
@@ -135,6 +179,7 @@ class Login extends mysqlObj
                         "is_admin" => "is_admin",
                         "is_dl" => "is_dl",
                         "is_log" => "is_log",
+                        "is_enabled" => "is_enabled",
                         "fullname" => "fullname"
                  );
   }

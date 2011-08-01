@@ -133,7 +133,7 @@ var_dump($connection->response);
     $len -= strlen($msg);
     $len -= strlen($surl);
     $len -= strlen($tags);
-    $len -= 2;
+    $len -= 4;
     
     $synopsis = $p->synopsis;
     if (!empty($synopsis)) {

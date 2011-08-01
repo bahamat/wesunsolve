@@ -52,6 +52,7 @@
   echo "done\n";
 
   /* check for patches checksumming */
+/*
   if (isset($opts['k'])) {
     $table = "`patches`";
     $index = "`patch`, `revision`";
@@ -67,6 +68,12 @@
     $it = new mIterator("Patch", $index, $table, $where, $cindex);
     while(($p = $it->next())) {
       $p->fetchFromId();
+      if (!$p->findArchive()) {
+        $rc = $p->checkPresence();
+	if($rc) {
+	  $p->tryDownload()
+ 	}
+      }
       $rc = $p->checkSum();
       if ($rc == -3) {
         echo "[CSUM] Not OK for ".$p->name()."\n";
@@ -78,10 +85,9 @@
       }
 
     }
-
-
     return;
   }
+*/
 
   /* add patches from dir */
   if (isset($opts['a'])) {
@@ -279,6 +285,10 @@
       }
 
       $archive = $p->findArchive();
+      if (!$archive && isset($opts['k'])) {
+        $rc = $p->checkPresence();
+      }
+
       if ($archive == null && !$p->isAlreadyTried()) { /* New patch to download */
         if (!isset($opts['d'])) {
           $p->checkPath();

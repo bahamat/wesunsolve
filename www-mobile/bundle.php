@@ -43,7 +43,6 @@
          $content = new Template("./tpl/bundle.tpl");
 
          $index->set("head", $head); 
-         $index->set("menu", $menu);
          $index->set("foot", $foot);
 
          if($error) {

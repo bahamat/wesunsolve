@@ -474,6 +474,30 @@ class Patch extends mysqlObj
     return $config['ppath']."/$dir1/$dir2";
   }
 
+  public function checkPresence() {
+
+    $this->fetchCSum();
+    if (!$this->o_csum)
+      return false;
+
+    $path = $this->path();
+    $ctlfile = $path."/.".$this->name();
+    if(file_exists($ctlfile)) {
+      unlink($ctlfile);
+      return true;
+    }
+    return false;
+  }
+
+  public function removeCtrlfile() {
+
+    $path = $this->path();
+    $ctlfile = $path."/.".$this->name();
+    if (file_exists($ctlfile))
+      return unlink($ctlfile);
+    return true;
+  }
+
   public function findArchive() {
     global $config;
    
@@ -1422,6 +1446,27 @@ class Patch extends mysqlObj
   public function viewed() {
      $q = 'UPDATE '.$this->_table.' SET `views`=`views`+1 WHERE `patch`='.$this->patch.' AND `revision`='.$this->revision;
      return MysqlCM::getInstance()->rawQuery($q);
+  }
+
+
+ /* static */
+
+  public static function getMostviewed($nb = 10) {
+
+    $res = array();
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $where .= " ORDER BY `patches`.`views` DESC LIMIT 0,$nb";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Patch($t['patch'], $t['revision']);
+        $k->fetchFromId();
+        array_push($res, $k);
+      }
+    }
+    return $res;
   }
 
 

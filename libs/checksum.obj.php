@@ -102,6 +102,10 @@ class Checksum extends mysqlObj
               $ip->p = $p->patch;
               $ip->r = $p->revision;
               Announce::getInstance()->nPatch($ip);
+	    } else {
+  	      if ($new) {
+		$p->removeCtrlfile();
+	      }
 	    }
 	  } else {
 	    $p = null;
