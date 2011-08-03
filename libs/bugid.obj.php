@@ -177,7 +177,8 @@ class Bugid extends mysqlObj
 	  if (preg_match("/^bugsContent.Sun/", $line)) {
 	    $bcraw = preg_split("/bugsContent.Sun = \"/", $line);
 	    $bcraw = $bcraw[1];
-	    $bcraw = stripslashes(substr($bcraw,0,strlen($bcraw)-2));
+	    $bcraw = substr($bcraw,0,strlen($bcraw)-2);
+	    //$bcraw = stripslashes(substr($bcraw,0,strlen($bcraw)-2));
 	    // :%s/>[\s]*</>\r\n</g
 	    $bcraw = preg_replace('/>[\s]*</i','>'."\r\n".'<', $bcraw);
 	    $this->setft("raw", $bcraw);
@@ -204,7 +205,7 @@ class Bugid extends mysqlObj
    	    if (!empty($lineDesc)) {
 	      $curdesc = $this->ft("description");
 	      if (empty($curdesc) || strcmp($lineDesc, $curdesc)) {
-	        $this->setft("description", $lineDesc);
+	        $this->setft("description", str_replace('<br/>', "\r\n", $lineDesc));
 	        $this->update();
 	        echo "\t> Updated description\n";
 	      }
@@ -445,7 +446,7 @@ class Bugid extends mysqlObj
     $res = array();
     $table = "`bugids`";
     $index = "`id`";
-    $where .= " ORDER BY `bugids`.`views` DESC LIMIT 0,$nb";
+    $where = " ORDER BY `bugids`.`views` DESC LIMIT 0,$nb";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {

@@ -20,3 +20,10 @@ Processing:
 - better Architecture parsing and sorting
 - Flag patches to update readme file when needed
 - Add checksum check when downloading patches
+
+
+Interface dev:
+
+- Equilibrer la partie de droite pour aligner avec le dessus/dessous
+- Ajouter un icon "new" quand les patchs sont sorti le jour meme
+

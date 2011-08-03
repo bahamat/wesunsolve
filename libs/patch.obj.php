@@ -1486,7 +1486,7 @@ class Patch extends mysqlObj
     $res = array();
     $table = "`patches`";
     $index = "`patch`, `revision`";
-    $where .= " ORDER BY `patches`.`views` DESC LIMIT 0,$nb";
+    $where = " ORDER BY `patches`.`views` DESC LIMIT 0,$nb";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
