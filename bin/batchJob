@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::hxpdrntfcbuselk";
+  $shortopts = "a::i::hxpdrntfcbuselkvg";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -34,22 +34,53 @@
     echo "\t -s\tCleanup the old bundle files\n";
     echo "\t -x\tDo not update the patchdiag.xref\n";
     echo "\t -p\tDo not parse the patchdiag.xref\n";
+    echo "\t -g\tAdd new patchdiag.xref archives\n";
     echo "\t -d\tDo not download anything\n";
     echo "\t -n\tDo not parse anything\n";
     echo "\t -r\tParse the readme anyway\n";
     echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
     echo "\t -k\tCheck for patches checksums\n";
+    echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
   }
 
-  echo "[-] Connecting to MySQL...";
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
-  echo "done\n";
+
+  if (isset($opts['g'])) {
+    Patchdiag::updateDB();
+    return 0;
+  }
+
+  if (isset($opts['v'])) {
+    if (!isset($opts['i'])) {
+      echo "[!] -v should be also with -i=<patch>\n";
+      die();
+    }
+    $db=0;
+    $readme=0;
+    $archive=0;
+    $p = explode("-", $opts['i']);
+    if (count($p) != 2) { die("Malformed patch id\n"); }
+    $p = new Patch($p[0], $p[1]);
+    if ($p->fetchFromId()) {
+      echo $p->name().":$db:$readme:$archive\n";
+      return 0;
+    }
+    $db=1;
+    if (file_exists($p->readmePath())) {
+      $readme = 1;
+    }
+    if (file_exists($p->findArchive())) {
+      $archive = 1;
+    }
+    echo $p->name().":$db:$readme:$archive\n";
+    return 0;
+  }
 
   /* check for patches checksumming */
 /*
