@@ -22,7 +22,7 @@
 	 }
 
 	 $id = mysql_escape_string($_GET['id']);
-	 if (!preg_match("/[0-9]{6}-[0-9]{2}/", $id)) {
+	 if (!preg_match("/^[0-9]{6}-[0-9]{2}$/", $id)) {
 	   die("Malformed patch ID");
 	 }
 	 
