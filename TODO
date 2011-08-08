@@ -4,9 +4,9 @@ Backend:
 
 Frontend:
 
-*DONE ON DEV* Let the user post comments on patchs/bug, theses comments could be either private or public
-*DONE ON DEV* History of patch/bug visited.
-- Bug ids presentation searching and so on...
+*DONE IN DEV* Let the user post comments on patchs/bug, theses comments could be either private or public
+*DONE IN DEV* History of patch/bug visited.
+*WIP* Bug ids presentation searching and so on...
 - Try to improve browsing experience (main page refurbishing mainly+menu searches)
 - more searching field
 - Let the user do saved search with notification when the results are changed.
@@ -25,5 +25,5 @@ Processing:
 Interface dev:
 
 - Equilibrer la partie de droite pour aligner avec le dessus/dessous
-- Ajouter un icon "new" quand les patchs sont sorti le jour meme
+*DONE IN DEV* Ajouter un icon "new" quand les patchs sont sorti le jour meme
 

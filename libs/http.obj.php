@@ -35,6 +35,24 @@ class HTTP
     die();
   }
 
+  public static function errWWW($e) {
+    $index = new Template("./tpl/index.tpl");
+    $head = new Template("./tpl/head.tpl");
+    $menu = new Template("./tpl/menu.tpl");
+    $foot = new Template("./tpl/foot.tpl");
+    $foot->set("start_time", $start_time);
+    $content = new Template("./tpl/error.tpl");
+    $content->set("error", $e);
+
+    $index->set("head", $head);
+    $index->set("menu", $menu);
+    $index->set("content", $content);
+    $index->set("foot", $foot);
+    echo $index->fetch();
+    die();
+  }
+
+
   public static function Piwik($title) {
     global $config;
     @require_once('../../../libs/PiwikTracker.php');
