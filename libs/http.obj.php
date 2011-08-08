@@ -24,7 +24,6 @@ class HTTP
     $head = new Template("./tpl/head.tpl");
     $menu = new Template("./tpl/menu.tpl");
     $foot = new Template("./tpl/foot.tpl");
-    $foot->set("start_time", $start_time);
     $content = new Template("./tpl/sorrypage.tpl");
 
     $index->set("head", $head);
