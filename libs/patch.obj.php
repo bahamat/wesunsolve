@@ -113,6 +113,13 @@ class Patch extends mysqlObj
     return 0;
   }
 
+  public function isNew() {
+    $now = time();
+    if (($now - $this->releasedate) < 3600*24*5)
+      return true;
+    return false;
+  }
+
   public static function browseDir($dir) {
     if (is_dir($dir)) {
       // get subdirs
