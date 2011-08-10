@@ -13,6 +13,8 @@ Frontend:
 - Add the ability to share publicly custom lists of patches and rate them
 - Let the user download a pack of readme from a custom list
 - When managing its patch list, user should have the opportunity to change patch to its latest release
+*DONE IN DEV* As we now archive different version of README, we could propose a diff tools on the webgui to see
+  additions to readmes from time to time.
 
 Processing:
 

@@ -10,6 +10,17 @@
  * @filesource
  */
 
+function cli_diff($old, $new) {
+  if (!file_exists($old)) return false;
+  if (!file_exists($new)) return false;
+
+  $cmd = "/usr/bin/diff -w $old $new";
+  $out = array();
+  exec($cmd, $out, $ret);
+  $ret = "";
+  foreach($out as $line) { $ret .= "$line\n"; };
+  return $ret;
+}
 
 function getData($obj, $arg) {
 

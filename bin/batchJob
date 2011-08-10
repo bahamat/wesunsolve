@@ -279,7 +279,7 @@
   
   $patches = array();
   if (isset($opts['t'])) {
-    echo "[-] Fetching the toadd queue from databases.";
+    echo "[-] Fetching the toadd queue from databases and flag patches to update: .";
     $table = "`toadd`";
     $index = "`patch`, `rev`";
     $where = "";
@@ -287,110 +287,141 @@
     {
       $i=0;
       foreach($idx as $t) {
-        if ($i==1000) { echo "."; $i=0; }
         $i++;
         $g = new Patch($t['patch'], $t['rev']);
-        array_push($patches, $g);
-      }
-    }
-    echo "done\n";
-  } else {
-    $table = "`patches`";
-    $index = "`patch`, `revision`";
-    $cindex = "COUNT(`patch`)";
-    $where = "";
-    if (isset($opts['i'])) {
-      $p = explode("-", $opts['i']);
-      if (count($p) != 2) { die("Malformed patch id\n"); }
-      $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
-    }
-    $where .= " ORDER BY `releasedate` DESC";
-
-    $it = new mIterator("Patch", $index, $table, $where, $cindex);
-
-    echo "[-] Trying to treat ".$it->count()." patches:\n";
-    while(($p = $it->next())) {
-      if ($p->fetchFromId() && isset($opts['t'])) {
-        echo "[-] Added new patch: ".$p->name()."\n";
-        $p->insert();
-      }
-
-      $archive = $p->findArchive();
-      if (!$archive && isset($opts['k'])) {
-        $rc = $p->checkPresence();
-      }
-
-      if ($archive == null && !$p->isAlreadyTried()) { /* New patch to download */
-        if (!isset($opts['d'])) {
-          $p->checkPath();
-          $p->tryDownload();
-        }
-      }
-      if (!$archive) $archive = $p->findArchive();
-      if ($archive != null) {
-        
-        if ($p->updateArchiveSize($archive)) {
-          echo "[-] Updated filesize: ".$p->filesize."\n";
-          $p->update();
-        }
-        if (!file_exists($archive.".md5sum")) {
-          echo "[-] Generating MD5..";
-          $p->makeMD5($archive, $archive.".md5sum");
-          echo "done\n";
-        }
-        if (!file_exists($archive.".sha512sum")) {
-          echo "[-] Generating SHA512..";
-          $p->makeSHA512($archive, $archive.".sha512sum");
-          echo "done\n";
-        }
-        if (!file_exists($p->readmePath())) {
-          echo "[-] Trying to extract README for ".$p->name()."..";
-  	  $ret = $p->extractReadme();
-	  if (!$ret) {
-  	    echo "done\n";
-          } else {
-	    echo "failed\n";
-          }
-        }
-      }
-      if (file_exists($p->readmePath()) && !filesize($p->readmePath())) {
-        unlink($p->readmePath());
-      }
-      if (!file_exists($p->readmePath()) && (!file_exists($p->path()."/.README.".$p->name()) || isset($opts['f']))) { /* try to download the readme file */
-        if (!isset($opts['d'])) {
-          echo "[-] Trying to download README for ".$p->name()."..";
-          $ret = $p->downloadReadme();
-          if ($ret) {
-    	    echo "failed\n";
-          } else {
-  	    echo "done\n";
-          }
-        }
-      }
-      if (file_exists($p->readmePath()) && !isset($opts['n'])) {
-        $p->fetchData();
-        if ($p->data("readme_done") != 1 || isset($opts['r']) || isset($opts['f'])) {
-          echo "[-] Loading ".$p->name()." patch datas...";
-          $p->fetchFromId();
-          $p->fetchAll();
-          echo "done\n";
-          echo "[-] Parsing the readme file...\n";
-  	  $fc = file_get_contents($p->readmePath());
-          $ret = $p->readme($fc);
-          unset($fc);
-          if ($ret > 0) {
-	    $p->setData("readme_done", 1);
-	    $p->update();
-  	  }
-        }
-      }
-      if (isset($opts['t'])) {
+        if ($g->fetchFromId()) {
+	  $g->insert();
+	}
+        $g->to_update = 1;
+        $g->update();
         /* Remove from toadd */
         $q = "DELETE FROM `toadd` WHERE `patch`='".$p->patch."' AND `rev`='".$p->revision."'";
         $m->rawQuery($q);
       }
-      unset($p);
     }
+    echo "done\n";
+  } 
+
+  $table = "`patches`";
+  $index = "`patch`, `revision`";
+  $cindex = "COUNT(`patch`)";
+  $where = ""; $w = 0;
+  if ($opts['t']) {
+    if ($w) { $where .= " AND "; $w++; } else { $where .= " WHERE "; $w++; }
+    $where .= "`to_update`=1"; $w++;
+  }
+  if (isset($opts['i'])) {
+    $p = explode("-", $opts['i']);
+    if (count($p) != 2) { die("Malformed patch id\n"); }
+    if ($w) { $where .= " AND "; $w++; } else { $where .= " WHERE "; $w++; }
+    $where .= "`patch`='".$p[0]."' AND `revision`='".$p[1]."'";
+  }
+  $where .= " ORDER BY `releasedate` DESC";
+
+  $it = new mIterator("Patch", $index, $table, $where, $cindex);
+
+  echo "[-] Trying to treat ".$it->count()." patches:\n";
+  while(($p = $it->next())) {
+    if ($p->fetchFromId()) {
+      echo "[!] error. unable to fetch patch ".$p->name()."\n";
+      continue;
+    }
+    if ($p->to_update && $opts['t']) {
+      $p->to_update = 0;
+      $p->update();
+    }
+
+    $archive = $p->findArchive();
+    if (!$archive && isset($opts['k'])) {
+      $rc = $p->checkPresence();
+    }
+
+    if ($archive == null && !$p->isAlreadyTried()) { /* New patch to download */
+      if (!isset($opts['d'])) {
+        $p->checkPath();
+        $p->tryDownload();
+      }
+    }
+    if (!$archive) $archive = $p->findArchive();
+    if ($archive != null) {
+        
+      if ($p->updateArchiveSize($archive)) {
+        echo "[-] Updated filesize: ".$p->filesize."\n";
+        $p->update();
+      }
+      if (!file_exists($archive.".md5sum")) {
+        echo "[-] Generating MD5..";
+        $p->makeMD5($archive, $archive.".md5sum");
+        echo "done\n";
+      }
+      if (!file_exists($archive.".sha512sum")) {
+        echo "[-] Generating SHA512..";
+        $p->makeSHA512($archive, $archive.".sha512sum");
+        echo "done\n";
+      }
+      if (!file_exists($p->readmePath())) {
+        echo "[-] Trying to extract README for ".$p->name()."..";
+  	$ret = $p->extractReadme();
+	if (!$ret) {
+  	  echo "done\n";
+        } else {
+	  echo "failed\n";
+        }
+      }
+    }
+    if (file_exists($p->readmePath()) && !filesize($p->readmePath())) {
+      unlink($p->readmePath());
+    }
+    $now = time();
+    if (!file_exists($p->readmePath()) && file_exists($p->path()."/.README.".$p->name()) && isset($opts['t'])) { /* retry the readme download */
+      unlink ($p->path()."/.README.".$p->name());
+    } else if (file_exists($p->readmePath()) && isset($opts['t'])) { /* we will try to gather a new version of the readme, so, rename the file first.. */
+      rename($p->readmePath(), $p->readmePath()."-".$now);
+      echo "[-] Readme for ".$p->name()." is flagged for redownload...\n";
+    }
+    if (!file_exists($p->readmePath()) && (!file_exists($p->path()."/.README.".$p->name()) || isset($opts['f']))) { /* try to download the readme file */
+      if (!isset($opts['d'])) {
+        echo "[-] Trying to download README for ".$p->name()."..";
+        $ret = $p->downloadReadme();
+        if ($ret) {
+    	  echo "failed\n";
+        } else {
+  	  echo "done\n";
+        }
+      }
+    }
+    if (isset($opts['t']) && file_exists($p->readmePath()) && !filesize($p->readmePath())) { // restore the old readme
+      unlink($p->readmePath());
+      rename($p->readmePath()."-".$now, $p->readmePath());
+    } else if (isset($opts['t']) && file_exists($p->readmePath())) { // we possibly got a new version, let's check
+      if (filesize($p->readmePath()) == filesize($p->readmePath()."-".$now) &&
+          md5(file_get_contents($p->readmePath())) == md5(file_get_contents($p->readmePath()."-".$now))) {
+         // This is the same as before, remove the old one.
+         unlink($p->readmePath()."-".$now);
+         echo "[-] Same Readme for ".$p->name()." has been redownload...\n";
+      } else {
+         echo "[-] New version of Readme for ".$p->name()." has been download...\n";
+      }
+    }
+    if (file_exists($p->readmePath()) && !isset($opts['n'])) {
+      $p->fetchData();
+      if ($p->data("readme_done") != 1 || isset($opts['t']) || isset($opts['r']) || isset($opts['f'])) {
+        echo "[-] Loading ".$p->name()." patch datas...";
+        $p->fetchFromId();
+        $p->fetchAll();
+        echo "done\n";
+        echo "[-] Parsing the readme file...\n";
+  	$fc = file_get_contents($p->readmePath());
+        $ret = $p->readme($fc);
+        unset($fc);
+        if ($ret > 0) {
+	  $p->setData("readme_done", 1);
+	  $p->update();
+	}
+      }
+    }
+    
+    unset($p);
   }
 
   /* Bugs updates */

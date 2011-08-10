@@ -11,6 +11,8 @@
  * @filesource
  */
 
+@require_once($config['rootpath']."/libs/functions.lib.php");
+
 class Patch extends mysqlObj
 {
   /* Data Var */
@@ -50,7 +52,60 @@ class Patch extends mysqlObj
   public $a_comments = array();
 
   public $a_previous = array();
+  public $a_readmes = array();
 
+  public function getAllReadme() {
+    $this->a_readmes = array();
+    foreach(glob($this->readmePath()."-*") as $r) {
+      $this->a_readmes[] = $r;
+    }
+  }
+
+  public function diffReadme() {
+    $diff = array();
+    /* First parse every readme file name and sort them in an array by date */
+    foreach($this->a_readmes as $f) {
+      $d = explode("-", $f);
+      $d = $d[2];
+      $diff[$d] = $f;
+    }
+    ksort($diff);
+    
+    /* Fill an array like this:
+     * array( date_first_readme => "Initial release",
+     *        date_second_readme => "diff with first one",
+     *        date_last_readme => "diff with previous one"
+     *      )
+     */
+    $ret = array();
+    $i = 0;
+    $old = null;
+    foreach($diff as $d => $fn) {
+      if (!$i) { /* first one */
+ 	$i++;
+	$ret[$d] = "Initial release";
+	$old = $fn;
+	//$old = file_get_contents($fn);
+	continue;
+      }
+      //$new = file_get_contents($fn);
+      $new = $fn;
+      $di = cli_diff($old, $new);
+      //$di = xdiff_string_diff($old, $new, 0, false);
+      $ret[$d] = $di;
+      $old = $new;
+    }
+    /* Now add the latest readme with date of today */
+    $d = time();
+    $new = $this->readmePath();
+    //$new = file_get_contents($this->readmePath());
+    $di = cli_diff($old, $new);
+    //$di = xdiff_string_diff($old, $new, 0, false);
+    $ret[$d] = $di;
+
+    return $ret;
+  }
+ 
   public function fetchCSum() {
     $this->o_csum = null;
     $table = "`checksums`";
