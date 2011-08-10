@@ -20,10 +20,12 @@ class HTTP
   public $argv;
 
   public static function errMysql() {
+    global $start_time;
     $index = new Template("./tpl/index.tpl");
     $head = new Template("./tpl/head.tpl");
     $menu = new Template("./tpl/menu.tpl");
     $foot = new Template("./tpl/foot.tpl");
+    $foot->set("start_time", $start_time);
     $content = new Template("./tpl/sorrypage.tpl");
 
     $index->set("head", $head);
@@ -35,6 +37,7 @@ class HTTP
   }
 
   public static function errWWW($e) {
+    global $start_time;
     $index = new Template("./tpl/index.tpl");
     $head = new Template("./tpl/head.tpl");
     $menu = new Template("./tpl/menu.tpl");

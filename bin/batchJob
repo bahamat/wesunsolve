@@ -306,7 +306,7 @@
   $index = "`patch`, `revision`";
   $cindex = "COUNT(`patch`)";
   $where = ""; $w = 0;
-  if ($opts['t']) {
+  if (isset($opts['t'])) {
     if ($w) { $where .= " AND "; $w++; } else { $where .= " WHERE "; $w++; }
     $where .= "`to_update`=1"; $w++;
   }
