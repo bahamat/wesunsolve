@@ -54,6 +54,10 @@ class Patch extends mysqlObj
   public $a_previous = array();
   public $a_readmes = array();
 
+  public function link() {
+    return '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
+  }
+
   public function getAllReadme() {
     $this->a_readmes = array();
     foreach(glob($this->readmePath()."-*") as $r) {
