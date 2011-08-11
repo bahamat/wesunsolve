@@ -18,6 +18,30 @@ class HTTP
 
   public $argc;
   public $argv;
+  public $css;
+
+  public function fetchCSS() {
+    global $_GET;
+
+    if (isset($_GET['r']) && !empty($_GET['r'])) {
+      $where = "WHERE `id`=".mysqlCM::getInstance()->quote($_GET['r'])." LIMIT 0,1";
+    } else {
+      $where = "WHERE `is_default`=1 LIMIT 0,1";
+    }
+
+    $index = "`id`";
+    $table = "`css`";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (!count($idx)) {
+        return null;
+      }
+      $this->css = new CSS($idx[0]['id']);
+      $this->css->fetchFromId();
+    }
+    return 0;
+  }
 
   public static function errMysql() {
     global $start_time;

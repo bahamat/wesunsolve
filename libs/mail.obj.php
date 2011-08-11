@@ -38,7 +38,7 @@ class Mail
 
   public static function sendConfirm($l, $code) {
     global $config;
-    $from = '"'.$config['mailName']."\" ".$config['mailFrom'];
+    $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
     $msg = "Dear ".$l->fullname.",\n";
     $msg .= "\nYou have registered on WeSunSolve.net with the e-mail address ".$l->email.".\n\n";
     $msg .= "In order to confirm your account, please follow the link below:\n\n";
@@ -46,7 +46,7 @@ class Mail
     $msg .= "Thanks in advance,\n";
     $msg .= "\n\nWe Sun Solve!\n";
 
-    $headers .= "From: $from\n";
+    $headers = "From: $from\n";
     $headers .= "Reply-to: info@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
@@ -55,7 +55,7 @@ class Mail
 
   public static function sendAdmin($subject, $msg, $from="") {
     global $config;
-    $from = '"'.$config['mailName'].'" '.$config['mailFrom'];
+    $from = '"'.$config['mailName'].'" <'.$config['mailFrom'].">";
     mail($config['admin'], "[SUNSOLVE] $subject", "--\n".$msg."\n\n--\n", "From: $from");
   }
 }
