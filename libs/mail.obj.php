@@ -36,6 +36,23 @@ class Mail
     trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
   }
 
+  public static function sendResetcode($l, $code) {
+    global $config;
+    $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
+    $msg = "Dear ".$l->fullname.",\n";
+    $msg .= "\nEither you or someone else has requested a reset password code for email: ".$l->email.".\n\n";
+    $msg .= "In order to reset your password, please follow the link below:\n\n";
+    $msg .= " http://wesunsolve.net/resetpass/c/".$code."\n\n";
+    $msg .= "Thanks in advance,\n";
+    $msg .= "\n\nWe Sun Solve!\n";
+
+    $headers = "From: $from\n";
+    $headers .= "Reply-to: info@wesunsolve.net";
+    $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
+
+    mail($l->email, "[SUNSOLVE] Reset your password", $msg, $headers);
+  }
+
   public static function sendConfirm($l, $code) {
     global $config;
     $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";

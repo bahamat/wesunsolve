@@ -94,10 +94,36 @@ class Login extends mysqlObj
     return false;
   }
 
+  public function alreadyReset() {
+    $rc = new UForgetp();
+    $rc->id_login = $this->id;
+    if ($rc->fetchFromId()) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public function sendResetcode() {
+    global $config;
+
+    $str = $this->username.$this->email.$config['sitename'].time();
+    $c = md5($str);
+
+    $co = new UForgetp();
+    $co->id_login = $this->id;
+    $co->code = $c;
+    $co->insert();
+
+    Mail::getInstance()->sendResetcode($this, $c);
+
+    return true;
+  }
+
   public function sendConfirm() {
     global $config;
 
-    $str = $this->username.$this->email.$config['sitename'];
+    $str = $this->username.$this->email.$config['sitename'].time();
     $c = md5($str);
 
     $co = new UConfirm();
@@ -116,18 +142,16 @@ class Login extends mysqlObj
 
     if (!$this->o_code) return false;
 
-    $str = $this->username.$this->email.$config['sitename'];
-    $c = md5($str);
+    // enable the account
+    $this->is_enabled = 1;
+    $this->update();
+    // self delete this code
+    $this->o_code->delete();
+    return true;
+  }
 
-    if (!strcmp($c, $this->o_code->code)) {
-      // enable the account
-      $this->is_enabled = 1;
-      $this->update();
-      // self delete this code
-      $this->o_code->delete();
-      return true;
-    }
-    return false;
+  public function resetPasswordcode($c) {
+    return $c->delete();
   }
   
 
@@ -152,7 +176,13 @@ class Login extends mysqlObj
 		  	  "is_log" => array("type" => "B",
                                                   "desc" => "Log your action for history purpose",
                                                  "objvar" => 1
-                                                )
+                                                ),
+			  "resolution" => array("type" => "E", // enum
+						"desc" => "Width of the page",
+						"values" => array("960" => 3,
+								  "1200" => 1,
+								  "1600" => 2)
+						)
 			);
     $this->_my = array(
                         "id" => SQL_INDEX,

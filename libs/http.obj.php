@@ -21,10 +21,16 @@ class HTTP
   public $css;
 
   public function fetchCSS() {
-    global $_GET;
+    global $config;
 
-    if (isset($_GET['r']) && !empty($_GET['r'])) {
-      $where = "WHERE `id`=".mysqlCM::getInstance()->quote($_GET['r'])." LIMIT 0,1";
+    $lm = loginCM::getInstance();
+    if (isset($lm->o_login)) {
+      $r = $lm->o_login->data("resolution");
+      if (!$r) $r = $config['resolution'];
+    }
+
+    if (isset($r)) {
+      $where = "WHERE `id`=".mysqlCM::getInstance()->quote($r)." LIMIT 0,1";
     } else {
       $where = "WHERE `is_default`=1 LIMIT 0,1";
     }

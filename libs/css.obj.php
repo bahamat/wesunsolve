@@ -22,6 +22,7 @@ class CSS extends mysqlObj
   public $s_box = 0;
   public $s_snet = 0;
   public $p_snet = 0;
+  public $s_strip = 0;
   public $is_default = 0;
   
 
@@ -41,6 +42,7 @@ class CSS extends mysqlObj
                         "s_box" => SQL_PROPE,
                         "s_snet" => SQL_PROPE,
                         "p_snet" => SQL_PROPE,
+                        "s_strip" => SQL_PROPE,
                         "is_default" => SQL_PROPE
                  );
 
@@ -52,6 +54,7 @@ class CSS extends mysqlObj
                         "s_box" => "s_box",
                         "s_snet" => "s_snet",
                         "p_snet" => "p_snet",
+                        "s_strip" => "s_strip",
                         "is_default" => "is_default"
                  );
   }
