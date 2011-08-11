@@ -58,6 +58,10 @@ class Patch extends mysqlObj
     return '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
   }
 
+  public static function linkize($str) {
+    
+  }
+
   public function getAllReadme() {
     $this->a_readmes = array();
     foreach(glob($this->readmePath()."-*") as $r) {
@@ -452,11 +456,13 @@ class Patch extends mysqlObj
       $r_date = $fields[2];
       $synopsis = $fields[count($fields) - 1];
       $patch = new Patch($pid, $rev);
+      $new = false;
       if ($patch->fetchFromId()) {
         echo "   > New patch: ".$patch->name()."\n";
         $ip = new Ircnp();
 	$ip->p = $patch->patch;
 	$ip->r = $patch->revision;
+        $new = true;
 	Announce::getInstance()->nPatch($ip);
 	$patch->insert();
         $nb++;
@@ -473,12 +479,14 @@ class Patch extends mysqlObj
             $patch->status = "RELEASED";
 	  }
         }
+        if (!$new) $patch->to_update = 1;
 	$patch->update();
         $mod++;
 	echo "   > Updated PCA flags for ".$patch->name()."\n";
       }
       if (strlen($patch->synopsis) < 10 && strcmp($patch->synopsis, $synopsis)) {
         $patch->synopsis = $synopsis;
+        if (!$new) $patch->to_update = 1;
         $patch->update();
         $mod++;
 	echo "   > Updated synopsis for ".$patch->name()."\n";
@@ -486,6 +494,7 @@ class Patch extends mysqlObj
       $r_date = $patch->parseDate($r_date);
       if (!$patch->releasedate && $r_date) {
 	$patch->releasedate = $r_date;
+        if (!$new) $patch->to_update = 1;
 	$patch->update();
         $mod++;
 	echo "   > Updated release date for ".$patch->name()."\n";
@@ -1176,6 +1185,8 @@ class Patch extends mysqlObj
 	    if (!$cPatch->isBugid($bo->id)) {
 	      $cPatch->addBugid($bo);
 	      echo "\t\t* bug $id linked to patch: ".$cPatch->name()."\n";
+	      $cPatch->to_update = 1;
+ 	      $cPatch->update();
             }
 	  } else {
 	    if (!$this->isBugid($bo->id)) {
@@ -1196,6 +1207,9 @@ class Patch extends mysqlObj
           echo "[-] Old revision of patch detected, inserting: ".$patch->name()."\n";
 	  $patch->insert();
           $nb++;
+	} else {
+	      $patch->to_update = 1;
+ 	      $patch->update();
 	}
 	$cPatch = $patch;
 	$stepBugs = 1;
@@ -1296,7 +1310,10 @@ class Patch extends mysqlObj
               if ($po->fetchFromId()) {
                 $po->insert();
 		$nb++;
-              }
+              } else {
+		$po->to_update = 1;
+		$po->update();
+	      }
               if (!$this->isRequired($po)) {
                 $this->addRequired($po);
                 echo "\t\t* Required by this patch: $patch\n";
@@ -1321,6 +1338,9 @@ class Patch extends mysqlObj
               if ($po->fetchFromId()) {
                 $po->insert();
 		$nb++;
+              } else {
+                $po->to_update = 1;
+                $po->update();
               }
               if (!$this->isConflict($po)) {
                 $this->addConflict($po);
@@ -1346,7 +1366,10 @@ class Patch extends mysqlObj
 	      if ($po->fetchFromId()) {
                 $po->insert();
 		$nb++;
-	      }
+	      } else {
+                $po->to_update = 1;
+                $po->update();
+              }
 	      if (strcmp($po->status, "OBSOLETE")) {
                 $po->status = "OBSOLETE";
 	        $po->update();

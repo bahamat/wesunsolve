@@ -250,12 +250,14 @@
 
   /* Update CHECKSUM file */
   if (isset($opts['c'])) {
-    echo "[-] Downloading CHECKSUMS file...";
-    if (Checksum::downloadFile()) {
-      echo "failed\n";
-      exit;
-    } else {
-      echo "done\n";
+    if (!isset($opts['d'])) {
+      echo "[-] Downloading CHECKSUMS file...";
+      if (Checksum::downloadFile()) {
+        echo "failed\n";
+        exit;
+      } else {
+        echo "done\n";
+      }
     }
     echo "[-] Parsing CHECKSUMS for new entries...\n";
     Checksum::updateFile();
@@ -393,7 +395,9 @@
     if (isset($opts['t']) && file_exists($p->readmePath()) && !filesize($p->readmePath())) { // restore the old readme
       unlink($p->readmePath());
       rename($p->readmePath()."-".$now, $p->readmePath());
-    } else if (isset($opts['t']) && file_exists($p->readmePath())) { // we possibly got a new version, let's check
+    } else if (isset($opts['t']) && !file_exists($p->readmePath())) {
+      rename($p->readmePath()."-".$now, $p->readmePath());
+    } else if (isset($opts['t']) && file_exists($p->readmePath()) && file_exists($p->readmePath()."-".$now)) { // we possibly got a new version, let's check
       if (filesize($p->readmePath()) == filesize($p->readmePath()."-".$now) &&
           md5(file_get_contents($p->readmePath())) == md5(file_get_contents($p->readmePath()."-".$now))) {
          // This is the same as before, remove the old one.

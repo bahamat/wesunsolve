@@ -61,6 +61,7 @@ class Checksum extends mysqlObj
     $csum = null;
     $cnt = 0;
     $new = false;
+    $p = null;
     foreach ($lines as $line) {
       $line = trim($line);
       if (empty($line)) {
@@ -77,7 +78,6 @@ class Checksum extends mysqlObj
       if (preg_match('/^========================================================$/', $line)) {
         $trash++;
       }
-      $p = null;
       if ($trash == 2) { /* post header */
         if (!$pp && !strpos($line, ":")) { /* this is the name of the file here... */
 	  $pp = true;
@@ -89,7 +89,7 @@ class Checksum extends mysqlObj
 	    $nb++;
             $new = true;
 	  }
-          if (preg_match("/[0-9]{6}-[0-9]{2}/", $csum->name)) { // Patch checksum
+          if (preg_match("/^[0-9]{6}-[0-9]{2}/", $csum->name)) { // Patch checksum
             $prev = explode(".", $csum->name);
 	    $prev = $prev[0];
 	    $prev = explode("-", $prev);
@@ -136,6 +136,7 @@ class Checksum extends mysqlObj
 	    case "Sum":
               if (strcmp($csum->sum, $f[1])) {
 	        $csum->sum = $f[1];
+ 		if ($p) { $p->to_update = 1; $p->update(); }
 	        echo "  > Updated SUM checksum entry for ".$csum->name." to ".$f[1]."\n";
 		$csum->update();
 		$mod++;
