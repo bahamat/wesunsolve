@@ -85,17 +85,20 @@
   if (isset($_GET['form']) && $_GET['form'] == 1) {
 
     if (isset($pid) && !empty($pid)) {
+      $pid = trim($pid);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
       $where .= "`patch` LIKE '$pid'";
       $str .= "/pid/".urlencode($pid);
     }
     if (isset($rev) && !empty($rev)) {
+      $rev = trim($rev);
       $rev = sprintf("%d", $rev);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
       $where .= "`patches`.`revision` LIKE '$rev'";
       $str .= "/rev/".urlencode($rev);
     }
     if (isset($synopsis) && !empty($synopsis)) {
+      $synopsis = trim($synopsis);
       $str .= "/synopsis/".urlencode($synopsis);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
       $idx .= ", MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") as score";
@@ -118,6 +121,7 @@
       //echo "SELECT $idx FROM $table $where<br/>\n";
     }
   } else if (isset($pid) && !empty($pid)) {
+    $pid = trim($pid);
     if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
     $str .= "/pid/".urlencode($pid);
     if (strpos($pid, "-")) {
