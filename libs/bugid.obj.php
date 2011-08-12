@@ -174,12 +174,12 @@ class Bugid extends mysqlObj
 	  if(empty($line)) {
 	    continue;
 	  }
-echo "$line\n";
+/*
 	  if (preg_match("/<b>Related bugs/",$line)) {
             $rb = preg_replace('/.*<b>.*<\/b>:(.+)<br/>/i', '$1', $line);
   	    echo "RB: $rb\n";
-// <b>Related bugs</b>: 2128956, 6341429, 4426407, 6406663, 6416022, 6500569, 6574993, 6597670, 6609815, 6633197, 6646919, 6655375, 6691138, 6709114<br/>
 	  }
+*/
 	  if (preg_match("/^bugsContent.Sun/", $line)) {
 	    $bcraw = preg_split("/bugsContent.Sun = \"/", $line);
 	    $bcraw = $bcraw[1];
