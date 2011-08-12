@@ -11,9 +11,6 @@
 
          $h = HTTP::getInstance();
          $h->parseUrl();
-
-         $h = HTTP::getInstance();
-         $h->parseUrl();
          $h->sanitizeArray($_POST);
          $h->sanitizeArray($_GET);
 

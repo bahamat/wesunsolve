@@ -24,7 +24,8 @@ class HTTP
     global $config;
 
     $lm = loginCM::getInstance();
-    if (isset($lm->o_login)) {
+    if (isset($lm->o_login) && $lm->o_login) {
+      $lm->o_login->fetchData();
       $r = $lm->o_login->data("resolution");
       if (!$r) $r = $config['resolution'];
     }
