@@ -120,7 +120,7 @@ class Login extends mysqlObj
     return true;
   }
 
-  public function sendConfirm() {
+  public function sendConfirm($a=0) {
     global $config;
 
     $str = $this->username.$this->email.$config['sitename'].time();
@@ -132,7 +132,11 @@ class Login extends mysqlObj
     $co->insert();
     $this->o_code = $co;
 
-    Mail::getInstance()->sendConfirm($this, $c);
+    if (!$a) {
+      Mail::getInstance()->sendConfirm($this, $c);
+    } else {
+      Mail::getInstance()->sendConfirm2($this, $c);
+    }
 
     return true;
   }

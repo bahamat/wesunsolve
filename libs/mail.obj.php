@@ -53,6 +53,25 @@ class Mail
     mail($l->email, "[SUNSOLVE] Reset your password", $msg, $headers);
   }
 
+  public static function sendConfirm2($l, $code) {
+    global $config;
+    $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
+    $msg = "Dear ".$l->fullname.",\n";
+    $msg .= "\nYou have registered in the past on WeSunSolve.net with the e-mail address ".$l->email.".\n";
+    $msg .= "As of today, WeSunSolve.net has been upgraded and we now verify e-mail address of our accounts.\n";
+    $msg .= "Also, we added a lot of new features on the website and we kindly invite you to see them in action ;-)\n\n";
+    $msg .= "In order to confirm your account, please follow the link below:\n\n";
+    $msg .= " http://wesunsolve.net/confirm/c/".$code."\n\n";
+    $msg .= "Thanks in advance,\n";
+    $msg .= "\n\nWe Sun Solve!\n";
+
+    $headers = "From: $from\n";
+    $headers .= "Reply-to: info@wesunsolve.net";
+    $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
+
+    mail($l->email, "[SUNSOLVE] Confirm your account", $msg, $headers);
+  }
+
   public static function sendConfirm($l, $code) {
     global $config;
     $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";

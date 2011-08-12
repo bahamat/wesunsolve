@@ -48,13 +48,14 @@
       <li class="m_header">Links</li> 
       <li class="m_element"><a href="http://support.oracle.com">My Oracle Support</a></li> 
       <li class="m_element"><a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a></li> 
+      <li class="m_element"><a href="http://www.par.univie.ac.at/solaris/pca/">Patch check advanced</a></li> 
       <li class="m_element"><a href="http://www.solarisinternals.com">Solaris internal</a></li> 
       <li class="m_element"><a href="http://www.sunfreeware.com">Sun Freewares</a></li> 
       <li class="m_element"><a href="http://www.opencsw.org">OpenCSW</a></li> 
       <li class="m_element"><a href="http://wildness.espix.org">wildcat's blog</a></li> 
       <li class="m_element"><a href="http://www.espix.org">Espix Network</a></li> 
      </ul> 
-     <p>2.0b</p> 
+     <p>2.0</p> 
  
     </div><!-- d_menu --> 
    </div><!-- grid_<?php echo $h->css->s_menu; ?> --> 

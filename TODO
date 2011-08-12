@@ -4,8 +4,6 @@ Backend:
 
 Frontend:
 
-*DONE IN DEV* Let the user post comments on patchs/bug, theses comments could be either private or public
-*DONE IN DEV* History of patch/bug visited.
 *WIP* Bug ids presentation searching and so on...
 - Try to improve browsing experience (main page refurbishing mainly+menu searches)
 - more searching field
@@ -13,23 +11,11 @@ Frontend:
 - Add the ability to share publicly custom lists of patches and rate them
 - Let the user download a pack of readme from a custom list
 - When managing its patch list, user should have the opportunity to change patch to its latest release
-*DONE IN DEV* As we now archive different version of README, we could propose a diff tools on the webgui to see
-  additions to readmes from time to time.
 - refurbish helpus page
-*DONE IN DEV* add /docs
-*DONE IN DEV* add select css style
-
 
 Processing:
 
 - pkg list -u parser
 - better Architecture parsing and sorting
-- Flag patches to update readme file when needed
 - Add checksum check when downloading patches
-
-
-Interface dev:
-
-- Equilibrer la partie de droite pour aligner avec le dessus/dessous
-*DONE IN DEV* Ajouter un icon "new" quand les patchs sont sorti le jour meme
 

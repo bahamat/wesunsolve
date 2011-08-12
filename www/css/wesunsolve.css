@@ -497,6 +497,12 @@ ul.listtick {
   padding-bottom: 2px;
 }
 
+#titlecomment {
+  padding-top: 10px;
+  text-align: right;
+  font-size: 0.8em;
+}
+
 /* 
 .d_content_box li {
   margin-left:40px;

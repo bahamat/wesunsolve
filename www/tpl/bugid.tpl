@@ -4,6 +4,7 @@
 ?>  
     <div id="d_content">
      <h2 class="grid_10 push_1 alpha omega">Bug <?php echo $bug->id; ?></h2>
+     <p id="titlecomment" class="push_4 grid_5"><?php echo count($bug->a_comments); ?> Comments | <a href="#comments">view</a> / <a href="/add_comment/id_on/<?php echo $bug->id; ?>/type/bug">add</a></p>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
