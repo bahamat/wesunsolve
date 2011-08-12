@@ -351,7 +351,7 @@
       echo "[!] error. unable to fetch patch ".$p->name()."\n";
       continue;
     }
-    if ($p->to_update && $opts['t']) {
+    if ($p->to_update && isset($opts['t'])) {
       $p->to_update = 0;
       $p->update();
     }
@@ -418,7 +418,7 @@
     if (isset($opts['t']) && file_exists($p->readmePath()) && !filesize($p->readmePath())) { // restore the old readme
       unlink($p->readmePath());
       rename($p->readmePath()."-".$now, $p->readmePath());
-    } else if (isset($opts['t']) && !file_exists($p->readmePath())) {
+    } else if (isset($opts['t']) && !file_exists($p->readmePath()) && file_exists($p->readmePath()."-".$now)) {
       rename($p->readmePath()."-".$now, $p->readmePath());
     } else if (isset($opts['t']) && file_exists($p->readmePath()) && file_exists($p->readmePath()."-".$now)) { // we possibly got a new version, let's check
       if (filesize($p->readmePath()) == filesize($p->readmePath()."-".$now) &&
