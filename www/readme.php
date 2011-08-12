@@ -18,7 +18,7 @@
 
  if (isset($_GET['id'])) {
    $id = mysql_escape_string($_GET['id']);
-   if (!preg_match("/[0-9]{6}-[0-9]{2}/", $id)) {
+   if (!preg_match("/[0-9]{6}-[0-9]{2}/", $id) && !preg_match("/[0-9]{6}-[0-9]{2}-[0-9]{10}/", $id)) {
      die("Malformed patch ID");
    }
  
@@ -27,16 +27,19 @@
    if ($patch->fetchFromId()) {
      die("Patch not found in our database");
    }
+   $fn = $patch->readmePath();
+   if (isset($p[2])) { /* old readme request */
+     $tf = $p[2];
+     $fn .= "-$tf";
+   }
 
-   $dir1 = substr($patch->patch, 0, 2);
-   $dir2 = substr($patch->patch, 2, 2);
-   if (!file_exists($config['ppath']."/$dir1/$dir2/README.".$patch->name())) {
+   if (!file_exists($fn)) {
      die("Patch readme not found on our server");
    }
 
    header("Content-type: text/plain");
    header("Content-Disposition: filename=README.".$patch->name());
-   echo file_get_contents($config['ppath']."/$dir1/$dir2/README.".$patch->name());
+   echo file_get_contents($fn);
  } else if (isset($_GET['bn'])) {
    $id = mysql_escape_string($_GET['bn']);
    if (!preg_match("/[0-9]*/", $id)) {

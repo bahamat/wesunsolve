@@ -1,14 +1,45 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
- "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
+<?php
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
+?>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+ <head> 
 <?php if (isset($title) && !empty($title)) { ?>
-    <title><?php echo $title; ?></title>
+  <title><?php echo $title; ?></title>
 <?php } else { ?>
-    <title>We Sun Solve ! - A bunch of information about Solaris</title>
+  <title>We Sun Solve ! - A bunch of information about Solaris</title>
 <?php } ?>
-    <link rel="stylesheet" type="text/css" href="/css/index.css" />
+  <link rel="stylesheet" type="text/css" href="/css/reset2.css" /> 
+  <link rel="stylesheet" type="text/css" href="/css/<?php echo $h->css->css_file; ?>" /> 
+  <link rel="stylesheet" type="text/css" href="/css/wesunsolve.css" /> 
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script> 
 <?php if (isset($head_add)) echo $head_add; ?>
-  </head>
-  <body>
-   <h1>We Sun Solve !<span id="head_twit"><a href="http://twitter.com/wesunsolve"><img src="/img/twitter-button.jpg" alt="Follow We Sun Solve on twitter"/></a></span></h1>
+ </head> 
+ <body> 
+ 
+  <div class="container_24"> 
+   <div id="header" class="grid_24 d_bar"> 
+ 
+    <div id="d_title" class="grid_20 alpha"> 
+      <h1><a href="/">We Sun Solve!</a></h1> 
+      <h2>A bunch of information about Solaris operating system...</h2> 
+    </div> 
+ 
+    <div id="d_search" class="grid_4 omega"> 
+      <form id="f_menu_patch" method="post" action="/psearch"> 
+       <fieldset style="min-width: 100px"> 
+         <input type="text" id="f_menu_patch_input" name="pid" value="" placeholder="Patch ID..." /><input type="image" src="/img/zoom.png" alt="Patch search"/> 
+       </fieldset> 
+     </form> 
+     <form id="f_menu_bug" method="post" action="/bsearch"> 
+       <fieldset style="min-width: 100px"> 
+        <input type="text" id="f_menu_bug_input" name="bid" value="" placeholder="Bug ID..." /><input type="image" src="/img/zoom.png" alt="Bug search"/> 
+       </fieldset> 
+     </form> 
+    </div> 
+ 
+   </div><!-- header --> 
+ 
+  </div><!-- container_24 --> 
+

@@ -25,7 +25,8 @@
 
  if (isset($_GET['form']) && $_GET['form'] == 1) {
    $plist = Patch::parseList($_POST['plist'], $_POST['format']);
-   if (!$plist) die("Error in format submitted");
+   if (!$plist) HTTP::errWWW("Error in format submitted");
+
    $curr = 0;
    foreach($plist as $p) {
     $p->fetchFromId();

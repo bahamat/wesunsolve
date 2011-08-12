@@ -1,3 +1,1 @@
-User-agent: *
-Disallow: /readme.php*
-Disallow: /files.php*
+Disallow: /

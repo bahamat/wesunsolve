@@ -1,11 +1,23 @@
-   <div class="content">
-    <h4>Help us !</h4>
-    <p>If you like this website and want to give us some help, here are the current area where help is needed:</p>
-    <ul>
-      <li>We need someone who has good understanding of RRD tool to implement some graphing on the website and patches releases.</li>
-      <li>If a graphist out there is willing to make a logo and a favicon for the website, that would be great ;-)</li>
-      <li></li>
-    </ul>
-    <p>If you feel that you could help us with one of theses topic, don't hesitate to contact us or join us over IRC on #sunsolve at irc.freenode.org.<br/>
-    On another way, you can also help us on various topics like by suggesting new features or improvements, again, this website is yours !</p>
-   </div>
+<?php
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
+?>  
+    <div id="d_content">
+     <h2 class="grid_10 push_1 alpha omega">Help us!</h2>
+     <div class="clear"></div>
+     <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
+      <div class="d_content_box">
+       <div style="height: 30px" class="push_<?php echo $h->css->p_snet; ?> grid_<?php echo $h->css->s_snet; ?>">
+        <div class="addthis_toolbox addthis_default_style" id="snet">
+         <a class="addthis_button_facebook"></a>
+         <a class="addthis_button_twitter"></a>
+         <a class="addthis_button_email"></a>
+         <a class="addthis_button_print"></a>
+         <a class="addthis_button_google_plusone"></a>
+        </div>
+       </div>
+       <div class="clear clearfix"></div>
+       <h3>Tdb</h3>
+   </div><!-- d_content_box -->
+  </div><!-- grid_19 -->
+ </div><!-- d_content -->

@@ -52,11 +52,14 @@
    $bid = $_GET['bid'];
  }
 
-  if (isset($_POST['start']) && !empty($_POST['start'])) {
-    $start = $_POST['start'];
-  } else if (isset($_GET['start']) && !empty($_GET['start'])) {
-    $start = $_GET['start'];
-  }
+ if (isset($_POST['page']) && !empty($_POST['page'])) {
+   $page = $_POST['page'];
+ } else if (isset($_GET['page']) && !empty($_GET['page'])) {
+   $page = $_GET['page'];
+ } else {
+   $page = 1;
+ }
+ $nb_page = 0;
 
   if (isset($_POST['df']) && !empty($_POST['df'])) {
    $df = $_POST['df'];
@@ -147,13 +150,20 @@ LIMIT 0,20;
       $nb = $idx[0]['c'];
     }
   }
+
+  if($nb) {
+    $nb_page = $nb / $rpp;
+    $nb_page = round($nb_page,0);
+  }
+
   
   /* check if url is saying where to start... */
-  if(isset($start) && !empty($start)) {
+  if(isset($page) && !empty($page)) {
 
-    if (preg_match("/[0-9]*/", $start)) {
+    if (preg_match("/[0-9]*/", $page)) {
+      $start = ($page - 1) * $rpp;
       if ($start >= $nb) { /* could not start after the number of results... */
-	$start = 0;
+        $start = 0;
       }
     } else {
       $start = 0;
@@ -161,7 +171,7 @@ LIMIT 0,20;
   } else { /* otherwise start from scratch */
     $start = 0;
   }
- 
+
   if ($start < 0) $start = 0;
   $where .= " LIMIT $start,$rpp";
 
@@ -192,6 +202,7 @@ LIMIT 0,20;
     $content->set("bid", $bid);
   }
   $content->set("str", $str);
+  $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
 
 screen:
   $index->set("head", $head);

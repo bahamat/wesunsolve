@@ -23,17 +23,49 @@
    foreach ($lo->_plist as $name => $param) {
      /* Gather settings info and default value if necessary */
      if (!isset($_POST[$name]) || empty($_POST[$name])) {
-       continue; // This setting could not be saved...
+       $newval = false;
+     } else {
+       $newval = $_POST[$name];
      }
-     $newval = $_POST[$name];
      $min = $param['min'];
      $desc = $param['desc'];
      $max = $param['max'];
-     $val = $lo->data($name);
+     if (isset($param['objvar'])) {
+       $val = $lo->{$name};
+     } else {
+       $val = $lo->data($name);
+     }
+     if (isset($param['values'])) {
+       $values = $param['values'];
+     }
      if (!$val && isset($config[$name])) {
        $val = $config[$name];
      }
      switch ($param['type']) {
+       case "E":
+        if($val == $newval) {
+	  continue;
+	}
+	if (isset($param['objvar'])) {
+          $lo->{$name} = $newval;
+          $lo->update();
+        } else {
+          $lo->setData($name, $newval);
+        }
+        $msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+       break;
+       case "B":
+        if ($val == $newval) {
+	  continue;
+	}
+        if (isset($param['objvar'])) {
+	  $lo->{$name} = $newval;
+	  $lo->update();
+	} else {
+	  $lo->setData($name, $newval);
+	}
+	$msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+       break;
        case "N":
         if ($val == $newval) {
 	  continue; // nothing to change
@@ -46,7 +78,12 @@
 	  $content->set("lo", $lo);
 	  goto screen;
 	}
-	$lo->setData($name, $newval);
+        if (isset($param['objvar'])) {
+          $lo->{$name} = $newval;
+          $lo->update();
+        } else {
+          $lo->setData($name, $newval);
+        }
 	$msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
 	break;
        default:

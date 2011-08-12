@@ -18,12 +18,12 @@
          $h->sanitizeArray($_GET);
 
 	 if (!isset($_GET['id'])) {
-	   die("Cannot be called as-is");
+           HTTP::errWWW("Cannot be called as-is");
 	 }
 
 	 $id = mysql_escape_string($_GET['id']);
 	 if (!preg_match("/[0-9]*/", $id)) {
-	   die("Malformed bundle ID");
+	   HTTP::errWWW("Malformed bundle ID");
 	 }
 	 
 	 $bundle = new Bundle($id);

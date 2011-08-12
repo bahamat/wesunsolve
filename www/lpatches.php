@@ -23,11 +23,14 @@
    }
  }
 
- if (isset($_POST['start']) && !empty($_POST['start'])) {
-   $start = $_POST['start'];
- } else if (isset($_GET['start']) && !empty($_GET['start'])) {
-   $start = $_GET['start'];
+ if (isset($_POST['page']) && !empty($_POST['page'])) {
+   $page = $_POST['page'];
+ } else if (isset($_GET['page']) && !empty($_GET['page'])) {
+   $page = $_GET['page'];
+ } else {
+   $page = 1;
  }
+ $nb_page = 0;
 
  $where = " WHERE `releasedate`!='' ORDER BY `patches`.`releasedate` DESC,`patches`.`patch` DESC,`patches`.`revision` DESC";
  $bad = 0;
@@ -58,10 +61,16 @@
     }
   }
 
-  /* check if url is saying where to start... */
-  if(isset($start) && !empty($start)) {
+  if($nb) {
+    $nb_page = $nb / $rpp;
+    $nb_page = round($nb_page,0);
+  }
 
-    if (preg_match("/[0-9]*/", $start)) {
+  /* check if url is saying where to start... */
+  if(isset($page) && !empty($page)) {
+
+    if (preg_match("/[0-9]*/", $page)) {
+      $start = ($page - 1) * $rpp;
       if ($start >= $nb) { /* could not start after the number of results... */
         $start = 0;
       }
@@ -118,6 +127,7 @@
   $content->set("rpp", $rpp);
   $content->set("title", $title);
   $content->set("str", $str);
+  $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
   if (isset($lo) && $lo) {
     $content->set("l", $lo);
     $head_add = "<script type=\"text/javascript\" src=\"/js/ax_main.js\"></script>";

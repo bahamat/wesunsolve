@@ -7,23 +7,28 @@
       } else {
 	$idnext = $start + $rpp;
       }
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
 ?>
- <div class="content">
-  <h2>Search for bugids (<?php echo $rpp; ?> results out of <?php echo $nb; ?> starting from <?php echo $start; ?>)</h2>
+    <div id="d_content">
+     <h2 class="grid_10 push_1 alpha omega">Search for bugids</h2>
+     <div class="clear"></div>
+     <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
+      <div class="d_content_box">
+       <div style="height: 30px" class="push_<?php echo $h->css->p_snet; ?> grid_<?php echo $h->css->s_snet; ?>">
+        <div class="addthis_toolbox addthis_default_style" id="snet">
+         <a class="addthis_button_facebook"></a>
+         <a class="addthis_button_twitter"></a>
+         <a class="addthis_button_email"></a>
+         <a class="addthis_button_print"></a>
+         <a class="addthis_button_google_plusone"></a>
+        </div>
+       </div>
+       <div class="clear clearfix"></div>
+  <p>Search for bugids (<?php echo $rpp; ?> results out of <?php echo $nb; ?> starting from <?php echo $start; ?>)</p>
   <div class="ctable">
+  <p class="paging"><?php echo $pagination; ?></p>
   <table class="ctable">
-  <tr><td></td><td colspan="5"><a href="<?php echo $str; ?>/start/0">&lt;&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;
-<?php if (isset($idprev)) { ?>
-      <a href="<?php echo $str; ?>/start/<?php echo $idprev; ?>">[prev]</a>
-<?php } else { ?>
-      [prev]
-<?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-<?php if (isset($idnext)) { ?>
-      <a href="<?php echo $str; ?>/start/<?php echo $idnext; ?>">[next]</a>
-<?php } else { ?>
-      [next]
-<?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="<?php echo $str; ?>/start/<?php echo $nb-$rpp; ?>">&gt;&gt;</a></td></tr>
    <tr>
     <?php if ($score) { ?><th>Score</th><?php } ?>
     <th>Bug ID</th>
@@ -31,33 +36,20 @@
     <th>Created</th>
     <th>Updated</th>
     <th>Submitted</th>
-    <th></th>
    </tr>
 <?php foreach($bugids as $p) { ?>
    <tr>
     <?php if ($score) { ?><td><?php echo $p->score; ?></td><?php } ?>
-    <td><?php echo $p->id; ?></td>
-    <td><?php echo $p->synopsis; ?></td>
-    <td><?php echo date('d/m/Y', $p->d_created); ?></td>
-    <td><?php echo date('d/m/Y', $p->d_updated); ?></td>
-    <td><?php echo date('d/m/Y', $p->d_submit); ?></td>
-    <td><a href="/bugid/id/<?php echo $p->id; ?>">details</a></td>
+    <td><a href="/bugid/id/<?php echo $p->id; ?>"><?php echo $p->id; ?></a></td>
+    <td><?php echo substr($p->synopsis,0,$h->css->s_strip - 10); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $p->d_created); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $p->d_updated); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $p->d_submit); ?></td>
    </tr>
 <?php } ?>
-  <tr><td></td><td colspan="5"><a href="<?php echo $str; ?>/start/0">&lt;&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;
-<?php if (isset($idprev)) { ?>
-      <a href="<?php echo $str; ?>/start/<?php echo $idprev; ?>">[prev]</a>
-<?php } else { ?>
-      [prev]
-<?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-<?php if (isset($idnext)) { ?>
-      <a href="<?php echo $str; ?>/start/<?php echo $idnext; ?>">[next]</a>
-<?php } else { ?>
-      [next]
-<?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="<?php echo $str; ?>/start/<?php echo $nb-$rpp; ?>">&gt;&gt;</a></td></tr>
    </table>
+  <p class="paging"><?php echo $pagination; ?></p>
   </div>
- </div>
-
-
+   </div><!-- d_content_box -->
+  </div><!-- grid_19 -->
+ </div><!-- d_content -->

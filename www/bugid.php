@@ -4,29 +4,31 @@
 
 	 $m = mysqlCM::getInstance();
 	 if ($m->connect()) {
-           HTTP::getInstance()->errMysql();
+           HTTP::errMysql();
 	 }
- $lm = loginCM::getInstance();
+        $lm = loginCM::getInstance();
  $lm->startSession();
 
  $h = HTTP::getInstance();
  $h->parseUrl();
 
 	 if (!isset($_GET['id'])) {
-	   die("Cannot be called as-is");
+	   HTTP::errWWW("Cannot be called as-is");
 	 }
 
 	 $id = mysql_escape_string($_GET['id']);
 	 if (!preg_match("/[0-9]{4}/", $id)) {
-	   die("Malformed Bug ID");
+	   HTTP::errWWW("Malformed Bug ID");
 	 }
 	 
 	 $bug = new Bugid($id);
 	 if ($bug->fetchFromId()) {
-	   die("Bug not found in our database");
+	   HTTP::errWWW("Bug not found in our database");
 	 }
+         $bug->viewed();
          $bug->fetchAll();
 	 $bug->fetchFulltext();
+         
          if ($lm->o_login && $lm->o_login->is_log) {
            $lm->o_login->logAction('bug', $bug->id);
          }
@@ -40,6 +42,7 @@
 	 $foot->set("start_time", $start_time);
          $content = new Template("./tpl/bugid.tpl");
          $content->set("bug", $bug);
+         $content->set("l", $lm->o_login);
 
          $index->set("head", $head);
          $index->set("menu", $menu);

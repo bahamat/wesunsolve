@@ -1,99 +1,62 @@
-   <div class="nav">
-<p style="text-align:center;">
 <?php
-  $ip = getenv ("REMOTE_ADDR");
-  if (substr_count($ip,":") > 0
-      && substr_count($ip,".") == 0) {
-    echo "<b>[Connected using IPv6]</b>";
-  } else {
-    echo "[Connected using IPv4]";
-  }
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
 ?>
-</p>
-<?php
-  $lm = loginCM::getInstance();
-  if (isset($lm->o_login) && $lm->o_login) {
-    echo "<p>Welcome ".$lm->o_login->fullname."</p>";
-  } else {
-    echo "<p>Not signed in</p>";
-  }
-?>
-    <h2><a href="/">Home</a></h2>
-     <h3>/infos</h3>
-      <ul>
-        <li><a href="/bundles">Patch clusters</a></li>
-        <li><a href="/lpatches">Last Patches</a></li>
-        <li><a href="/lpatches/sec/1">Last Security Patches</a></li>
-        <li><a href="/lpatches/bad/1">Last Invalidated Patches</a></li>
-        <li><a href="/patch_search">Patches search</a></li>
-        <li><a href="/plist_report">Patches report</a></li>
-        <li><a href="/compare">Patches compare</a></li>
-        <li><a href="/bsearch">Bug search</a></li>
-      </ul>
-     <h3>/user</h3>
-     <ul>
-<?php if (!isset($lm->o_login) || !$lm->o_login) { ?>
-       <li><a href="/login">Login</a></li>
-       <li><a href="/register">Register</a></li>
+  <div class="container_24"> 
+   <div class="grid_<?php echo $h->css->s_menu; ?>"> 
+    <div id="d_menu"> 
+     <ul> 
+      <li class="m_header">Patches</li> 
+      <li class="m_element"><a href="/bundles">Patches bundles</a></li> 
+      <li class="m_element"><a href="/lpatches">Latest patches</a></li> 
+      <li class="m_element"><a href="/lpatches/sec/1">Latest security patches</a></li> 
+      <li class="m_element"><a href="/lpatches/bad/1">Latest obsoleted patches</a></li> 
+      <li class="m_element"><a href="/patch_search">Search for patches</a></li> 
+      <li class="m_element"><a href="/plist_report">Patches report</a></li> 
+      <li class="m_element"><a href="/compare">Patch compare</a></li> 
+      <li class="m_element"><a href="/patchdiag">Patchdiag archive</a></li> 
+     </ul> 
+     <ul> 
+      <li class="m_header">Bugs</li> 
+      <li class="m_element"><a href="/bsearch">Bug search</a></li> 
+     </ul> 
+     <ul> 
+      <li class="m_header">User</li> 
+<?php $lm = loginCM::getInstance(); if (!isset($lm->o_login) || !$lm->o_login) { ?>
+      <li class="m_element"><a href="/login">Login</a></li>
+      <li class="m_element"><a href="/register">Register</a></li>
 <?php } else { ?>
-       <li><a href="/panel">Panel</a></li>
-       <li><a href="/add_clist">Add custom list</a><br/></li>
-       <li><a href="/register_srv">Add server</a><br/></li>
-       <li><a href="/logout">Logout</a></li>
-       <li><a href="/password">Change password</a></li>
-       <li><a href="/settings">Change settings</a></li>
+      <li class="m_element"><a href="/panel">Panel</a></li>
+      <li class="m_element"><a href="/add_clist">Add custom list</a></li>
+      <li class="m_element"><a href="/register_srv">Add server</a></li>
+      <li class="m_element"><a href="/password">Change password</a></li>
+      <li class="m_element"><a href="/settings">Change settings</a></li>
+      <li class="m_element"><a href="/logout">Logout</a></li>
 <?php } ?>
-     </ul>
-     <h3>/various</h3>
-      <ul>
-        <li><a href="/rss/bundles">RSS Last bundles</a></li>
-        <li><a href="/rss/patches">RSS Last patches</a></li>
-        <li><a href="/rss/news">RSS Site news</a></li>
-        <li><a href="/help">Help us !</a></li>
-        <li><a href="/changelog">Changelog</a></li>
-      </ul>
-     <h3>/search/patch</h3>
-     <p>Use '%' as wildcard
-     <br/>Only enter Patch-ID and Bug-ID</p>
-     <form method="post" action="/psearch">
-     <p>
-      <input type="text" size="10" name="pid" value=""/>
-      <input type="submit" value="search"/>
-     </p>
-     </form>
-     <h3>/search/bugid</h3>
-     <form method="post" action="/bsearch">
-     <p>
-      <input type="text" size="10" name="bid" value=""/>
-      <input type="submit" value="search"/>
-     </p>
-     </form>
-     <p>For deeper search, use the dedicated search pages</p>
-     <h3>/links+friends</h3>
-      <ul>
-	<li><a href="http://support.oracle.com">My Oracle Support</a></li>
-	<li><a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a></li>
-	<li><a href="http://www.solarisinternals.com">Solaris Internal</a></li>
-	<li><a href="http://www.sunfreeware.com/">Sun Freewares</a></li>
-	<li><a href="http://www.opencsw.org/">OpenCSW</a></li>
-      </ul>
-      <ul>
-	<li><a href="http://wildness.espix.org">wildcat's blog</a></li>
-	<li><a href="http://www.espix.org">Espix Network</a></li>
-	<li><a href="/notify">Contact us</a></li>
-      </ul>
-  <br/>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-      <fieldset style="border: 0px; text-align:center"><input type="hidden" name="cmd" value="_s-xclick"/>
-      <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-"/>
-      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
-      <img alt="" style="border: 0px" src="https://www.paypalobjects.com/fr_FR/i/scr/pixel.gif" width="1" height="1"/>
-      </fieldset>
-    </form>
-  <p style="text-align: center;">
-    <a href="http://validator.w3.org/check?uri=referer"><img
-        src="http://www.w3.org/Icons/valid-xhtml10"
-        alt="Valid XHTML 1.0 Strict" height="31" width="88" style="border: 0px;" /></a>
-  </p>
-   </div>
+     </ul> 
+     <ul> 
+      <li class="m_header">Various</li> 
+      <li class="m_element"><a href="/dbstats">Database statistics</a></li> 
+      <li class="m_element"><a href="/help">Help us</a></li> 
+      <li class="m_element"><a href="/changelog">Change log</a></li> 
+      <li class="m_element"><a href="/docs">Documentation</a></li> 
+      <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last bundles</a></li> 
+      <li class="m_element"><a href="/rss/patches"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last patches</a></li> 
+      <li class="m_element"><a href="/rss/news"><img src="/img/rss.png" alt="RSS Feed"/> RSS Site news</a></li> 
+     </ul> 
+     <ul> 
+      <li class="m_header">Links</li> 
+      <li class="m_element"><a href="http://support.oracle.com">My Oracle Support</a></li> 
+      <li class="m_element"><a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a></li> 
+      <li class="m_element"><a href="http://www.solarisinternals.com">Solaris internal</a></li> 
+      <li class="m_element"><a href="http://www.sunfreeware.com">Sun Freewares</a></li> 
+      <li class="m_element"><a href="http://www.opencsw.org">OpenCSW</a></li> 
+      <li class="m_element"><a href="http://wildness.espix.org">wildcat's blog</a></li> 
+      <li class="m_element"><a href="http://www.espix.org">Espix Network</a></li> 
+     </ul> 
+     <p>2.0b</p> 
+ 
+    </div><!-- d_menu --> 
+   </div><!-- grid_<?php echo $h->css->s_menu; ?> --> 
+ 
+   <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?>">

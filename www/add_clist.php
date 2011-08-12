@@ -37,6 +37,11 @@
    $s = new UCList();
    $s->id_login = $lm->o_login->id;
    $s->name = $_POST['name'];
+   if (isset($_POST['private'])) {
+     $s->is_private = 1;
+   } else {
+     $s->is_private = 0;
+   }
    if (!$s->fetchFromFields(array("id_login", "name"))) {
      $error = "This List is already present into your account!";
      $content = new Template("./tpl/add_clist.tpl");

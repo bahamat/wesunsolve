@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::hxpdrntfcbuselkvg";
+  $shortopts = "a::i::hxpdrntfcbuselkvgm";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -42,6 +42,7 @@
     echo "\t -f\tForce README extract/download\n";
     echo "\t -k\tCheck for patches checksums\n";
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
+    echo "\t -m\tSend confirm email to users unactivated.\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
   }
@@ -49,6 +50,27 @@
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  if (isset($opts['m'])) {
+    $table = "`login`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE is_enabled=0";
+    $it = new mIterator("Login", $index, $table, $where, $cindex);
+    while(($l = $it->next())) {
+      $l->fetchFromId();
+      echo "[-] Treating ".$l->username."...\n";
+      /* Checking if user already got a confirmation code */
+      $co = new UConfirm();
+      $co->id_login = $l->id;
+      if ($co->fetchFromField("id_login")) {
+	echo "\t > need a code !\n";
+      //$l->sendConfirm();
+      } else { echo "\t > already sent\n"; }
+      unset($l);
+    }
+    return 0;
   }
 
   if (isset($opts['g'])) {

@@ -1,0 +1,541 @@
+/**
+ * We Sun Solve! main CSS theme
+ *
+ * 2011 - Gouverneur Thomas <tgo@ians.be>
+ */
+
+
+/**
+ * body style
+ */
+body {
+  /* background-color: #ffffff; */
+  background-color: #ddd;
+  color: #000000;
+  font-family: sans-serif;
+  font-style: normal;
+  font-size: 0.9em;
+}
+
+/* Generic style */
+
+.halfbigtxt {
+  width: 250px;
+  height: 300px;
+}
+
+.bigtxt {
+  width: 500px;
+  height: 300px;
+}
+
+textarea {
+  background-color: #bfcddb;
+  border: solid 1px #000000;
+  font-size: 1em;
+  margin: 0px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
+input {
+  background-color: #bfcddb;
+  border: solid 1px #000000;
+  font-size: 0.8em;
+  margin: 0px;
+  margin-right: 2px;
+}
+
+input[type="image"] {
+  margin: 0px;
+  padding-top: 1px;
+  padding-right: 1px;
+  padding-bottom: 1px;
+  padding-left: 1px;
+  vertical-align: middle;
+  margin-right: 1px;
+  border: 0;
+  background-color: #3e6b8a;
+}
+
+input[type="submit"] {
+  margin: 0px;
+  padding: 0px;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+input[type="password"] {
+  width: 100px;
+  margin-bottom: 2px;
+}
+
+input[type="text"] {
+  width: 100px;
+  margin-bottom: 2px;
+}
+
+select {
+  background-color: #bfcddb;
+  border: solid 1px #000000;
+  font-size: 0.8em;
+  margin: 0px;
+  margin-bottom: 2px;
+  margin-right: 2px;
+}
+
+/* Header and footer id's */
+
+#header {
+}
+
+#footer {
+}
+
+/* Header and footer bar */
+
+.d_bar {
+  border-top: solid 1px #000000;
+  border-bottom: solid 1px #000000;
+  background-color: #3e6b8a;
+  color: #ffffff;
+  margin-top: 20px;
+}
+
+.d_bar a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.d_bar a:hover {
+  text-decoration: none;
+}
+
+.d_bar h1, h2 {
+  text-align: left;
+  font-family: sans-serif;
+}
+
+.d_bar h1 {
+  font-variant: small-caps;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 2em;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+.d_bar h2 {
+  font-style: italic;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-bottom: 5px;
+}
+
+.d_bar p {
+  text-align: center;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 0.9em;
+}
+
+#d_search {
+  text-align: right;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Menu ID */
+
+#d_menu {
+  margin-top: 20px;
+  border: solid 1px #000000;
+  background-color: #dde6ec;
+}
+
+#d_menu p {
+  font-size: 0.7em;
+  text-align: center;
+  color: #000000;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.m_header {
+  background-color: #3e6b8a;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1em;
+  font-variant: small-caps;
+  text-align: left;
+  padding-left: 3px;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.m_element {
+  font-weight: normal;
+  padding-left: 10px;
+  font-size: 0.9em;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  background-color: #dde6ec;
+}
+
+.m_element a {
+  color: #3e6b8a;
+  text-decoration: none;
+}
+
+.m_element:hover {
+  background-color: #eeeeee;
+  text-decoration: underline;
+}
+
+.m_element img {
+  vertical-align: sub;
+}
+
+
+/* Content ID */
+
+#d_content {
+  margin-top: 20px;
+}
+
+#d_content h2 {
+  color: #04304F;
+  font-variant: normal;
+  font-size: 1.3em;
+  font-weight: bold;
+  text-align: center;
+  border-right: solid 1px #000000;
+  border-left: solid 1px #000000;
+  border-top: solid 1px #000000;
+  background-color: #dde6ec;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.d_content_box {
+  background-color: #dde6ec;
+  border: solid 1px #000000;
+  padding: 5px;
+}
+
+.d_content_box p {
+  font-size: 1em;
+  font-weight: normal;
+  text-indent: 15px;
+  margin-bottom: 10px;
+}
+
+.d_content_box h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  margin-top: 18px;
+  margin-left: 35px;
+  font-variant: small-caps;
+}
+
+.d_content_box h4 {
+  font-size: 1.0em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+#snet {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  width:155px;
+}
+
+#d_boxes {
+  float:right;
+  background-color: #ff;
+}
+
+#d_main {
+  float: left;
+}
+
+.lastbox {
+  margin-bottom: 20px;
+}
+
+.listbox {
+  border: solid 1px #000000;
+/*  margin-top: 30px; */
+}
+
+.listbox h3 {
+  font-weight: bold;
+  font-size: 1em;
+  text-decoration: none;
+  font-variant: small-caps;
+  text-align: center;
+  background-color: #3e6b8a;
+  color: #ffffff;
+  padding: 2px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin: 0px;
+}
+
+.listbox ul {
+  list-style-type:none;
+  list-style-position: inside;
+  vertical-align: middle;
+  padding: 0px;
+  margin-left: 0px;
+  padding-bottom: 0px;
+}
+
+.listbox li {
+  margin-left: 10px;
+  padding-left: 0px;
+  font-size: 0.9em;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+.sitenews {
+  border: solid 1px #000000;
+  margin-bottom: 10px;
+  margin-left: 20px;
+}
+
+#newsfoot {
+  text-align: right;
+  font-size: 0.8em;
+  padding-bottom: 1px;
+  margin-bottom: 2px;
+  padding-right: 2px;
+}
+
+.sitenews h3 {
+  font-weight: bold;
+  font-size: 1em;
+  text-decoration: none;
+  font-variant: small-caps;
+  text-align: left;
+  background-color: #3e6b8a;
+  color: #ffffff;
+  padding: 2px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin: 0px;
+}
+
+.sitenews p {
+
+}
+
+/* Colors */
+
+p.warning {
+  border: solid 1px;
+  color: red;
+  text-align: center;
+}
+
+.red {
+  color: red;
+}
+
+.orange {
+  color: #ff9900;
+}
+
+.green {
+  color: green;
+}
+
+.greentd {
+  background-color: green;
+}
+
+.orangetd {
+  background-color: #ff9900;
+}
+
+.browntd {
+  background-color: brown;
+}
+
+.redtd {
+  background-color: red;
+}
+
+/* Nav bar & legend */
+
+.navtd {
+  font-size: 0.8em;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#legend {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.paging {
+        line-height:2em;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+}
+.paging a,
+.paging span {
+        padding:0.2em 0.5em;
+}
+.paging a {
+        border:1px solid #9AAFE5;
+        color:#105CB6;
+        text-decoration:none;
+}
+.paging a:hover {
+        border:1px solid #296BB5;
+        color:#000031;
+}
+.paging .prevnext {
+        font-weight:bold;
+}
+.paging span.disabled {
+        border:1px solid #DDDDDD;
+        color:#999999;
+}
+.paging span.current {
+        border:1px solid #2E6AB1;
+        background-color:#2E6AB1;
+        color:#ffffff;
+        font-weight:bold;
+}
+
+.newimg {
+        vertical-align: sub;
+}
+
+
+/**
+ * Lists and tables
+ */
+
+.tdcode {
+  font-size: 0.8em;
+}
+
+#tdtitle {
+  background-color: #3e6b8a;
+  color: #ffffff;
+  text-align: center;
+  font-size: 1em;
+}
+
+#tdtitle a, #tdtitle a:hover, #tdtitle a:visited {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+
+.ctable {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctable th {
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 8px;
+}
+
+.ctable td {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.tdcode {
+  font-size: 0.8em;
+}
+
+ul.listinfo {
+  list-style-type:none;
+/*  list-style-image:url('/img/information.png'); */
+}
+
+.listinfo li {
+  background-image: url(/img/information.png);
+  background-repeat: no-repeat;
+  background-position: 0;
+  padding-left: 20px;
+  margin-left:20px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+ul.listtick {
+  list-style-type:none;
+/*  list-style-image:url('/img/tick.png'); 
+  vertical-align: middle;*/
+  padding:0px;
+  margin:0px;
+}
+
+.listtick li {
+  background-image: url(/img/tick.png);
+  background-repeat: no-repeat;
+  background-position: 0;
+  padding-left: 20px;
+  margin-left:20px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+/* 
+.d_content_box li {
+  margin-left:40px;
+}
+*/
+
+/* Links */
+
+a {
+}
+
+a:hover {
+}
+
+#d_content a {
+  color: #3e6b8a;
+  text-decoration: none;
+}
+
+#d_content a:hover {
+  text-decoration: underline;
+}
+
+/* Content style */
+
+#d_content b {
+  font-weight: bold;
+}
+
+#d_content i {
+  font-weight: italic;
+}
+
+.d_content_box p {
+  font-size: 1em;
+  font-weight: normal;
+  text-indent: 15px;
+  margin-bottom: 10px;
+}
+
+
+

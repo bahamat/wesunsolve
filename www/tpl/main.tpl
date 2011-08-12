@@ -1,68 +1,64 @@
-   <div class="content">
-    <h2>Welcome to SunSolve</h2>
-    <p><b>DISCLAMER:</b> This website and the informations shown here are provided "as-is" and aren't an official source.
-	We could not be held responsible for accuracy of the infromation provided here.</p>
-    <h3>Why ?</h3>
-    <p>When the merge of Sun and Oracle has been made, we lost a lot of tools that were present on the famous SunSolve. Like the ability
-       to search efficiently for patches, bugids, sun alerts and so on. This website has the aim to provide part of this informations by
-       indexing all the patches and bugids that we could gather publicly. We want to allow easy search to ease the life of solaris sysadmins.
-    </p>
-    <h3>Request for comments !</h3>
-    <p>It seems that this website's popularity is still growing.. Don't hesitate to <a href="/notify">drop us a comment</a> to tell us what you think about this website, which features you're willing to see, which improvements you'd like to have. This website is yours ! Thanks to all of you !</p>
-    <h4>Site news</h4>
 <?php
-  $news = array();
-  $table = "`rss_news`";
-  $index = "`id`";
-  $where = " ORDER BY `date` DESC LIMIT 0,10";
-
-  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
-  {
-    foreach($idx as $t) {
-      $g = new News($t['id']);
-      $g->fetchFromId();
-      array_push($news, $g);
-    }
-  }
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
 ?>
-    <ul>
+    <div id="d_content"> 
+     <h2 class="grid_10 push_1 alpha omega">Welcome to Sunsolve !</h2> 
+     <div class="clear"></div> 
+     <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega"> 
+      <div class="d_content_box"> 
+       <div style="height: 30px" class="push_<?php echo $h->css->p_snet; ?> grid_<?php echo $h->css->s_snet; ?> alpha omega"> 
+        <div class="addthis_toolbox addthis_default_style" id="snet"> 
+         <a class="addthis_button_facebook"></a> 
+         <a class="addthis_button_twitter"></a> 
+         <a class="addthis_button_email"></a> 
+         <a class="addthis_button_print"></a> 
+         <a class="addthis_button_google_plusone"></a> 
+        </div> 
+       </div> 
+       <div class="clear clearfix"></div>
+       <h3>Last activities</h3>
+       <div class="prefix_1 grid_<?php echo $h->css->s_box; ?> alpha"> 
+        <div class="listbox firstbox"> 
+         <h3>Most viewed patches</h3> 
+         <ul> 
+         <?php foreach($mvp as $p) { ?>
+           <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> (<?php echo $p->views; ?> views)</li>
+         <?php } ?>
+	 </ul> 
+        </div> 
+       </div> 
+       <div class="grid_<?php echo $h->css->s_box; ?>"> 
+        <div class="listbox"> 
+         <h3>Most viewed bugs</h3> 
+         <ul> 
+         <?php foreach($mvb as $b) { ?>
+           <li><a href="/bugid/id/<?php echo $b->id; ?>"><?php echo $b->id; ?></a> (<?php echo $b->views; ?> views)</li>
+         <?php } ?>
+	 </ul> 
+        </div> 
+       </div> 
+       <div class="grid_<?php echo $h->css->s_box + 2; ?> omega"> 
+        <div class="listbox"> 
+         <h3>Last 10 comments</h3> 
+     <?php if (count($com)) { ?>
+         <ul> 
+         <?php foreach($com as $c) { ?>
+	   <li><?php echo $c->type.' '.$c->link(); ?>: <?php echo $c->since(); ?> ago</li> 
+         <?php } ?>
+	 </ul> 
+    <?php } ?>
+        </div> 
+       </div> 
+       <div class="clear"></div> 
+ 
+       <h3>Site News</h3> 
+       <ul class="listtick">
 <?php foreach($news as $n) { ?>
-      <li><i><?php echo date('d/m/Y', $n->date); ?></i>: <?php echo $n->synopsis; ?> - <?php if (!empty($n->link)) echo "<a href=\"".$n->link."\">Link</a>"; ?></li>
+      <li><i><?php echo date(HTTP::getDateFormat(), $n->date); ?></i>: <?php echo $n->synopsis; ?> - <?php if (!empty($n->link)) echo "<a href=\"".$n->link."\">Link</a>"; ?></li>
 <?php } ?>
-    </ul>
-    <h4>Database overview</h4>
-    <p>
-      Here are the stats of our database:
-    </p>
-      <ul>
-       <li>Number of patches registered: <?php echo MysqlCM::getInstance()->count("patches"); ?></li>
-       <li>Number of checksums registered: <?php echo MysqlCM::getInstance()->count("checksums"); ?></li>
-       <li>Number of OBSOLETED patches: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `status`='OBSOLETE'"); ?></li>
-       <li>Number of Unresolved patches: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `synopsis`=''"); ?></li>
-       <li>Number of BugIDs registered: <?php echo MysqlCM::getInstance()->count("bugids"); ?></li>
-       <li>Number of BugIDs details available: <?php echo MysqlCM::getInstance()->count("bugids", "WHERE `available`='1'"); ?></li>
-       <li>Patches released past year: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `releasedate` > ".(time() - (3600*24*31*12))); ?></li>
-       <li>Patches released past month: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `releasedate` > ".(time() - (3600*24*31))); ?></li>
-       <li>Patches released past week: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `releasedate` > ".(time() - (3600*24*7))); ?></li>
-<?php
-$index = "SUM(`filesize`/1024/1024) as total";
-$table = "`patches`";
-$where="";
-if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
-  $total = $idx[0]['total'];
-}
-
-$index = "SUM(`size`/1024/1024) as total";
-$table = "`bundles`";
-$where="";
-if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
-  $total += $idx[0]['total'];
-}
-
-
-?>
-       <li>Total size of the patches repository: <?php echo round($total, 2); ?> MBytes (<?php echo round($total / 1024, 2); ?> GBytes)</li>
-       <li>Number of Keywords: <?php echo MysqlCM::getInstance()->count("keywords"); ?></li>
-       <li>Number of Files: <?php echo MysqlCM::getInstance()->count("files"); ?></li>
-      </ul>
-   </div>
+       </ul>
+ 
+       </div><!-- d_content_box --> 
+      </div><!-- grid_19 --> 
+     </div><!-- d_content --> 

@@ -22,20 +22,20 @@
    }
  }
  
-  $page = new Template("./tpl/index.tpl");
+  $index = new Template("./tpl/index.tpl");
   $head = new Template("./tpl/head.tpl");
   $menu = new Template("./tpl/menu.tpl");
   $foot = new Template("./tpl/foot.tpl");
   $foot->set("start_time", $start_time);
 
-  $page->set("menu", $menu);
-  $page->set("foot", $foot);
+  $index->set("menu", $menu);
+  $index->set("foot", $foot);
 
   $str = "/psearch/form/1";
 
   $patches = array();
   $table = "`patches`";
-  $index = "`patches`.`patch`, `patches`.`revision`";
+  $idx = "`patches`.`patch`, `patches`.`revision`";
   $where = "";
   $w = 0;
 
@@ -48,11 +48,15 @@
 
   $my = mysqlCM::getInstance();
 
-  if (isset($_POST['start']) && !empty($_POST['start'])) {
-    $start = $_POST['start'];
-  } else if (isset($_GET['start']) && !empty($_GET['start'])) {
-    $start = $_GET['start'];
+  if (isset($_POST['page']) && !empty($_POST['page'])) {
+    $page = $_POST['page'];
+  } else if (isset($_GET['page']) && !empty($_GET['page'])) {
+    $page = $_GET['page'];
+  } else {
+    $page = 1;
   }
+  $nb_page = 0;
+
   if (isset($_POST['pid']) && !empty($_POST['pid'])) {
     $pid = $_POST['pid'];
   } else if (isset($_GET['pid']) && !empty($_GET['pid'])) {
@@ -94,7 +98,7 @@
     if (isset($synopsis) && !empty($synopsis)) {
       $str .= "/synopsis/".urlencode($synopsis);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
-      $index .= ", MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") as score";
+      $idx .= ", MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") as score";
       $where .= " MATCH(`patches`.`synopsis`) AGAINST(".$my->quote($synopsis).") ";
       $fts = true;
     }
@@ -111,7 +115,7 @@
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
       $where .= " `files`.`name` LIKE '$files' AND `jt_patches_files`.`fileid`=`files`.`id` ";
       $where .= " AND `patches`.`patch`=`jt_patches_files`.`patchid` AND `patches`.`revision`=`jt_patches_files`.`revision`";
-      //echo "SELECT $index FROM $table $where<br/>\n";
+      //echo "SELECT $idx FROM $table $where<br/>\n";
     }
   } else if (isset($pid) && !empty($pid)) {
     if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
@@ -137,17 +141,23 @@
   /* first count max results */
 
   $nb = 0;
-  if (($idx = $my->fetchIndex($idxcount, $table, $where)))
+  if (($pp = $my->fetchIndex($idxcount, $table, $where)))
   { 
-    if (isset($idx[0]) && isset($idx[0]['c'])) {
-      $nb = $idx[0]['c'];
+    if (isset($pp[0]) && isset($pp[0]['c'])) {
+      $nb = $pp[0]['c'];
     }
   }
 
-  /* check if url is saying where to start... */
-  if(isset($start) && !empty($start)) {
+  if($nb) {
+    $nb_page = $nb / $rpp;
+    $nb_page = round($nb_page,0);
+  }
 
-    if (preg_match("/[0-9]*/", $start)) {
+  /* check if url is saying where to start... */
+  if(isset($page) && !empty($page)) {
+
+    if (preg_match("/[0-9]*/", $page)) {
+      $start = ($page - 1) * $rpp;
       if ($start >= $nb) { /* could not start after the number of results... */
         $start = 0;
       }
@@ -161,9 +171,9 @@
   $where .= " LIMIT $start,$rpp";
   $title .= " from $start to ".($start + $rpp);
   $head->set("title", $title);
-  $page->set("head", $head);
+  $index->set("head", $head);
 
-  if ($nb && ($idx = $my->fetchIndex($index, $table, $where)))
+  if ($nb && ($idx = $my->fetchIndex($idx, $table, $where)))
   {
     foreach($idx as $t) {
       $g = new Patch($t['patch'], $t['revision']);
@@ -180,6 +190,7 @@
   $content->set("rpp", $rpp);
   $content->set("score", $fts);
   $content->set("str", $str);
-  $page->set("content", $content);
-  echo $page->fetch();
+  $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
+  $index->set("content", $content);
+  echo $index->fetch();
 ?>

@@ -15,6 +15,10 @@ Frontend:
 - When managing its patch list, user should have the opportunity to change patch to its latest release
 *DONE IN DEV* As we now archive different version of README, we could propose a diff tools on the webgui to see
   additions to readmes from time to time.
+- refurbish helpus page
+*DONE IN DEV* add /docs
+*DONE IN DEV* add select css style
+
 
 Processing:
 

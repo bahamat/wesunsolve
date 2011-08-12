@@ -1,5 +1,22 @@
-<div class="content">
-  <h2>Patch List report</h2>
+<?php
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
+?>  
+    <div id="d_content">
+     <h2 class="grid_10 push_1 alpha omega">Patch List report</h2>
+     <div class="clear"></div>
+     <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
+      <div class="d_content_box">
+       <div style="height: 30px" class="push_<?php echo $h->css->p_snet; ?> grid_<?php echo $h->css->s_snet; ?>">
+        <div class="addthis_toolbox addthis_default_style" id="snet">
+         <a class="addthis_button_facebook"></a>
+         <a class="addthis_button_twitter"></a>
+         <a class="addthis_button_email"></a>
+         <a class="addthis_button_print"></a>
+         <a class="addthis_button_google_plusone"></a>
+        </div>
+       </div>
+       <div class="clear clearfix"></div>
   <p>Warning: The patch synopsis is limited to 100 char on this array, please check patch detail to see full messages</p>
   <div class="ctable">
   <?php if (isset($psetid)) { ?>
@@ -20,15 +37,14 @@
      if ($lm->o_login && $lm->o_login->is_admin) { ?>
       <th>Tobedl</th>
 <?php } ?>
-      <th>Readme</th>
     </tr>
 <?php foreach($plist as $p) { ?>
     <tr>
       <td <?php echo $p->color(); ?>><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
-      <td><?php if ($p->releasedate) echo date('d/m/Y', $p->releasedate); ?></td>
+      <td><?php if ($p->releasedate) echo date(HTTP::getDateFormat(), $p->releasedate); ?></td>
       <td><?php if ($p->o_latest === false) { echo "yes"; } else if ($p->o_latest) { echo "<a href=\"/patch/id/".$p->o_latest->name()."\">".$p->o_latest->name()."</a>"; } else { echo "not found"; } ?></td>
       <td><?php echo $p->status; ?></td>
-      <td style="text-align: left;"><?php echo substr($p->synopsis,0,100); ?></td>
+      <td style="text-align: left;"><?php echo substr($p->synopsis,0,$h->css->s_strip); ?></td>
 <?php if ($curr && $p->o_current) { ?>
       <td><a href="/patch/id/<?php echo $p->o_current->name(); ?>"><?php echo $p->o_current->name(); ?></a></td>
 <?php } else if ($curr) { ?>
@@ -37,10 +53,9 @@
 <?php if($lm->o_login && $lm->o_login->is_admin) { ?>
       <td><a target="_blank" href="/.toadd/p/<?php echo $p->patch; ?>/i/<?php echo $p->revision; ?>">todo</a></td>
 <?php } ?>
-      <td><a href="/readme/id/<?php echo $p->name(); ?>">Readme</a></td>
     </tr>
 <?php } ?>
   </table>
   </div>
-</div>
-
+   </div><!-- d_content_box -->
+ </div><!-- d_content -->

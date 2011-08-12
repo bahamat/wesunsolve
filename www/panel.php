@@ -39,6 +39,8 @@
    $content->set("servers", $lo->a_servers);
    $content->set("uclists", $lo->a_uclists);
    $content->set("news", $news);
+   $content->set('lvp', Patch::getLastviewed($lo));
+   $content->set('lvb', Bugid::getLastviewed($lo));
  }
 
  $index = new Template("./tpl/index.tpl");

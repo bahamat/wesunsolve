@@ -15,7 +15,7 @@
   $bundles = array();
   $table = "`bundles`";
   $index = "`id`";
-  $where = " ORDER BY `lastmod` DESC, `synopsis` DESC";
+  $where = " WHERE `synopsis`!='' ORDER BY `lastmod` DESC, `synopsis` DESC";
 
   if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
   {

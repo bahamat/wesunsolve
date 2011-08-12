@@ -18,12 +18,12 @@
          $h->sanitizeArray($_GET);
 
 	 if (!isset($_GET['id'])) {
-	   die("Cannot be called as-is");
+	   HTTP::errWWW("Cannot be called as-is");
 	 }
 
 	 $id = mysql_escape_string($_GET['id']);
 	 if (!preg_match("/^[0-9]{6}-[0-9]{2}$/", $id)) {
-	   die("Malformed patch ID");
+	   HTTP::errWWW("Malformed patch ID");
 	 }
 	 
 	 $p = explode("-", $id);
@@ -38,6 +38,12 @@
            $patch->fetchPrevious(2);
 	 }
         $patch->viewed();
+   
+        $patch->getAllReadme();
+        $mreadme = false;
+        if (count($patch->a_readmes)) {
+          $mreadme = true;
+        }
 
 	$archive = null;
 	$is_dl = false;
@@ -59,6 +65,7 @@
          $content = new Template("./tpl/patch.tpl");
 	 $content->set("archive", $archive);
 	 $content->set("is_dl", $is_dl);
+	 $content->set("mreadme", $mreadme);
 
         if ($lm->o_login) {
 	  $lm->o_login->fetchUCLists();

@@ -64,6 +64,7 @@
     $l->email = $_POST["email"];
     $l->is_enabled = 0;
     $l->insert();
+    $l->sendConfirm();
     IrcMsg::add("[WWW] New user registered: ".$l->username);
     $msg = "New user has been added: ".$l->username." / ".$l->fullname." / ".$l->email;
     Mail::sendAdmin("New user has registered", $msg);

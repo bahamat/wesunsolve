@@ -1,5 +1,22 @@
-	   <div class="content">
-	    <h2>Bug <?php echo $bug->id; ?></h2>
+<?php
+  $h = HTTP::getInstance();
+  if (!$h->css) $h->fetchCSS();
+?>  
+    <div id="d_content">
+     <h2 class="grid_10 push_1 alpha omega">Bug <?php echo $bug->id; ?></h2>
+     <div class="clear"></div>
+     <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
+      <div class="d_content_box">
+      <div style="height: 30px" class="push_<?php echo $h->css->p_snet; ?> grid_<?php echo $h->css->s_snet; ?>">
+        <div class="addthis_toolbox addthis_default_style" id="snet">
+         <a class="addthis_button_facebook"></a>
+         <a class="addthis_button_twitter"></a>
+         <a class="addthis_button_email"></a>
+         <a class="addthis_button_print"></a>
+         <a class="addthis_button_google_plusone"></a>
+        </div>
+       </div>
+       <div class="clear clearfix"></div>
 	     <h3>General informations</h3>
 		<ul>
 		 <li>Synopsis: <?php echo htmlentities($bug->synopsis); ?></li>
@@ -24,9 +41,9 @@
 <?php if (!empty($bug->substate)) { ?><b>Sub State</b>: <?php echo $bug->substate; ?><br/><?php } ?>
 <?php if (!empty($bug->submitter)) { ?><b>Submitter</b>: <?php echo $bug->submitter; ?><br/><?php } ?>
 <?php if (!empty($bug->sponsor)) { ?><b>Sponsor</b>: <?php echo $bug->sponsor; ?><br/><?php } ?>
-<?php if ($bug->d_submit) { ?><b>Date Submitted</b>: <?php echo date('d/m/Y', $bug->d_submit); ?><br/><?php } ?>
-<?php if ($bug->d_created) { ?><b>Date Created</b>: <?php echo date('d/m/Y', $bug->d_created); ?><br/><?php } ?>
-<?php if ($bug->d_updated) { ?><b>Date Updated</b>: <?php echo date('d/m/Y', $bug->d_updated); ?><br/><?php } ?>
+<?php if ($bug->d_submit) { ?><b>Date Submitted</b>: <?php echo date(HTTP::getDateFormat(), $bug->d_submit); ?><br/><?php } ?>
+<?php if ($bug->d_created) { ?><b>Date Created</b>: <?php echo date(HTTP::getDateFormat(), $bug->d_created); ?><br/><?php } ?>
+<?php if ($bug->d_updated) { ?><b>Date Updated</b>: <?php echo date(HTTP::getDateFormat(), $bug->d_updated); ?><br/><?php } ?>
 <?php if (!empty($bug->commit_tf)) { ?><b>Commit to fix</b>: <?php echo $bug->commit_tf; ?><br/><?php } ?>
 <?php if (!empty($bug->duplicate_of)) { ?><b>Duplicate of</b>: <?php echo $bug->duplicate_of; ?><br/><?php } ?>
 <?php if (!empty($bug->first_reported_bug_id)) { ?><b>First reported bug ID</b>: <?php echo $bug->first_reported_bug_id; ?><br/><?php } ?>
@@ -60,5 +77,22 @@
   echo $bug->ft("raw");
 } ?>
 	     </div>
-	   </div>
+                <p><br/><a href="#top"><img src="/img/arrow_up.png">back to top</a></p>
 
+                <h3><a name="comments"></a>Comments</h3>
+                <?php if (!count($bug->a_comments)) { ?>
+                  <p>There is no comments for this bug yet. <a href="/add_comment/id_on/<?php echo $bug->id; ?>/type/bug">add one</a>.</p>
+                <?php } else { ?>
+                  <ul>
+                <?php foreach ($bug->a_comments as $c) { $c->fetchLogin(); ?>
+                        <li>on <i><?php echo date(HTTP::getDateFormat(), $c->added);  ?></i>, <b><?php echo $c->o_login->username; ?></b> said:  <?php echo $c->comment; ?>
+                        <?php if (isset($l) && ($l->id == $c->id_login)) { ?>
+                          (<a href="/del_comment/id/<?php echo $c->id; ?>">delete</a>)
+                        <?php } ?>
+                        </li>
+                <?php } ?>
+                  </ul>
+                <?php } ?>
+                <p><br/><a href="#top"><img src="/img/arrow_up.png">back to top</a></p>
+   </div><!-- d_content_box -->
+ </div><!-- d_content -->
