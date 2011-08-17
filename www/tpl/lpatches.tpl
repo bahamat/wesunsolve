@@ -25,7 +25,7 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
-  <p><?php echo $title; ?> (<?php echo $rpp; ?> patches of <?php echo $nb; ?> starting from <?php echo $start; ?>)</p>
+  <p><?php echo $title; ?></p>
   <div class="ctable">
    <table id="legend" class="ctable"><tr>
 				<td class="greentd">RECOMMENDED</td>

@@ -19,8 +19,8 @@
        <div class="clear clearfix"></div>
   <form method="post" action="/psearch/form/1">
   <div class="ctable">
-  <p>You can fill the fields that you want to search on...</p>
-  <p>You can use % for wildcards</p>
+  <p>Search using a patch ID or a keyword using the fields below</p>
+  <p>You can use % as a wildcard</p>
   <table class="ctable">
     <tr><th>Patch ID:</th><td><input type="text" name="pid"/></td></tr>
     <tr><th>Revision:</th><td><input type="text" name="rev"/></td></tr>

@@ -18,11 +18,11 @@
        </div>
        <div class="clear clearfix"></div>
   <p>Add patch level for <?php echo $s->name; ?></p>
-    <p>Copy/Paste below the list in the specified format...</p>
+    <p>Paste below the list of patches using one of the available formats</p>
       <ul>
-       <li><b>PCA</b>: Output of pca -l m</li>
-       <li><b>Text</b>: One patch per line</li>
-       <li><b>showrev</b>: Output of showrev -p</li>
+       <li><b>PCA</b>: Output of <i>pca -l m</i></li>
+       <li><b>Text</b>: One full patch number per line (e.g.:123456-78)</i></li>
+       <li><b>showrev</b>: Output of <i>showrev -p</i></li>
       </ul>
     <p>You could also use a file to upload directly, but you must fill one of the field...</p>
 <?php if (isset($error)) { ?>

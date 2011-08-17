@@ -17,7 +17,7 @@
         </div> 
        </div> 
        <div class="clear clearfix"></div>
-       <h3>Last activities</h3>
+       <h3>Recent activity</h3>
        <div class="prefix_1 grid_<?php echo $h->css->s_box; ?> alpha"> 
         <div class="listbox firstbox"> 
          <h3>Most viewed patches</h3> 

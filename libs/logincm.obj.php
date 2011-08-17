@@ -37,6 +37,9 @@ class loginCM
     if ($l->fetchFromField("username")) {
       return -1;
     }
+    if (!$l->is_enabled) {
+      return -2;
+    }
     if ($l->auth($password) == FALSE) {
       return -1;
     }

@@ -17,7 +17,7 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
-    <p>Here, you can download old patchdiag.xref from a certain date. Please select the one you want inside the droplist below then click fetch.</p>
+    <p>Search for archived patchdiag.xref at a given date. Select the desired date then click fetch.</p>
     <form method="POST" action="/patchdiag">
       <table class="ctable">
       <tr><td>File listing</td><td><select name="id">

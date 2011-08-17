@@ -12,6 +12,10 @@ Frontend:
 - Let the user download a pack of readme from a custom list
 - When managing its patch list, user should have the opportunity to change patch to its latest release
 - refurbish helpus page
+- Helpus total rework, removed from the menu as of now
+- (lblume) Legende de couleur pour lpatches difficile a distinguer (recommended/security/withdrawn/obsolete)
+- (lblume) create a Courier font style for codes/commands
+
 
 Processing:
 

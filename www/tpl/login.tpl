@@ -24,11 +24,11 @@
     <table class="ctable">
       <tr><td>Login</td><td><input type="text" value="" name="username"></td></tr>
       <tr><td>Password</td><td><input type="password" value="" name="password"></td></tr>
-      <tr><td></td><td><input id="cb_keeploggedin" type="checkbox" value="1" name="keep"><label for="cb_keeploggedin"> Keep me loggedin</label></td></tr>
+      <tr><td></td><td><input id="cb_keeploggedin" type="checkbox" value="1" name="keep"><label for="cb_keeploggedin"> Keep me logged in</label></td></tr>
       <tr><td></td><td><input type="submit" value="Login" name="save"></td></tr>
     </table>
     </form>
-    <p><a href="/forgetpass">Forget your password?</a></p>
+    <p><a href="/forgetpass">Forgot your password?</a></p>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->
  </div><!-- d_content -->

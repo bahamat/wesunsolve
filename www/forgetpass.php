@@ -43,7 +43,7 @@
       $content->set("error", "We couldn't find this email in our database..");
       goto screen;
     }
-    if (!$l->alreadyReset()) {
+    if ($l->alreadyReset()) {
       $content = new Template("./tpl/forgetpass.tpl");
       $content->set("error", "A reset code has already been sent, you couldn't have two. If this is an error, just contact site administrator.");
       goto screen;

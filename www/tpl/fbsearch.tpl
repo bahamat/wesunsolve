@@ -19,7 +19,7 @@
        <div class="clear clearfix"></div>
   <form method="post" action="/bsearch/form/1">
   <div class="ctable">
-  <p>You can fill the fields that you want to search on...</p>
+  <p>Search using a bug ID or a keyword using the fields below</p>
   <table class="ctable">
     <tr><th>Bug ID:</th><td><input type="text" name="bid"/></td></tr>
     <tr><th>Full Text Search:</th><td><input type="text" name="synopsis"/></td></tr>

@@ -4,7 +4,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>  
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Compare 2 Server - report</h2>
+     <h2 class="grid_10 push_1 alpha omega">Comparison of two servers - report</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -55,7 +55,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>  
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Compare 2 Server - report</h2>
+     <h2 class="grid_10 push_1 alpha omega">Comparison of two servers - report</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -70,11 +70,11 @@
        </div>
   <form method="post" action="/compare/form/1">
   <div class="ctable">
-  <p>Copy/Paste below the list in the specified format...</p>
+  <p>Paste below the list of patches using one of the available formats</p>
   <ul>
-   <li><b>PCA</b>: Output of pca -l m</li>
-   <li><b>Text</b>: One patch per line</li>
-   <li><b>showrev</b>: Output of showrev -p</li>
+   <li><b>PCA</b>: Output of <i>pca -l m</i></li>
+   <li><b>Text</b>: One full patch number per line (e.g.:123456-78)</li>
+   <li><b>showrev</b>: Output of <i>showrev -p</i></li>
   </ul>
   <table class="ctable">
     <tr><th>Server 1</th><th>Server 2</th></tr>

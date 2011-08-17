@@ -439,7 +439,11 @@
         echo "done\n";
         echo "[-] Parsing the readme file...\n";
   	$fc = file_get_contents($p->readmePath());
-        $ret = $p->readme($fc);
+	if (isset($opts['t'])) {
+          $ret = $p->readme($fc, true);
+        } else {
+          $ret = $p->readme($fc);
+	}
         unset($fc);
         if ($ret > 0) {
 	  $p->setData("readme_done", 1);

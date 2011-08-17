@@ -29,7 +29,7 @@
     } else {
       $keep = 0;
     }
-    if ($lm->login($_POST["username"], $_POST["password"], $keep)) {
+    if (($rc = $lm->login($_POST["username"], $_POST["password"], $keep)) == -1) {
       $content = new Template("./tpl/login.tpl");
       $content->set("error", "Error in either login or password");
       $f = new LoginFailed();
@@ -39,6 +39,10 @@
       $f->agent = $_SERVER['HTTP_USER_AGENT'];
       $f->ip = $_SERVER['REMOTE_ADDR'];
       $f->insert();
+      goto screen;
+    } else if ($rc == -2) {
+      $content = new Template("./tpl/error.tpl");
+      $content->set("error", "Your account hasn't been confirmed yet");
       goto screen;
     }
   }

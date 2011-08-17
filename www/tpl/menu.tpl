@@ -12,8 +12,8 @@
       <li class="m_element"><a href="/lpatches/sec/1">Latest security patches</a></li> 
       <li class="m_element"><a href="/lpatches/bad/1">Latest obsoleted patches</a></li> 
       <li class="m_element"><a href="/patch_search">Search for patches</a></li> 
-      <li class="m_element"><a href="/plist_report">Patches report</a></li> 
-      <li class="m_element"><a href="/compare">Patch compare</a></li> 
+      <li class="m_element"><a href="/plist_report">Create patch reports</a></li> 
+      <li class="m_element"><a href="/compare">Compare patch levels</a></li> 
       <li class="m_element"><a href="/patchdiag">Patchdiag archive</a></li> 
      </ul> 
      <ul> 
@@ -35,9 +35,8 @@
 <?php } ?>
      </ul> 
      <ul> 
-      <li class="m_header">Various</li> 
+      <li class="m_header">News</li> 
       <li class="m_element"><a href="/dbstats">Database statistics</a></li> 
-      <li class="m_element"><a href="/help">Help us</a></li> 
       <li class="m_element"><a href="/changelog">Change log</a></li> 
       <li class="m_element"><a href="/docs">Documentation</a></li> 
       <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last bundles</a></li> 
@@ -49,8 +48,8 @@
       <li class="m_element"><a href="http://support.oracle.com">My Oracle Support</a></li> 
       <li class="m_element"><a href="http://www.sun.com/bigadmin/home/index.jsp">Big Admin</a></li> 
       <li class="m_element"><a href="http://www.par.univie.ac.at/solaris/pca/">Patch check advanced</a></li> 
-      <li class="m_element"><a href="http://www.solarisinternals.com">Solaris internal</a></li> 
-      <li class="m_element"><a href="http://www.sunfreeware.com">Sun Freewares</a></li> 
+      <li class="m_element"><a href="http://www.solarisinternals.com">Solaris Internals</a></li> 
+      <li class="m_element"><a href="http://www.sunfreeware.com">Sun Freeware</a></li> 
       <li class="m_element"><a href="http://www.opencsw.org">OpenCSW</a></li> 
       <li class="m_element"><a href="http://wildness.espix.org">wildcat's blog</a></li> 
       <li class="m_element"><a href="http://www.espix.org">Espix Network</a></li> 

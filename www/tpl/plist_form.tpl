@@ -19,11 +19,11 @@
        <div class="clear clearfix"></div>
   <form method="post" action="/plist_report/form/1">
   <div class="ctable">
-  <p>Copy/Paste below the list in the specified format...</p>
+  <p>Paste below the list of patches using one of the available formats</p>
   <ul>
-   <li><b>PCA</b>: Output of pca -l m</li>
-   <li><b>Text</b>: One patch per line</li>
-   <li><b>showrev</b>: Output of showrev -p</li>
+   <li><b>PCA</b>: Output of <i>pca -l m<i></li>
+   <li><b>Text</b>: One full patch number per line (e.g.: 123456-78)</li>
+   <li><b>showrev</b>: Output of <i>showrev -p</i></li>
   </ul>
   <table class="ctable">
     <tr><td><select name="format">

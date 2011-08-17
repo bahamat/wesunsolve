@@ -32,47 +32,47 @@
 <h3><a name="register"></a>Registration process</h3>
 <p>You can register on <i>We Sun Solve!</i> by filling the <a href="http://wesunsolve.net/register">registration form</a>. <br/>
    The only information we need is an email address, a login and a password. Please note that you will receive a confirmation
-   code to verify your email address. After you've followed the link present in this e-mail, you will be able to <a href="/login">login</a></p>
+   code to verify your email address. After you have followed the link present in this e-mail, you will be able to <a href="/login">login</a></p>
 <p>There are several feature that are only available to registered users, like:</p>
 <ul class="listtick">
   <li>Adapt UI settings of the website;</li>
-  <li>Encode your servers and keep track of their patching level;</li>
-  <li>Setup custom patches list and keep track of their updates;</li>
-  <li>History of your browsing (patches/bug/searchs);</li>
+  <li>Upload your server information and keep track of their patching level;</li>
+  <li>Setup custom patch lists and keep track of their updates;</li>
+  <li>History of your browsing (patches/bug/searches);</li>
   <li>Make your list of patches public and let people rate them;</li>
   <li>Post public or private comments on bugs/patches;</li>
   <li>Adapt the resolution of the whole website;</li>
-  <li><b>*SOON*</b> Saved search with notifications;</li>
+  <li><b>*SOON*</b> Saved searches with notifications;</li>
   <li><b>*SOON*</b> Vote for other users' custom lists;</li>
   <li><b>*SOON*</b> Download all the readme's of a patch list at once</li>
 </ul>
 <br/>
 <a href="#index">back to top</a>
 <!-- [ Separator ] -->
-<h3><a name="features"></a>Features list</h3>
-<p>We will try to keep track of every feature of this website hereunder:</p>
+<h3><a name="features"></a>Feature list</h3>
+<p>We will try to keep track of every features of this website here:</p>
 <ul class="listtick">
  <li>View the <a href="/lpatches">Latest patches</a> released;</li>
  <li>View the <a href="/lpatches/sec/1">Latest security patches</a> released;</li>
  <li>View the <a href="/lpatches/bad/1">Latest obsoleted/bad patches</a> released;</li>
  <li>Search for <a href="/patch_search">patches</a>;</li>
  <li>Search for <a href="/bsearch">bugs</a>;</li>
- <li>Use a "Last modified" date limit while searching for <a href="/bsearch">bugs</a>;</li>
- <li>Quickly access to a patch by using the site's header form (<i>111111-02</i>, <i>137137-%</i>);</li>
- <li>Quickly access to a bug by using the site's header form (<i>6932350</i>);</li>
- <li>View public user-comments for patches/bugs/bundles;</li>
+ <li>Use a "Last modified" date limit when searching for <a href="/bsearch">bugs</a>;</li>
+ <li>Quick access to a patch by using the site's header form (<i>111111-02</i>, <i>137137-%</i>);</li>
+ <li>Quick access to a bug by using the site's header form (<i>6932350</i>);</li>
+ <li>View public users' comments for patches/bugs/bundles;</li>
  <li>*Post <b>public</b> comments on patches/bugs/bundles;</li>
- <li>*Post <b>private</b> comments on patches/bugs/bundle (i.e. to remember on which server you've tried a certain patch..);</li>
- <li>View the most seen patches on <a href="/">main page</a>;</li>
- <li>View the most seen bugs on <a href="/">main page</a>;</li>
- <li>View the latest public user-comments on <a href="/">main page</a>;</li>
+ <li>*Post <b>private</b> comments on patches/bugs/bundle (i.e. to remember on which server you have tried a certain patch..);</li>
+ <li>Check the most viewed patches on <a href="/">main page</a>;</li>
+ <li>Check the most viewed bugs on <a href="/">main page</a>;</li>
+ <li>View the latest public users' comments on <a href="/">main page</a>;</li>
  <li>Check the website <a href="/dbstats">database statistics</a>;</li>
  <li>Check the website <a href="/arch">architecture details</a>;</li>
  <li>Check the website <a href="/changelog">change log</a>;</li>
  <li>RSS feed for <a href="/rss/bundles">Last modified patch clusters</a>;</li>
  <li>RSS feed for <a href="/rss/patches">Latest patch released</a>;</li>
  <li>RSS feed for <a href="/rss/news">We Sun Solve news</a>;</li>
- <li>*Add some <a href="/add_clist">custom patches list</a> either private or public;</li>
+ <li>*Add some <a href="/add_clist">custom patch lists</a> either private or public;</li>
  <li>*Add some <a href="/register_srv">server</a> to your user panel;</li>
  <li>*Change your <a href="/password">password</a>;</li>
  <li>*Change your <a href="/settings">settings</a> (bugs shown per page, patches shown per page, disable history log, change resolution of the website);</li>
@@ -80,7 +80,8 @@
  <li>Manage different patching level for your servers;</li>
  <li>Compare two patching level to see differences;</li>
  <li>Make a <a href="/plist_report">report</a> for a list of given patches;</li>
- <li>See differences between README's updates of a patch (i.e: <a href="/diffr/type/patch/id/146091-04">146091-04</a>)</li>
+ <li>See differences between README's updates of a patch (i.e: <a href="/diffr/type/patch/id/146091-04">146091-04</a>);</li>
+ <li>Download an <a href="/patchdiag">old patchdiag.xref file</a></li>
 </ul>
 <br/>
 <a href="#index">back to top</a>
@@ -89,11 +90,11 @@
 <p></p>
 <a href="#index">back to top</a>
 <!-- [ Separator ] -->
-<h3><a name="psearch"></a>Patches Searching</h3>
+<h3><a name="psearch"></a>Patch Search</h3>
 <p></p>
 <a href="#index">back to top</a>
 <!-- [ Separator ] -->
-<h3><a name="bsearch"></a>Bugs Searching</h3>
+<h3><a name="bsearch"></a>Bug Search</h3>
 <p></p>
 <a href="#index">back to top</a>
 <!-- [ Separator ] -->

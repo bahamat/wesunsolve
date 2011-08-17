@@ -8,7 +8,7 @@
 <?php if (isset($title) && !empty($title)) { ?>
   <title><?php echo $title; ?></title>
 <?php } else { ?>
-  <title>We Sun Solve ! - A bunch of information about Solaris</title>
+  <title>We Sun Solve ! - A heap of information about Solaris</title>
 <?php } ?>
   <link rel="stylesheet" type="text/css" href="/css/reset2.css" /> 
   <link rel="stylesheet" type="text/css" href="/css/<?php echo $h->css->css_file; ?>" /> 
@@ -23,7 +23,7 @@
  
     <div id="d_title" class="grid_20 alpha"> 
       <h1><a href="/">We Sun Solve!</a></h1> 
-      <h2>A bunch of information about Solaris operating system...</h2> 
+      <h2>A heap of information about the Solaris operating system...</h2> 
     </div> 
  
     <div id="d_search" class="grid_4 omega"> 

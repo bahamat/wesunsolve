@@ -98,12 +98,12 @@
    $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://wesunsolve.net/rss/patches" />';
  }
 
- $title = 'Latest Solaris released patches - results from '.$start.' to '.($start+$rpp);
+ $title = 'Last released Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  if ($bad) {
-   $title = 'Latest Solaris invalidated patches - results from '.$start.' to '.($start+$rpp);
+   $title = 'Last obsoleted/bad Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  }
  if ($sec) {
-   $title = 'Latest Solaris security released patches - results from '.$start.' to '.($start+$rpp);
+   $title = 'Last released Solaris security patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  }
 
   $index = new Template("./tpl/index.tpl");

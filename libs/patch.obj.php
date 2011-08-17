@@ -1085,7 +1085,7 @@ class Patch extends mysqlObj
   }
 
   /* parse readme contents */
-  public function readme(&$c) {
+  public function readme(&$c, $redo=false) {
     global $stats;
 
     $nb = 0;
@@ -1185,8 +1185,10 @@ class Patch extends mysqlObj
 	    if (!$cPatch->isBugid($bo->id)) {
 	      $cPatch->addBugid($bo);
 	      echo "\t\t* bug $id linked to patch: ".$cPatch->name()."\n";
-	      $cPatch->to_update = 1;
- 	      $cPatch->update();
+	      if(!$redo) {
+	        $cPatch->to_update = 1;
+ 	        $cPatch->update();
+	      }
             }
 	  } else {
 	    if (!$this->isBugid($bo->id)) {
@@ -1208,8 +1210,10 @@ class Patch extends mysqlObj
 	  $patch->insert();
           $nb++;
 	} else {
-	      $patch->to_update = 1;
- 	      $patch->update();
+	      if(!$redo) {
+	        $patch->to_update = 1;
+ 	        $patch->update();
+	      }
 	}
 	$cPatch = $patch;
 	$stepBugs = 1;
@@ -1311,8 +1315,10 @@ class Patch extends mysqlObj
                 $po->insert();
 		$nb++;
               } else {
-		$po->to_update = 1;
-		$po->update();
+	        if(!$redo) {
+		  $po->to_update = 1;
+		  $po->update();
+		}
 	      }
               if (!$this->isRequired($po)) {
                 $this->addRequired($po);
@@ -1339,8 +1345,10 @@ class Patch extends mysqlObj
                 $po->insert();
 		$nb++;
               } else {
-                $po->to_update = 1;
-                $po->update();
+	        if(!$redo) {
+                  $po->to_update = 1;
+                  $po->update();
+		}
               }
               if (!$this->isConflict($po)) {
                 $this->addConflict($po);
@@ -1367,8 +1375,10 @@ class Patch extends mysqlObj
                 $po->insert();
 		$nb++;
 	      } else {
-                $po->to_update = 1;
-                $po->update();
+	        if(!$redo) {
+                  $po->to_update = 1;
+                  $po->update();
+		}
               }
 	      if (strcmp($po->status, "OBSOLETE")) {
                 $po->status = "OBSOLETE";

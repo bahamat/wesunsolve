@@ -21,6 +21,7 @@
     <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>
     <p>Please enter a valid e-mail address, a confirmation e-mail will be sent to it.</p>
+    <p>NOTE: Every field is mandatory.</p>
     <form method="POST" action="/register">
     <table class="ctable">
       <tr><td>Full Name</td><td><input type="text" value="<?php if (isset($fullname)) echo $fullname; ?>" name="fullname"></td></tr>
