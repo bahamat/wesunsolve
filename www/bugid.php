@@ -17,7 +17,7 @@
 	 }
 
 	 $id = mysql_escape_string($_GET['id']);
-	 if (!preg_match("/[0-9]{4}/", $id)) {
+	 if (!preg_match("/^[0-9]{4,15}$/", $id)) {
 	   HTTP::errWWW("Malformed Bug ID");
 	 }
 	 
