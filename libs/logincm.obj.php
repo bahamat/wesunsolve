@@ -58,6 +58,7 @@ class loginCM
   }
 
   public function logout() {
+    global $config;
     global $_SESSION;
     global $_COOKIE;
     if ($this->isLogged) {
@@ -67,6 +68,8 @@ class loginCM
       }
       if (isset($_COOKIE[$config['sitename']])) {
  	unset($_COOKIE[$config['sitename']]);
+	// destroy cookie
+	setcookie ($config['sitename'], "", time() - 3600);
       }
       $this->o_login = NULL;
       $this->username = ""; 
