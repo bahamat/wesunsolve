@@ -177,7 +177,6 @@ class Bugid extends mysqlObj
 /*
 	  if (preg_match("/<b>Related bugs/",$line)) {
             $rb = preg_replace('/.*<b>.*<\/b>:(.+)<br/>/i', '$1', $line);
-  	    echo "RB: $rb\n";
 	  }
 */
 	  if (preg_match("/^bugsContent.Sun/", $line)) {
@@ -211,6 +210,7 @@ class Bugid extends mysqlObj
    	    if (!empty($lineDesc)) {
 	      $curdesc = $this->ft("description");
 	      if (empty($curdesc) || strcmp($lineDesc, $curdesc)) {
+	        echo $lineDesc;
 	        $this->setft("description", str_replace('<br/>', "\r\n", $lineDesc));
 	        $this->update();
 	        echo "\t> Updated description\n";

@@ -267,6 +267,10 @@ select {
   margin-bottom: 20px;
 }
 
+.secondline {
+  margin-top: 20px;
+}
+
 .listbox {
   border: solid 1px #000000;
 /*  margin-top: 30px; */
@@ -464,6 +468,14 @@ p.warning {
   font-size: 0.8em;
 }
 
+#add_uclist_form {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 ul.listinfo {
   list-style-type:none;
 /*  list-style-image:url('/img/information.png'); */
@@ -545,3 +557,8 @@ a:hover {
 
 
 
+/* Code style */
+
+.code {
+  font-family: monospace;
+}

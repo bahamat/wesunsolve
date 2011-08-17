@@ -38,13 +38,22 @@
 	 </ul> 
         </div> 
        </div> 
-       <div class="grid_<?php echo $h->css->s_box + 2; ?> omega"> 
-        <div class="listbox"> 
+       <div class="grid_<?php echo $h->css->s_box; ?> omega">
+        <div class="listbox">
+         <h3>Last 10 updated readmes</h3>
+         <ul>
+	  <li>WIP</li>
+	 </ul>
+	</div>
+       </div>
+       <div class="clear"></div>
+       <div class="prefix_1 grid_<?php echo $h->css->s_box + 5; ?> alpha"> 
+        <div class="listbox firstbox secondline"> 
          <h3>Last 10 comments</h3> 
      <?php if (count($com)) { ?>
          <ul> 
          <?php foreach($com as $c) { ?>
-	   <li><?php echo $c->type.' '.$c->link(); ?>: <?php echo $c->since(); ?> ago</li> 
+	   <li><b><?php $c->fetchLogin(); echo $c->o_login->username; ?></b> on <?php echo $c->type.' '.$c->link(); ?>: <?php echo $c->since(); ?> ago</li> 
          <?php } ?>
 	 </ul> 
     <?php } ?>
