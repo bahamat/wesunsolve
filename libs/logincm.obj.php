@@ -58,9 +58,16 @@ class loginCM
   }
 
   public function logout() {
+    global $_SESSION;
+    global $_COOKIE;
     if ($this->isLogged) {
       $this->isLogged = 0;
-      unset($_SESSION['username']);
+      if (isset($_SESSION['username'])) {
+        unset($_SESSION['username']);
+      }
+      if (isset($_COOKIE[$config['sitename']])) {
+ 	unset($_COOKIE[$config['sitename']]);
+      }
       $this->o_login = NULL;
       $this->username = ""; 
     }
@@ -71,7 +78,7 @@ class loginCM
     global $_COOKIE;
     global $config;
     if (isset($_SESSION['username']) || isset($_COOKIE[$config['sitename']])) {
-      if (isset($_SESSION['username'])) {
+      if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
         $this->username = $_SESSION['username'];
         $l = new Login();
         $l->username = $_SESSION['username'];
@@ -85,7 +92,8 @@ class loginCM
           $this->isLogged = 1;
         }
       } else if (isset($_COOKIE[$config['sitename']])) {
-        $v = parse_str($_COOKIE[$config['sitename']]);
+ 	$v = array();
+        parse_str($_COOKIE[$config['sitename']], &$v);
         $l = new Login();
         $l->username = $v['username'];
         if ($l->fetchFromField("username")) {
