@@ -26,6 +26,13 @@ class UComment extends mysqlObj
 
   public $o_login = null;
 
+
+  public function show() {
+    $ret = $this->comment;
+    $ret = str_replace('\r\n', '<br/>', $ret);
+    return $ret;
+  }
+
   public static function getLastComments() {
     $comments = array();
     $table = "`u_comments`";
