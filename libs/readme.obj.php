@@ -21,6 +21,25 @@ class Readme extends mysqlObj
   public $txt = "";
   
 
+  public static function fetchLast10() {
+    $ret = array();
+
+    $table = "`p_readmes`";
+    $index = "`patch`, `revision`, `when`";
+    $where = "where `when`!=0 order by `when` desc limit 0,10";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Patch($t['patch'], $t['revision']);
+        $k->fetchFromId();
+	$k->lmod = $t['when'];
+        array_push($ret, $k);
+      }
+    }
+    return $ret;
+  }
+
  /**
   * Constructor
   */

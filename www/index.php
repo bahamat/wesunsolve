@@ -36,9 +36,11 @@
  $mvp = Patch::getMostviewed();
  $mvb = Bugid::getMostviewed();
  $com = UComment::getLastComments();
+ $lap = Readme::fetchLast10();
  $content->set("mvp", $mvp);
  $content->set("mvb", $mvb);
  $content->set("com", $com);
+ $content->set("lap", $lap);
  $content->set("news", $news);
 
  $index->set("head", $head);

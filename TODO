@@ -15,6 +15,7 @@ Frontend:
 - Helpus total rework, removed from the menu as of now
 - Let the user remove its comments
 - (lblume) Legende de couleur pour lpatches difficile a distinguer (recommended/security/withdrawn/obsolete)
+- (dagobert) when patch is obsolete, link to the superseeding patch
 
 
 Processing:
@@ -23,3 +24,4 @@ Processing:
 - better Architecture parsing and sorting
 - Add checksum check when downloading patches
 - History for bundles (in/out and updated patches)
+- Timeline for patches (obsoletion, new release, new note, etc..)

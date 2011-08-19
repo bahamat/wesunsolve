@@ -24,7 +24,7 @@
      <table class="ctable">
       <tr>
 <?php $i=0; $prev = null; $n = count($diff) - 1; foreach($diff as $d => $di) { ?>
-      <tr><td id="tdtitle"><?php if (!$i) { 
+      <tr><td class="tdtitle"><?php if (!$i) { 
 			echo "Before ".date($config['dateFormat'], $d); 
 		    } else {
 			echo "Between ".date($config['dateFormat'], $prev)." and ".date($config['dateFormat'], $d); 

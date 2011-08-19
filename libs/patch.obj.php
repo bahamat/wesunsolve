@@ -35,6 +35,7 @@ class Patch extends mysqlObj
 
   /* Fulltext search */
   public $score = 0;
+  public $lmod = 0;
 
   /* Others */
   public $o_latest = null;

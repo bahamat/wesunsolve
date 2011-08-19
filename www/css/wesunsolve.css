@@ -276,6 +276,9 @@ select {
 /*  margin-top: 30px; */
 }
 
+.firstbox {
+}
+
 .listbox h3 {
   font-weight: bold;
   font-size: 1em;
@@ -435,14 +438,14 @@ p.warning {
   font-size: 0.8em;
 }
 
-#tdtitle {
+.tdtitle {
   background-color: #3e6b8a;
   color: #ffffff;
   text-align: center;
   font-size: 1em;
 }
 
-#tdtitle a, #tdtitle a:hover, #tdtitle a:visited {
+.tdtitle a, .tdtitle a:hover, .tdtitle a:visited {
   color: #ffffff;
   font-weight: bold;
 }
@@ -529,12 +532,12 @@ a {
 a:hover {
 }
 
-#d_content a {
+a {
   color: #3e6b8a;
   text-decoration: none;
 }
 
-#d_content a:hover {
+a:hover {
   text-decoration: underline;
 }
 

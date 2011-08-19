@@ -23,7 +23,7 @@
          <h3>Most viewed patches</h3> 
          <ul> 
          <?php foreach($mvp as $p) { ?>
-           <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> (<?php echo $p->views; ?> views)</li>
+           <li><a href="/diffr/type/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> (<?php echo $p->views; ?> views)</li>
          <?php } ?>
 	 </ul> 
         </div> 
@@ -38,11 +38,17 @@
 	 </ul> 
         </div> 
        </div> 
-       <div class="grid_<?php echo $h->css->s_box; ?> omega">
+       <div class="grid_<?php echo $h->css->s_box + 2; ?> omega">
         <div class="listbox">
          <h3>Last 10 updated readmes</h3>
          <ul>
-	  <li>WIP</li>
+<?php if (count($lap)) {
+        foreach($lap as $p) { ?>
+	  <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> has changed on <?php echo date(HTTP::getDateFormat(), $p->lmod); ?></li>
+<?php   }
+      } else { ?>
+	  <li>No data...</li>
+<?php } ?>
 	 </ul>
 	</div>
        </div>
