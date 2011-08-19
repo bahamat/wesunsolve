@@ -23,6 +23,7 @@
       <ul class="listtick">
        <li>Number of registered users: <?php echo MysqlCM::getInstance()->count("login"); ?></li>
        <li>Number of patches registered: <?php echo MysqlCM::getInstance()->count("patches"); ?></li>
+       <li>Number of readmes version gathered: <?php echo MysqlCM::getInstance()->count("p_readmes"); ?></li>
        <li>Number of checksums registered: <?php echo MysqlCM::getInstance()->count("checksums"); ?></li>
        <li>Number of OBSOLETED patches: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `status`='OBSOLETE'"); ?></li>
        <li>Number of Unresolved patches: <?php echo MysqlCM::getInstance()->count("patches", "WHERE `synopsis`=''"); ?></li>

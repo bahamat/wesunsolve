@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::hxpdrntfcbuselkvgm";
+  $shortopts = "a::i::hxpdrntfcbuselkvgmo";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -43,6 +43,7 @@
     echo "\t -k\tCheck for patches checksums\n";
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
+    echo "\t -o\tInsert readmes of patches inside database...\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
   }
@@ -50,6 +51,68 @@
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  if (isset($opts['o'])) {
+
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $cindex = "COUNT(`patch`)";
+    $where = "";
+    if (isset($opts['i'])) {
+      $p = explode("-", $opts['i']);
+      if (count($p) != 2) { die("Malformed patch id\n"); }
+      $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
+    }
+    $where .= " ORDER BY `releasedate` DESC";
+
+    $it = new mIterator("Patch", $index, $table, $where, $cindex);
+    $fields = array("patch", "revision", "when");
+    while(($p = $it->next())) {
+      $p->fetchFromId();
+      echo "[-] Checking readmes for ".$p->name()."\n";
+      $p->getAllReadme();
+      $orig = $p->readmePath();
+      if (file_exists($orig)) {
+        $ro = new Readme();
+        $ro->patch = $p->patch;
+        $ro->revision = $p->revision;
+        $ro->when = 0; // orig readme == 0
+        if ($ro->fetchFromFields($fields)) {
+          $ro->txt = file_get_contents($orig);
+	  $ro->insert();
+	  echo "\t> latest readme added\n";
+	} else {
+	  $c = file_get_contents($orig);
+	  if (strcmp(md5($ro->txt), md5($c))) {
+            $ro->txt = $c;
+	    $ro->update();
+	    echo "\t> latest readme updated\n";
+	  }
+	}
+      }
+      foreach($p->a_readmes as $rfile) {
+        $d = explode("-", $rfile);
+        $d = $d[2];
+	$c = file_get_contents($rfile);
+        $ro = new Readme();
+	$ro->patch = $p->patch;
+	$ro->revision = $p->revision;
+	$ro->when = $d;
+	if ($ro->fetchFromFields($fields)) {
+          $ro->txt = $c;
+          $ro->insert();
+          echo "\t> $d readme added\n";
+	} else {
+	  if (strcmp(md5($ro->txt), md5($c))) {
+            $ro->txt = $c;
+            $ro->update();
+            echo "\t> $d readme updated\n";
+          }
+	}
+      }
+    }
+    return 0;
   }
 
   if (isset($opts['m'])) {
@@ -473,7 +536,9 @@
     for ($i=0,$cnt=0, $c = count($bugs); $i<$c; $i++,$cnt++) {
       $bug = $bugs[$i];
       echo "[-] (left: ".($c - $i).") Trying to download ".$bug->id."..";
-      $bug->fetchFromId();
+      if ($bug->fetchFromId()) {
+	$bug->insert();
+      }
       $bug->fetchFulltext();
       $rc = $bug->dl(1);
       if ($rc)
