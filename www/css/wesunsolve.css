@@ -372,10 +372,20 @@ p.warning {
 
 .browntd {
   background-color: brown;
+  color: #ffffff;
+}
+
+.browntd a {
+  color: #ffffff;
 }
 
 .redtd {
   background-color: red;
+  color: #ffffff;
+}
+
+.redtd a {
+  color: #ffffff;
 }
 
 /* Nav bar & legend */
