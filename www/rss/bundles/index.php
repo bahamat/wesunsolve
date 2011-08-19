@@ -31,19 +31,19 @@
 <rss version="2.0">
   <channel>
     <title>We sun solve - Last bundles</title>
-    <link>http://sunsolve.espix.org</link>
+    <link>http://wesunsolve.net</link>
     <description>Last bundles released</description>
     <language>en-us</language>
     <pubDate><?php echo $now; ?></pubDate>
     <lastBuildDate><?php echo $now; ?></lastBuildDate>
-    <docs>http://sunsolve.espix.org/rss/bundles</docs>
+    <docs>http://wesunsolve.net/rss/bundles</docs>
     <generator>We Sun Solve</generator>
     <managingEditor>tgo@ians.be</managingEditor>
     <webMaster>tgo@ians.be</webMaster>
 <?php foreach ($bundles as $p) { ?>
     <item>
      <title><?php echo $p->filename; ?>: <?php echo $p->synopsis; ?></title>
-     <link>http://sunsolve.espix.org/bundle/id/<?php echo $p->id; ?></link>
+     <link>http://wesunsolve.net/bundle/id/<?php echo $p->id; ?></link>
      <description><?php echo $p->synopsis; ?></description>
      <pubDate><?php if ($p->lastmod) echo date("D, j M Y G:i:s T", $p->lastmod); ?></pubDate>
     </item>

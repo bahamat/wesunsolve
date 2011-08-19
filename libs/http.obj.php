@@ -263,6 +263,14 @@ class HTTP
 	return $pagination;
   }
 
+  public static function linkize($str) {
+    if (preg_match("/[0-9]{6}-[0-9]{2}/", $str)) {
+      $str = preg_replace('/([0-9]{6}-[0-9]{2})/i', '<a href="/patch/id/$1">$1</a>', $str);
+      return $str;
+    }
+    return $str;
+  }
+
 }
 
 ?>

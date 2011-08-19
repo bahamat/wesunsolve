@@ -30,12 +30,12 @@
 <rss version="2.0">
   <channel>
     <title>We sun solve - Site News</title>
-    <link>http://sunsolve.espix.org</link>
+    <link>http://wesunsolve.net</link>
     <description>Last site news</description>
     <language>en-us</language>
     <pubDate><?php echo $now; ?></pubDate>
     <lastBuildDate><?php echo $now; ?></lastBuildDate>
-    <docs>http://sunsolve.espix.org/rss/news</docs>
+    <docs>http://wesunsolve.net/rss/news</docs>
     <generator>We Sun Solve</generator>
     <managingEditor>tgo@ians.be</managingEditor>
     <webMaster>tgo@ians.be</webMaster>
