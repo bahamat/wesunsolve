@@ -53,6 +53,7 @@ class Patch extends mysqlObj
   public $a_comments = array();
 
   public $a_previous = array();
+  public $a_bundles = array();
   public $a_readmes = array();
 
   public function link() {
@@ -704,6 +705,24 @@ class Patch extends mysqlObj
 
   public function name() {
     return sprintf("%d-%02d", $this->patch, $this->revision);
+  }
+
+  public function fetchBundles() {
+    $this->a_bundles = array();
+
+    $table = "`jt_bundles_patches`";
+    $index = "`bid`";
+    $where = "WHERE `pid`='".$this->patch."' AND `prev`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Bundle($t['bid']);
+        $k->fetchFromId();
+        array_push($this->a_bundles, $k);
+      }
+    }
+    return 0;
   }
 
   /* Users comments */

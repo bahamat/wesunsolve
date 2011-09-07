@@ -125,15 +125,15 @@ LIMIT 0,20;
     $where .= " MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`)";
     $where .= " AGAINST(".$my->quote($ftext).")";
     $table .= " b, `bugids_fulltext` ft";
-    $indx .= ", MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`)";
-    $indx .= " AGAINST(".$my->quote($ftext).") AS score";
+    $indx .= ", round(MATCH(ft.`comments`, ft.`description`, ft.`keywords`, ft.`responsible_engineer`, ft.`synopsis`, ft.`workaround`, ft.`raw`)";
+    $indx .= " AGAINST(".$my->quote($ftext).")) AS score";
     
     $search = true;
     $score = true;
     $idxcount = "count(b.`id`) as c";
   }
 
-  if (!isset($ftext)) $where .= " ORDER BY `d_updated` DESC";
+  
   if (!isset($idxcount)) $idxcount = "count($indx) as c";
 
   if (!$search) {
@@ -156,6 +156,11 @@ LIMIT 0,20;
     $nb_page = round($nb_page,0);
   }
 
+  if (!isset($ftext)) { 
+    $where .= " ORDER BY `d_updated` DESC"; 
+  } else {
+    $where .= " ORDER BY `score` DESC, `d_updated` DESC"; 
+  }
   
   /* check if url is saying where to start... */
   if(isset($page) && !empty($page)) {

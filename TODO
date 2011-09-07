@@ -4,18 +4,17 @@ Backend:
 
 Frontend:
 
-*WIP* Bug ids presentation searching and so on...
-- Try to improve browsing experience (main page refurbishing mainly+menu searches)
 - more searching field
 - Let the user do saved search with notification when the results are changed.
 - Add the ability to share publicly custom lists of patches and rate them
 - Let the user download a pack of readme from a custom list
 - When managing its patch list, user should have the opportunity to change patch to its latest release
-- refurbish helpus page
 - Helpus total rework, removed from the menu as of now
-- Let the user remove its comments
-- (lblume) Legende de couleur pour lpatches difficile a distinguer (recommended/security/withdrawn/obsolete)
 - (dagobert) when patch is obsolete, link to the superseeding patch
+- Add a sort by function to the patch list mechanism.
+- add a md5 search for files to find from which patches they originates...
+- bugid sort by date
+
 
 
 Processing:
@@ -25,3 +24,4 @@ Processing:
 - Add checksum check when downloading patches
 - History for bundles (in/out and updated patches)
 - Timeline for patches (obsoletion, new release, new note, etc..)
+

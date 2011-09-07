@@ -70,6 +70,15 @@
 	 	 <li><a href="/pdl/p/<?php echo $patch->name(); ?>">Download</a> locally</a>
 <?php } ?>
 		</ul>
+		<h3><a id="dep"></a>Bundles / Patch clusters</h3>
+                <?php if (!count($patch->a_bundles)) { echo "<p>This patch is not integrated in any bundle</p>"; } else { ?>
+                <ul>
+                <?php foreach ($patch->a_bundles as $p) { ?>
+                 <li><a href="/bundle/id/<?php echo $p->id; ?>"><?php echo $p->filename; ?></a> : <?php echo $p->synopsis; ?></li>
+                <?php } ?>
+                </ul>
+                <?php } ?>
+                <p><br/><a href="#top"><img alt="back to top" src="/img/arrow_up.png">back to top</a></p>
 		<h3><a id="dep"></a>Patch Requirements</h3>
 		<?php if (!count($patch->a_depend)) { echo "<p>There is no patch dependency for ".$patch->name()."</p>"; } else { ?>
 		<ul>

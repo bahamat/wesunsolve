@@ -17,13 +17,16 @@
         </div> 
        </div> 
        <div class="clear clearfix"></div>
+       <h3>Join us on IRC!</h3>
+       <p>You can join us at <b>#sunsolve</b> on <b>irc.freenode.net</b> with a regular IRC client or by using the <a target="_blank" href="http://webchat.freenode.net?channels=sunsolve&uio=d4">webchat</a>.</p>
+       <p>Come there to simply meet, idle, see the live patch flow, ask questions, drop comments or suggestion and have fun!</p>
        <h3>Recent activity</h3>
        <div class="prefix_1 grid_<?php echo $h->css->s_box; ?> alpha"> 
         <div class="listbox firstbox"> 
          <h3>Most viewed patches</h3> 
          <ul> 
          <?php foreach($mvp as $p) { ?>
-           <li><a href="/diffr/type/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> (<?php echo $p->views; ?> views)</li>
+           <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> (<?php echo $p->views; ?> views)</li>
          <?php } ?>
 	 </ul> 
         </div> 
@@ -44,7 +47,7 @@
          <ul>
 <?php if (count($lap)) {
         foreach($lap as $p) { ?>
-	  <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> has changed on <?php echo date(HTTP::getDateFormat(), $p->lmod); ?></li>
+	  <li><a href="/diffr/type/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> has changed on <?php echo date(HTTP::getDateFormat(), $p->lmod); ?></li>
 <?php   }
       } else { ?>
 	  <li>No data...</li>
