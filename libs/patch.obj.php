@@ -54,6 +54,7 @@ class Patch extends mysqlObj
 
   public $a_previous = array();
   public $a_bundles = array();
+  public $a_freadmes = array();
   public $a_readmes = array();
 
   public function link() {
@@ -65,55 +66,10 @@ class Patch extends mysqlObj
   }
 
   public function getAllReadme() {
-    $this->a_readmes = array();
+    $this->a_freadmes = array();
     foreach(glob($this->readmePath()."-*") as $r) {
-      $this->a_readmes[] = $r;
+      $this->a_freadmes[] = $r;
     }
-  }
-
-  public function diffReadme() {
-    $diff = array();
-    /* First parse every readme file name and sort them in an array by date */
-    foreach($this->a_readmes as $f) {
-      $d = explode("-", $f);
-      $d = $d[2];
-      $diff[$d] = $f;
-    }
-    ksort($diff);
-    
-    /* Fill an array like this:
-     * array( date_first_readme => "Initial release",
-     *        date_second_readme => "diff with first one",
-     *        date_last_readme => "diff with previous one"
-     *      )
-     */
-    $ret = array();
-    $i = 0;
-    $old = null;
-    foreach($diff as $d => $fn) {
-      if (!$i) { /* first one */
- 	$i++;
-	$ret[$d] = "Initial release";
-	$old = $fn;
-	//$old = file_get_contents($fn);
-	continue;
-      }
-      //$new = file_get_contents($fn);
-      $new = $fn;
-      $di = cli_diff($old, $new);
-      //$di = xdiff_string_diff($old, $new, 0, false);
-      $ret[$d] = $di;
-      $old = $new;
-    }
-    /* Now add the latest readme with date of today */
-    $d = time();
-    $new = $this->readmePath();
-    //$new = file_get_contents($this->readmePath());
-    $di = cli_diff($old, $new);
-    //$di = xdiff_string_diff($old, $new, 0, false);
-    $ret[$d] = $di;
-
-    return $ret;
   }
  
   public function fetchCSum() {
@@ -974,6 +930,31 @@ class Patch extends mysqlObj
   }
 
 
+  /* Readmes */
+  function fetchReadmes($all=1) {
+
+    $this->a_readmes = array();
+    $table = "`p_readmes`";
+    $index = "`when`";
+    $where = "WHERE `patch`='".$this->patch."' AND `revision`='".$this->revision."' ORDER BY `when` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    { 
+      foreach($idx as $t) {
+        $k = new Readme();
+        $k->patch = $this->patch;
+        $k->revision = $this->revision;
+        $k->when = $t['when'];
+        if ($all) $k->fetchFromId();
+        array_push($this->a_readmes, $k);
+      }
+    }
+    if (count($this->a_readmes) > 1) {
+      array_push($this->a_readmes, array_shift($this->a_readmes));
+    }
+    return 0;
+  }
+
 
   /* Keywords */
   function fetchKeywords($all=1) {
@@ -1663,7 +1644,7 @@ class Patch extends mysqlObj
         }
       }
     }
-    foreach($this->a_readmes as $rfile) {
+    foreach($this->a_freadmes as $rfile) {
       $d = explode("-", $rfile);
       $d = $d[2];
       $c = file_get_contents($rfile);
@@ -1681,6 +1662,30 @@ class Patch extends mysqlObj
           $ro->update();
           echo "\t> $d readme updated\n";
         }
+      }
+    }
+    /* Make the diff ! */
+    $this->fetchReadmes(0);
+    if (count($this->a_readmes) > 1) { // only make the diff if more than one readme...
+      $i = 0;
+      $old = null;
+      foreach($this->a_readmes as $ro) {
+        $ro->fetchFromId();
+        if (!$i) { /* first one */
+          $i++;
+ 	  $ro->diff = 'Initial release';
+          $old = $ro;
+          continue;
+        }
+        $new = $ro;
+        if ($new->when == 0) { // diffing the last readme
+          $di = cli_diff($this->readmePath()."-".$old->when, $this->readmePath());
+        } else {
+          $di = cli_diff($this->readmePath()."-".$old->when, $this->readmePath()."-".$new->when);
+        }
+        $ro->diff = $di;
+        $ro->update();
+        $old = $new;
       }
     }
   }

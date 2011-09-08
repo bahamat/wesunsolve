@@ -19,6 +19,7 @@ class Readme extends mysqlObj
   public $revision = -1;
   public $when = -1;
   public $txt = "";
+  public $diff = "";
   
 
   public static function fetchLast10() {
@@ -52,13 +53,15 @@ class Readme extends mysqlObj
                         "patch" => SQL_INDEX,
                         "revision" => SQL_INDEX,
                         "when" => SQL_INDEX,
-                        "txt" => SQL_PROPE
+                        "txt" => SQL_PROPE,
+                        "diff" => SQL_PROPE
                  );
 
     $this->_myc = array( /* mysql => class */
                         "patch" => "patch",
                         "revision" => "revision",
                         "when" => "when",
+                        "diff" => "diff",
                         "txt" => "txt"
                  );
   }

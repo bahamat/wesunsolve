@@ -41,11 +41,10 @@
 	    }
             $title = "Readme diff for patch: ".$patch->name()." - ".$patch->synopsis;
             $content = new Template("./tpl/diffrp.tpl");
-            $patch->getAllReadme();
+            $patch->fetchReadmes(0);
             if (!count($patch->a_readmes)) {
     	      HTTP::errWWW("This object doesn't have multiple readme");
             }
-            $content->set("diff", $patch->diffReadme());
             $content->set("patch", $patch);
             $content->set("config", $config);
             break;

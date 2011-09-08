@@ -23,17 +23,20 @@
     <div class="ctable">
      <table class="ctable">
       <tr>
-<?php $i=0; $prev = null; $n = count($diff) - 1; foreach($diff as $d => $di) { ?>
-      <tr><td class="tdtitle"><?php if (!$i) { 
-			echo "Before ".date($config['dateFormat'], $d); 
+<?php $i=0; $prev = null; $n = count($patch->a_readmes) - 1; foreach($patch->a_readmes as $ro) { $ro->fetchFromId(); ?>
+      <tr><td class="tdtitle">
+     <?php if(!$ro->when) $ro->when = time();
+	   if($prev && !$prev->when) $prev->when = time();
+           if (!$i) { 
+			echo "Before ".date($config['dateFormat'], $ro->when); 
 		    } else {
-			echo "Between ".date($config['dateFormat'], $prev)." and ".date($config['dateFormat'], $d); 
+			echo "Between ".date($config['dateFormat'], $prev->when)." and ".date($config['dateFormat'], $ro->when); 
 		    }
-		    $prev = $d;
-	      ?> <a href="/readme/id/<?php echo $patch->name(); ?><?php if ($i != $n) echo "-$d"; ?>">View full README</a>
+		    $prev = $ro;
+	      ?> <a href="/readme/id/<?php echo $patch->name(); ?><?php if ($i != $n) echo '-'.$ro->when; ?>">View full README</a>
 	  </td></tr>
       <tr>
-       <td class="tdcode"><?php echo nl2br($di); ?></td>
+       <td class="tdcode"><?php echo nl2br($ro->diff); ?></td>
       </tr>
 <?php $i++; } ?>
      </table>
