@@ -436,6 +436,9 @@
     	  echo "failed\n";
         } else {
   	  echo "done\n";
+	  if (file_exists($p->readmePath()) && !filesize($p->readmePath()) && !isset($opts['t'])) {
+	    $p->updateDBReadmes();
+	  }
         }
       }
     }
@@ -451,6 +454,7 @@
          unlink($p->readmePath()."-".$now);
          echo "[-] Same Readme for ".$p->name()." has been redownload...\n";
       } else {
+	 $p->updateDBReadmes();
          echo "[-] New version of Readme for ".$p->name()." has been download...\n";
       }
     }
