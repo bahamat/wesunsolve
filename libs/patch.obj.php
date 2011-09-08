@@ -1640,6 +1640,52 @@ class Patch extends mysqlObj
   }
 
 
+  public function updateDBReadmes() {
+
+    $fields = array("patch", "revision", "when");
+    $this->getAllReadme();
+    $orig = $this->readmePath();
+    if (file_exists($orig)) {
+      $ro = new Readme();
+      $ro->patch = $this->patch;
+      $ro->revision = $this->revision;
+      $ro->when = 0; // orig readme == 0
+      if ($ro->fetchFromFields($fields)) {
+        $ro->txt = file_get_contents($orig);
+        $ro->insert();
+        echo "\t> latest readme added\n";
+      } else {
+        $c = file_get_contents($orig);
+        if (strcmp(md5($ro->txt), md5($c))) {
+          $ro->txt = $c;
+          $ro->update();
+          echo "\t> latest readme updated\n";
+        }
+      }
+    }
+    foreach($this->a_readmes as $rfile) {
+      $d = explode("-", $rfile);
+      $d = $d[2];
+      $c = file_get_contents($rfile);
+      $ro = new Readme();
+      $ro->patch = $this->patch;
+      $ro->revision = $this->revision;
+      $ro->when = $d;
+      if ($ro->fetchFromFields($fields)) {
+        $ro->txt = $c;
+        $ro->insert();
+        echo "\t> $d readme added\n";
+      } else {
+        if (strcmp(md5($ro->txt), md5($c))) {
+          $ro->txt = $c;
+          $ro->update();
+          echo "\t> $d readme updated\n";
+        }
+      }
+    }
+  }
+
+
  /**
   * Constructor
   */

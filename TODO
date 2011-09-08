@@ -13,9 +13,6 @@ Frontend:
 - (dagobert) when patch is obsolete, link to the superseeding patch
 - Add a sort by function to the patch list mechanism.
 - add a md5 search for files to find from which patches they originates...
-- bugid sort by date
-
-
 
 Processing:
 
