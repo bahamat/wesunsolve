@@ -36,8 +36,8 @@
               $what = "patch";
               $number = $id;
 	    } else {
-              $patch->fetchAll(2);
-              $patch->fetchPrevious(2);
+//              $patch->fetchAll(2);
+//              $patch->fetchPrevious(2);
 	    }
             $title = "Readme diff for patch: ".$patch->name()." - ".$patch->synopsis;
             $content = new Template("./tpl/diffrp.tpl");
