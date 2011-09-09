@@ -38,6 +38,7 @@ class Patch extends mysqlObj
   public $lmod = 0;
 
   /* Others */
+  public $o_obsby = null; /* Obsoleted by .. */
   public $o_latest = null;
   public $o_current = null;
   public $o_csum = null;
@@ -661,6 +662,23 @@ class Patch extends mysqlObj
 
   public function name() {
     return sprintf("%d-%02d", $this->patch, $this->revision);
+  }
+
+  public function fetchObsby() {
+    /* TODO: Fetch the obsoleted by patch */
+    $this->o_obsby = null;
+    $table = "`jt_patches_obsolated`";
+    $index = "`patchid`, `revision`";
+    $where = "WHERE `obsoid`='".$this->patch."' AND `obsorev`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0])) {
+        $t = $idx[0];
+        $this->o_obsby = new Patch($t['patchid'], $t['revision']);
+      }
+    }
+    return 0;
   }
 
   public function fetchBundles() {

@@ -36,6 +36,7 @@
 	 } else {
            $patch->fetchAll(2);
            $patch->fetchPrevious(2);
+           $patch->fetchObsby();
 	 }
         $patch->viewed();
    

@@ -46,6 +46,12 @@
 <?php if ($patch->pca_sec) { ?>
 		 <li class="orange">This is a security patch</li>
 <?php } ?>
+<?php if (isset($patch->o_obsby) && $patch->o_obsby) { ?>
+                 <li>Obsoleted by: <a href="/patch/id/<?php echo $patch->o_obsby->name(); ?>"><?php echo $patch->o_obsby->name(); ?></a></li>
+<?php } ?>
+<?php if ($patch->o_latest) { ?>
+                 <li>Latest release of this patch: <a href="/patch/id/<?php echo $patch->o_latest->name(); ?>"><?php echo $patch->o_latest->name(); ?></a></li>
+<?php } ?>
 		 <li>Release date: <?php if($patch->releasedate) echo date(HTTP::getDateFormat(), $patch->releasedate); ?></li>
 		 <li>Detected status: <?php echo $patch->status; ?></li>
 		 <li>Synopsis: <?php echo $patch->synopsis; ?></li>
@@ -62,9 +68,6 @@
  		 <?php if ($mreadme) { ?>
 	         <li><a href="/diffr/type/patch/id/<?php echo $patch->name(); ?>">View differences between README versions</a></li>
 		 <?php } ?>
-  		 <?php if ($patch->o_latest) { ?>
-                 <li>Latest release of this patch: <a href="/patch/id/<?php echo $patch->o_latest->name(); ?>"><?php echo $patch->o_latest->name(); ?></a></li>
-                 <?php } ?>
                  <li><a href="https://getupdates.oracle.com/all_unsigned/<?php echo $patch->name().".zip"; ?>">Download</a> at Oracle MOS</li>
 <?php if ($is_dl && $archive) { ?>
 	 	 <li><a href="/pdl/p/<?php echo $patch->name(); ?>">Download</a> locally</a>

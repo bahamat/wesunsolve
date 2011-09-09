@@ -10,9 +10,10 @@ Frontend:
 - Let the user download a pack of readme from a custom list
 - When managing its patch list, user should have the opportunity to change patch to its latest release
 - Helpus total rework, removed from the menu as of now
-- (dagobert) when patch is obsolete, link to the superseeding patch
+*DONE* - (dagobert) when patch is obsolete, link to the superseeding patch
 - Add a sort by function to the patch list mechanism.
 - add a md5 search for files to find from which patches they originates...
+- Build a tree of patch revision timeline...
 
 Processing:
 
