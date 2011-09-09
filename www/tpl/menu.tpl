@@ -11,6 +11,7 @@
       <li class="m_element"><a href="/lpatches">Latest patches</a></li> 
       <li class="m_element"><a href="/lpatches/sec/1">Latest security patches</a></li> 
       <li class="m_element"><a href="/lpatches/bad/1">Latest obsoleted patches</a></li> 
+      <li class="m_element"><a href="/lastreadme">Latest updated READMEs</a></li> 
       <li class="m_element"><a href="/patch_search">Search for patches</a></li> 
       <li class="m_element"><a href="/plist_report">Create patch reports</a></li> 
       <li class="m_element"><a href="/compare">Compare patch levels</a></li> 

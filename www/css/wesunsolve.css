@@ -197,7 +197,6 @@ select {
   vertical-align: sub;
 }
 
-
 /* Content ID */
 
 #d_content {
@@ -385,6 +384,10 @@ p.warning {
 }
 
 .redtd a {
+  color: #ffffff;
+}
+
+.darklink {
   color: #ffffff;
 }
 

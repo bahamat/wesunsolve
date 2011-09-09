@@ -43,7 +43,7 @@
        </div> 
        <div class="grid_<?php echo $h->css->s_box + 2; ?> omega">
         <div class="listbox">
-         <h3>Last 10 updated readmes</h3>
+         <h3>Last 10 updated READMEs <a class="darklink" href="/lastreadme">[more]</a></h3>
          <ul>
 <?php if (count($lap)) {
         foreach($lap as $p) { ?>
