@@ -91,7 +91,7 @@
   $foot = new Template("./tpl/foot.tpl");
   $foot->set("start_time", $start_time);
   $content = new Template("./tpl/lastreadme.tpl");
-  $str = "/lastupdates";
+  $str = "/lastreadme";
   $content->set("ru", $ru);
   $content->set("start", $start);
   $content->set("nb", $nb);
