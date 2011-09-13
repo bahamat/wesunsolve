@@ -40,7 +40,7 @@
 	 }
         $patch->viewed();
    
-        $patch->getAllReadme();
+        $patch->fetchReadmes(0);
         $patch->fetchBundles();
         $mreadme = false;
         if (count($patch->a_readmes)) {
