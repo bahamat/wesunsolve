@@ -255,7 +255,7 @@ select {
 
 #d_boxes {
   float:right;
-  background-color: #ff;
+  background-color: #ff0000;
 }
 
 #d_main {
@@ -561,7 +561,7 @@ a:hover {
 }
 
 #d_content i {
-  font-weight: italic;
+  font-style: italic;
 }
 
 .d_content_box p {
@@ -577,4 +577,12 @@ a:hover {
 
 .code {
   font-family: monospace;
+}
+
+/* Dynamic content */
+
+.img_loading {
+  margin-left: auto;
+  margin-right: auto;
+  text-align:center;
 }

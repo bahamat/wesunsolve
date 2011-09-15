@@ -16,7 +16,7 @@
   <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script> 
 <?php if (isset($head_add)) echo $head_add; ?>
  </head> 
- <body> 
+ <body<?php if (isset($bargs) && !empty($bargs)) { echo " $bargs"; } ?>> 
  
   <div class="container_24"> 
    <div id="header" class="grid_24 d_bar"> 

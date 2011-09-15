@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::hxpdrntfcbuselkvgmo";
+  $shortopts = "a::i::j::hxpdrntfcbuselkvgmo";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -35,6 +35,7 @@
     echo "\t -x\tDo not update the patchdiag.xref\n";
     echo "\t -p\tDo not parse the patchdiag.xref\n";
     echo "\t -g\tAdd new patchdiag.xref archives\n";
+    echo "\t -j=<file>\tSpecify another file to parse\n";
     echo "\t -d\tDo not download anything\n";
     echo "\t -n\tDo not parse anything\n";
     echo "\t -r\tParse the readme anyway\n";
@@ -323,32 +324,44 @@
 
   if (!isset($opts['p']) && !isset($opts['t'])) {
     echo "[-] Parsing patchdiag.xref for new patches...\n";
-    Patch::parsePatchdiag();
+    if (isset($opts['j']) && !empty($opts['j'])) {
+      Patch::parsePatchdiag($opts['j']);
+      return 0; // exit after parsing if file is specified
+    } else {
+      Patch::parsePatchdiag();
+    }
   }
   
   $patches = array();
   if (isset($opts['t'])) {
-    echo "[-] Fetching the toadd queue from databases and flag patches to update: .";
-    $table = "`toadd`";
-    $index = "`patch`, `rev`";
-    $where = "";
-    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
-    {
-      $i=0;
-      foreach($idx as $t) {
-        $i++;
-        $g = new Patch($t['patch'], $t['rev']);
-        if ($g->fetchFromId()) {
-	  $g->insert();
-	}
-        $g->to_update = 1;
-        $g->update();
-        /* Remove from toadd */
-        $q = "DELETE FROM `toadd` WHERE `patch`='".$p->patch."' AND `rev`='".$p->revision."'";
-        $m->rawQuery($q);
+    if (isset($opts['j']) && !empty($opts['j'])) {
+      if (file_exists($opts['j'])) {
+	Patch::addListFile($opts['j']);
       }
+      return 0;
+    } else {
+      echo "[-] Fetching the toadd queue from databases and flag patches to update: .";
+      $table = "`toadd`";
+      $index = "`patch`, `rev`";
+      $where = "";
+      if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+      {
+        $i=0;
+        foreach($idx as $t) {
+          $i++;
+          $g = new Patch($t['patch'], $t['rev']);
+          if ($g->fetchFromId()) {
+  	  $g->insert();
+  	}
+          $g->to_update = 1;
+          $g->update();
+          /* Remove from toadd */
+          $q = "DELETE FROM `toadd` WHERE `patch`='".$g->patch."' AND `rev`='".$g->revision."'";
+          $m->rawQuery($q);
+        }
+      }
+      echo "done\n";
     }
-    echo "done\n";
   } 
 
   $table = "`patches`";

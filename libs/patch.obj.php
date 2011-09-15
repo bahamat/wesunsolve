@@ -380,10 +380,40 @@ class Patch extends mysqlObj
     }
   }
 
-  public static function parsePatchdiag() {
+  public static function addListFile($file) {
+    global $config;
+    if (!file_exists($file)) {
+      return -1;
+    }
+    $lines = file($file);
+    foreach ($lines as $line) {
+      $np = false;
+      if (empty($line)) {
+        continue;
+      }
+      // we asssume that if the line is not empty, it's a correct patch number
+      $p = explode("-", $line);
+      if (count($p) != 2)
+	continue;
+      $po = new Patch($p[0], $p[1]);
+      if ($po->fetchFromId()) {
+	echo "[-] Adding ".$po->name()." as new patch.\n";
+	$po->to_update = 1;
+	$po->insert();
+      } else {
+        echo "[-] ".$po->name()." already there..\n";
+      }
+    }
+  }
+
+  public static function parsePatchdiag($file=NULL) {
     global $config, $stats;
 
-    $file = $config['tmppath']."/patchdiag.xref";
+    $oldone = true;
+    if (!$file) {
+      $oldone = false;
+      $file = $config['tmppath']."/patchdiag.xref";
+    }
     if (!file_exists($file)) {
       return -1;
     }
@@ -391,6 +421,7 @@ class Patch extends mysqlObj
     $nb=0;
     $mod=0;
     foreach ($lines as $line) {
+      $np = false;
       if (empty($line)) {
 	continue;
       }
@@ -398,36 +429,41 @@ class Patch extends mysqlObj
 	continue;
       }
       $fields = explode("|", $line);
+      if (count($fields) < 3) // invalid line...
+	continue;
       $pid = $fields[0];
       $rev = $fields[1];
       $pca_rec = 0;
       $pca_sec = 0;
       $pca_bad = 0;
-      if ($fields[4] == "S") {
+      if (isset($fields[4]) && $fields[4] == "S") {
         $pca_sec = 1;
       }
-      if ($fields[3] == "R") {
+      if (isset($fields[3]) && $fields[3] == "R") {
         $pca_rec = 1;
       }
-      if (!strcmp(trim($fields[5]), "B") || !strcmp(trim($fields[5]), "YB")) {
+      if (isset($fields[5]) && (!strcmp(trim($fields[5]), "B") || !strcmp(trim($fields[5]), "YB"))) {
         $pca_bad = 1;
       }
-      $r_date = $fields[2];
+      if (isset($fields[2])) { 
+        $r_date = $fields[2];
+      }
       $synopsis = $fields[count($fields) - 1];
       $patch = new Patch($pid, $rev);
       $new = false;
       if ($patch->fetchFromId()) {
+        $np = true;
         echo "   > New patch: ".$patch->name()."\n";
         $ip = new Ircnp();
 	$ip->p = $patch->patch;
 	$ip->r = $patch->revision;
         $new = true;
-	Announce::getInstance()->nPatch($ip);
+	if (!$oldone) Announce::getInstance()->nPatch($ip);
 	$patch->insert();
         $nb++;
-        Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
+        if (!$oldone) Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
       }
-      if ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad) {
+      if (!$oldone && ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad)) {
         $patch->pca_rec = $pca_rec;
         $patch->pca_sec = $pca_sec;
         $patch->pca_bad = $pca_bad;
