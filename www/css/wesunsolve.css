@@ -365,6 +365,10 @@ p.warning {
   background-color: green;
 }
 
+.greentd a {
+  color: #000000;
+}
+
 .orangetd {
   background-color: #ff9900;
 }

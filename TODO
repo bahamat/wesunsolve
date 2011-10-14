@@ -23,3 +23,9 @@ Processing:
 - Add checksum check when downloading patches
 - History for bundles (in/out and updated patches)
 - Timeline for patches (obsoletion, new release, new note, etc..)
+
+LOOK AT:
+
+https://updates.oracle.com/Orion/Services/search?bug=<patchid>
+http://blogs.oracle.com/patch/entry/useful_patch_related_downloads
+

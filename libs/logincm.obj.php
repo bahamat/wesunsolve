@@ -48,7 +48,7 @@ class loginCM
     $l->last_seen = time();
     $l->update();
     $this->username = $l->username;
-    $_SESSION['username'] = $l->username;
+    if (isset($_SESSION)) $_SESSION['username'] = $l->username;
     if ($keep) { // keep you logged in
       $vstr = md5($l->username.$config['sitename'].$l->password);
       $vstr = 'username='.$l->username.'&vstr='.$vstr;

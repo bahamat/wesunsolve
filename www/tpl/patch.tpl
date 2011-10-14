@@ -68,7 +68,7 @@
  		 <?php if ($mreadme) { ?>
 	         <li><a href="/diffr/type/patch/id/<?php echo $patch->name(); ?>">View differences between README versions</a></li>
 		 <?php } ?>
-                 <li><a href="https://getupdates.oracle.com/all_unsigned/<?php echo $patch->name().".zip"; ?>">Download</a> at Oracle MOS</li>
+                 <li><a href="https://getupdates.oracle.com/all_unsigned/<?php echo $patch->name().'.'.$patch->findExt(); ?>">Download</a> at Oracle MOS</li>
 <?php if ($is_dl && $archive) { ?>
 	 	 <li><a href="/pdl/p/<?php echo $patch->name(); ?>">Download</a> locally</a>
 <?php } ?>

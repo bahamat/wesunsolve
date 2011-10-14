@@ -570,6 +570,22 @@ class Patch extends mysqlObj
     return true;
   }
 
+  public function findExt() {
+    global $config;
+
+    $path = $this->path();
+    $zipfile = $path."/".$this->name().".zip";
+    $tarfile = $path."/".$this->name().".tar.Z";
+
+    if (file_exists($zipfile)) {
+      return "zip";
+    } else if (file_exists($tarfile)) {
+      return "tar.Z";
+    } else {
+      return "zip";
+    }
+  }
+
   public function findArchive() {
     global $config;
    
@@ -1744,6 +1760,107 @@ class Patch extends mysqlObj
     }
   }
 
+  public function toXML(&$xml, $arg) {
+
+    $xml->push('patch', array('id' => $this->patch, 'rev' => sprintf("%02d", $this->revision)));
+    $xml->element('status', $this->status);
+    $xml->element('synopsis', $this->synopsis);
+    $xml->element('releasedate', $this->releasedate);
+    $xml->element('filesize', $this->filesize);
+    if ($this->pca_rec) $xml->emptyelement('recommended');
+    if ($this->pca_sec) $xml->emptyelement('security');
+    if ($this->pca_bad) $xml->emptyelement('bad');
+    $xml->element('synopsis', $this->synopsis);
+    $xml->element('readme', 'http://wesunsolve.net/readme/id/'.$this->name());
+    $xml->element('download', 'https://getupdates.oracle.com/all_unsigned/'.$this->name().'.'.$this->findExt());
+
+    /* Keywords */
+    $this->fetchKeywords();
+    if (count($this->a_keywords)) {
+      $xml->push('keywords');
+      foreach($this->a_keywords as $k) {
+        $xml->emptyelement('keyword', array('value' => $k->keyword));
+      }
+      $xml->pop();
+    }
+
+    if ($arg) {
+
+      /* Bundles where this patch is present */
+      $this->fetchBundles();
+      if (count($this->a_bundles)) {
+        $xml->push('bundles');
+        foreach($this->a_bundles as $b) {
+          $xml->push('bundle', array('filename' => $b->filename));
+          $xml->element('url', 'http://wesunsolve.net/bundle/id/'.$b->id);
+          $xml->pop();
+        }
+        $xml->pop();
+      }
+  
+  
+      /* Patch requirements */
+      $this->fetchRequired();
+      if (count($this->a_depend)) {
+        $xml->push('required');
+        foreach($this->a_depend as $p) {
+          $xml->emptyelement('patch', array('id' => $p->patch, 'rev' => $p->revision));
+        }
+        $xml->pop();
+      }
+  
+      /* Patch obsoleted by this one */
+      $this->fetchObsolated();
+      if (count($this->a_obso)) {
+        $xml->push('obsolete');
+        foreach($this->a_obso as $p) {
+          $xml->emptyelement('patch', array('id' => $p->patch, 'rev' => $p->revision));
+        }
+        $xml->pop();
+      }
+  
+      /* Conflitcs */
+      $this->fetchConflicts();
+      if (count($this->a_conflicts)) {
+	foreach($this->a_conflicts as $p) {
+	  $xml->emptyelement('patch', array('id' => $p->patch, 'rev' => $p->revision));
+	}
+        $xml->push('conflicts');
+        $xml->pop();
+  
+      }
+  
+      /* Bugids */
+      $this->fetchBugids();
+      if (count($this->a_bugids)) {
+        $xml->push('bugs');
+	foreach($this->a_bugids as $p) {
+	  $xml->emptyelement('bug', array('id' => $p->id));
+	}
+        $xml->pop();
+  
+      }
+  
+      /* Bug ids with included patches */
+      $this->fetchPrevious(2);
+      if (count($this->a_previous)) {
+        $xml->push('previousbugs');
+        foreach($this->a_previous as $p) {
+          if (count($p->a_bugids)) {
+	    $xml->push('patch', array('id' => $p->patch, 'rev' => $p->revision));
+            foreach($p->a_bugids as $b) {
+	      $xml->emptyelement('bug', array('id' => $b->id));
+   	    }
+	    $xml->pop();
+	  }
+        }
+        $xml->pop();
+  
+      }
+    }
+  
+    $xml->pop();
+  }
 
  /**
   * Constructor
