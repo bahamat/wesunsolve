@@ -3,7 +3,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>  
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Database statistics</h2>
+     <h2 class="grid_10 push_1 alpha omega">Figures and numbers</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -17,6 +17,12 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
+    <h3>Visitors</h3>
+     <p>Monthly visits graph:</p>
+     <div style="text-align: center;"><img src="./static/visits_month.png" alt="Monthly visits graph"/></div>
+     <p>Yearly visits graph:</p>
+     <div style="text-align: center;"><img src="./static/visits_year.png" alt="Monthly visits graph"/></div>
+    <h3>Database</h3>
     <p>
       Here are the stats of our database:
     </p>

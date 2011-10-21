@@ -17,7 +17,7 @@
  $menu = new Template("./tpl/menu.tpl");
  $foot = new Template("./tpl/foot.tpl");
  $foot->set("start_time", $start_time);
- $content = new Template("./tpl/dbstats.tpl");
+ $content = new Template("./tpl/stats.tpl");
 
  $index->set("head", $head);
  $index->set("menu", $menu);

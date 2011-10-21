@@ -38,7 +38,7 @@
      <ul> 
       <li class="m_header">News</li> 
       <li class="m_element"><a href="/backlinks">Backlinks</a></li> 
-      <li class="m_element"><a href="/dbstats">Database statistics</a></li> 
+      <li class="m_element"><a href="/stats">Figures and numbers</a></li> 
       <li class="m_element"><a href="/changelog">Change log</a></li> 
       <li class="m_element"><a href="/docs">Documentation</a></li> 
       <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last bundles</a></li> 
