@@ -105,10 +105,9 @@ class Bugid extends mysqlObj
     }
 
     if (!$there) {
-      $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" --user=\"".$config['MOSuser']."\"";
-      $cmd .= " --password=\"".$config['MOSpass']."\"";
-      $cmd .= " --load-cookies /srv/sunsolve/bin/cookies.txt ";
-      $cmd .= "--save-cookies /srv/sunsolve/bin/cookies.txt --keep-session-cookies ";
+      $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" ";
+      $cmd .= " --load-cookies /srv/sunsolve/tmp/cookies.txt ";
+      $cmd .= "--save-cookies /srv/sunsolve/tmp/cookies.txt --keep-session-cookies ";
       $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."\"";
       passthru($cmd);
     }
@@ -122,9 +121,11 @@ class Bugid extends mysqlObj
       if (!$size || $size == 2009) {
 	unlink($fp);
         echo "403";
+        return -1;
       }
       if($size == 7997) {
         echo "404";
+        return -1;
       }
     } else {
       echo "dont exist";
