@@ -29,7 +29,7 @@ add_comment/id_on/<?php echo $bundle->id; ?>/type/bundle">add</a></p>
 		<li><a href="/pdl/b/<?php echo $bundle->id; ?>">Download</a> locally</a>
 <?php } ?>
 		</ul>
-                <h3>Patch enclosed inside the cluster</h3>
+                <h3>Patch included in this cluster</h3>
                 <?php if (!count($bundle->a_patches)) { echo "<p>There is no patch included in ".$bundle->synopsis."</p>"; } else { ?>
                 <ul>
                 <?php foreach ($bundle->a_patches as $p) { ?>
