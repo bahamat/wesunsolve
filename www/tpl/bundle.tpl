@@ -23,6 +23,7 @@ add_comment/id_on/<?php echo $bundle->id; ?>/type/bundle">add</a></p>
 		 <li>Synopsis: <?php echo $bundle->synopsis; ?></li>
 		 <li>Release date: <?php if($bundle->lastmod) echo date(HTTP::getDateFormat(), $bundle->lastmod); ?></li>
 		 <li>Archive size: <?php echo $bundle->size; ?> bytes (<?php echo round($bundle->size / 1024 / 1024, 2); ?> MBytes)</li>
+		 <li>Filename: <?php echo $bundle->filename; ?></li>
                  <li><a href="/readme/bn/<?php echo $bundle->id; ?>">View README</a></li>
                  <li><a href="https://getupdates.oracle.com/patch_cluster/<?php echo $bundle->filename; ?>">Download</a> at Oracle MOS</li>
 <?php if ($is_dl && $archive) { ?>
