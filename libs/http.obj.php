@@ -23,6 +23,17 @@ class HTTP
   public function fetchCSS() {
     global $config;
 
+    // Set the default one first in case of trouble with sql server
+    $this->css = new CSS(3);
+    $this->css->css_file = "960_24_fixed.css";
+    $this->css->s_menu = 5;
+    $this->css->s_total = 24;
+    $this->css->s_box = 5;
+    $this->css->s_snet = 5;
+    $this->css->p_snet = 14;
+    $this->css->s_strip = 55;
+    $this->css->is_default = 1;
+
     $lm = loginCM::getInstance();
     if (isset($lm->o_login) && $lm->o_login) {
       $lm->o_login->fetchData();

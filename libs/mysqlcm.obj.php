@@ -429,6 +429,7 @@ class mysqlCM
   private function _query($query, $args=null)
   {
     if ($this->_debug) $this->_time();
+    if (!$this->_link) return -1;
 
     $this->_res = $this->_link->prepare($query);
     if ($this->_res->execute($args)) {

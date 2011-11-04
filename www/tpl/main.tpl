@@ -3,7 +3,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content"> 
-     <h2 class="grid_10 push_1 alpha omega">Welcome to Sunsolve !</h2> 
+     <h2 class="grid_10 push_1 alpha omega">Welcome to WeSunSolve !</h2> 
      <div class="clear"></div> 
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega"> 
       <div class="d_content_box"> 
