@@ -28,6 +28,7 @@ Here, we want to give a backlink to every people, blogger or website that has ta
       <li><a href="http://wildness.espix.org/index.php?post/2011/05/31/sunsolve.espix.org-%3A-A-new-tool-for-Solaris-sysadmins...">wildcat's blog</a> has also published an blog entry about WeSunSolve <img src="./img/us.png" alt="English"/> </li>
       <li><a href="http://www.blog-nouvelles-technologies.fr/archives/6306/we-sun-solve-nouvelle-communaute-pour-les-administrateurs-systemes-solaris/">blog-nouvelles-technologies.fr</a> is publishing an article on us. <img src="./img/fr.png" alt="French"/> </li>
       <li><a href="http://www.unixnote.com/2011/11/we-sun-solve-solves-sunsolve.html">unixnote.com</a> is talking about us in the blog! <img src="./img/us.png" alt="English"/> </li>
+      <li><a href="http://www.osnews.com/story/25295/SunSolve_Resurrected_Independent_of_Oracle">OSnews.com</a> has published a note on WeSunSolve! <img src="./img/us.png" alt="English"/> </li>
     </ul>
     <br/><p>You've also talked about WeSunSolve and you're not yet linked here ? just <a href="/contact">drop us a comment</a>...</p>
    </div><!-- d_content_box -->
