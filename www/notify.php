@@ -24,7 +24,7 @@
      $email = addslashes($_POST['email']);
      $name = addslashes($_POST['nom']);
      $details = addslashes($_POST['details']);
-     mail("tgo@ians.be", "[SUNSOLVE] Error report", "From: $email\nName: $name\n\nFree text:\n\n".$details."\n\n--\n");
+     Mail::sendAdmin("[SUNSOLVE] Error report", "From: $email\nName: $name\n\nFree text:\n\n".$details."\n\n--\n");
    } else {
      HTTP::errWWW("You must complete every field");
    }
