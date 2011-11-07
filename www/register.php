@@ -57,6 +57,12 @@
       $content->set("error", "This username already exists");
       goto screen;
     }
+    $l->email = $_POST["email"];
+    if (!$l->fetchFromField("email")) {
+      $content = new Template("./tpl/register.tpl");
+      $content->set("error", "This email already exists");
+      goto screen;
+    }
     $l = new Login();
     $l->username = $_POST["username"];
     $l->password = md5($_POST["password"]);

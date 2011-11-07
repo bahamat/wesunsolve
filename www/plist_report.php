@@ -23,7 +23,9 @@
   $index->set("menu", $menu);
   $index->set("foot", $foot);
 
- if (isset($_GET['form']) && $_GET['form'] == 1) {
+ if (isset($_GET['form']) && $_GET['form'] == 1 &&
+     isset($_POST['plist']) && !empty($_POST['plist']) &&
+     isset($_POST['format']) && !empty($_POST['format'])) {
    $plist = Patch::parseList($_POST['plist'], $_POST['format']);
    if (!$plist) HTTP::errWWW("Error in format submitted");
 
