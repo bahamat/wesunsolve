@@ -63,4 +63,4 @@ RewriteRule ^(.+\.php)$(.+)$ $1/$2 [L,QSA]
 
 
 #RewriteCond %{HTTP_REFERER} ^.*slashdot.*$
-#RewriteRule / http://wesunsolve.net/static/main.html [R=301,L]
+#RewriteRule ^$ http://wesunsolve.net/static/main.html [R=301,L]
