@@ -1,0 +1,165 @@
+#!/usr/bin/php
+<?php
+ require_once(dirname(__FILE__)."/../libs/config.inc.php");
+ require_once(dirname(__FILE__)."/../libs/autoload.lib.php");
+ require_once(dirname(__FILE__)."/../libs/daemon.obj.php");
+
+ class Uccd implements Daemonizable {
+  private $_lrun = 0;
+  private $_crun = 0;
+  private $_jexec = 0;
+  private $_interval = 10;
+  private $_logfd = 0;
+  public  $debug = false;
+
+  /* Main run () */
+  public function run() {
+
+    $this->log("Entering run()");
+
+    /* update last run time */
+    $this->_lrun = $this->_crun;
+    $this->_crun = date("U");
+
+    $this->log("Previous run: ".$this->_lrun);
+    $this->log("New run: ".$this->_crun);
+    
+    /* fetching devices */
+    $jlist = array();
+    $index = "`id`";
+    $table = "jobs";
+    $where = "WHERE state='".S_NEW."'";
+    $m = mysqlCM::getInstance();
+    if (($idx = $m->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $j = new Job($t["id"], $this);
+        $j->fetchFromId();
+        array_push($jlist, $j);
+      }
+    }
+    $this->log("Jobs loaded: ".count($jlist));
+    foreach ($jlist as $j) {
+      $this->log("Trying to execute job function: ".$j->class."::".$j->fct);
+      $j->runJob();
+    }
+
+    $this->log("sleeping..");
+    sleep($this->_interval);
+    return 0;
+  }
+
+  public function start() {
+    $this->openLog();
+    $m = mysqlCM::getInstance();
+    if ($m->connect()) {
+      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+    }
+  }
+
+  public function cleanup() {
+    $this->closeLog();
+  }
+
+  /* Signal management */
+
+  public function sigterm() {
+    $this->log("SIGTERM Received, exiting...");
+    $this->cleanup();
+    exit(-1);
+  }
+
+  public function sighup() {
+    $this->log("HUP Signal received, reopening log file...");
+    $this->closeLog();
+    $this->openLog();
+  }
+ 
+  public function sigkill() {
+    $this->log("SIGKILL Received, exiting...");
+    $this->cleanup();
+    exit(-1);
+  }
+
+  public function sigusr1() {
+    $this->log("SIGUSR1 Received");
+  }
+
+  public function sigusr2() {
+    $this->log("SIGUSR2 Received");
+  }
+
+  public function help() {
+    global $argv;
+    echo "$argv[0] [-hvf]\n";
+  }
+
+  /* Log management */
+
+  private function openLog() {
+    global $config; 
+
+    if (!($this->_logfd = fopen($config['ws2d']['log'], 'w'))) {
+      $this->log("Cannot open ".$config['ws2d']['log']." for logging!");
+      return;
+    }
+    $this->log("Opened ".$config['ws2d']['log']." for logging!");
+  }
+
+  private function closeLog() {
+
+    global $config;
+    if ($this->_logfd) {
+      $this->log("Closing ".$config['ws2d']['log']."!");
+      fclose($this->_logfd);
+      $this->_logfd = 0;
+    }
+  }
+
+  public function log($m) {
+    if ($this->debug) {
+      echo "$m\n";
+    }
+    if ($this->_logfd) {
+      fprintf($this->_logfd, "[%s] %s\n", date("Y-m-d M:i:s"), $m);
+    }
+  }
+
+  public function __construct() {
+    $j = new Job();
+    unset($j);
+  }
+
+ }
+
+ // Connect to mysql
+ $m = mysqlCM::getInstance();
+ if ($m->connect()) {
+   die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+ }
+
+ $ucc = new Uccd();
+
+ $opts = "vhf";
+ $options = getopt($opts);
+
+ if (isset($options["h"])) {
+  $ucc->help();
+  exit(0);
+ }
+
+ if (isset($options["v"])) {
+   $ucc->debug = true;
+ } else {
+   $ucc->debug = false;
+ }
+
+ if (isset($options["f"])) {
+  $o['f'] = true;
+ } else {
+  $o['f'] = false;
+ }
+
+ $daemon = new Daemon($ucc, $o['f']);  
+
+?>
