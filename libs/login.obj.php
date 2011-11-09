@@ -32,6 +32,54 @@ class Login extends mysqlObj
 
   public $a_servers = array();
   public $a_uclists = array();
+  public $a_mlists = array();
+
+  function fetchMList() {
+    $this->a_mlists = array();
+    $table = "`jt_login_mlist`";
+    $index = "`id_mlist`";
+    $where = "WHERE `id_login`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    { 
+      foreach($idx as $t) {
+        $k = new MList($t['id_mlist']);
+        $k->fetchFromId();
+        array_push($this->a_mlists, $k);
+      }
+    }
+    return 0;
+  }
+
+  function addMList($k) {
+
+    $table = "`jt_login_mlist`";
+    $names = "`id_login`, `id_mlist`";
+    $values = "'$this->id', '".$k->id."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_mlists, $k);
+    return 0;
+  }
+
+  function delMList($k) {
+
+    $table = "`jt_login_mlist`";
+    $where = " WHERE `id_login`='".$this->id."' AND `id_mlist`='".$k->id."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_mlists as $ak => $v) {
+      if ($k->id == $v->id) {
+        unset($this->a_mlists[$ak]);
+      }
+    }
+    return 0;
+  }
+
 
   public function fetchUCLists() {
     $table = "`u_clist`";
