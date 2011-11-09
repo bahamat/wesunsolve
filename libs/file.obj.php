@@ -22,6 +22,7 @@ class File extends mysqlObj
   public $size = 0;
   public $md5 = "";
   public $sha1 = "";
+  public $pkg = "";
   
   /* Lists */
   public $a_patches = array();

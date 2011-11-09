@@ -26,9 +26,9 @@ class OSRelease extends mysqlObj
   function fetchFiles($all=1) {
 
     $this->a_files = array();
-    $table = "`jt_patches_files`";
-    $index = "`fileid`, `size`, `md5`, `sha1`";
-    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+    $table = "`jt_osrelease_files`";
+    $index = "`fileid`, `size`, `pkg`, `md5`, `sha1`";
+    $where = "WHERE `id_release`='".$this->id."'";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
@@ -37,6 +37,7 @@ class OSRelease extends mysqlObj
         $k->fetchFromId();
         $k->size = $t['size'];
         $k->md5 = $t['md5'];
+        $k->pkg = $t['pkg'];
         $k->sha1 = $t['sha1'];
         array_push($this->a_files, $k);
       }
@@ -46,9 +47,9 @@ class OSRelease extends mysqlObj
 
   function addFile($k) {
 
-    $table = "`jt_patches_files`";
-    $names = "`fileid`, `patchid`, `revision`";
-    $values = "'$k->id', '".$this->patch."', '".$this->revision."'";
+    $table = "`jt_osrelease_files`";
+    $names = "`fileid`, `id_release`";
+    $values = "'$k->id', '".$this->id."'";
 
     if (mysqlCM::getInstance()->insert($names, $values, $table)) {
       return -1;
@@ -57,7 +58,7 @@ class OSRelease extends mysqlObj
     return 0;
   }
 
-  function setFileAttr($k, $size = 0, $md5 = "", $sha1 = "") {
+  function setFileAttr($k, $size = 0, $md5 = "", $sha1 = "", $pkg = "") {
 
     $file = null;
     foreach ($this->a_files as $ak => $v) {
@@ -69,13 +70,14 @@ class OSRelease extends mysqlObj
     if (!$file)
       return -1;
 
+    $file->pkg = $pkg;
     $file->md5 = $md5;
     $file->sha1 = $sha1;
     $file->size = $size;
 
-    $table = "jt_patches_files";
-    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
-    $where = " WHERE `fileid`='".$file->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+    $table = "jt_osrelease_files";
+    $set = "`size`='".$file->size."', `pkg`='".$file->pkg."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $where = " WHERE `fileid`='".$file->id."' AND `id_release`='".$this->id."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
       return -1;
@@ -85,8 +87,8 @@ class OSRelease extends mysqlObj
 
   function delFile($k) {
 
-    $table = "`jt_patches_files`";
-    $where = " WHERE `fileid`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+    $table = "`jt_osrelease_files`";
+    $where = " WHERE `fileid`='".$k->id."' AND `id_release`='".$this->id."'";
 
     if (mysqlCM::getInstance()->delete($table, $where)) {
       return -1;
@@ -107,6 +109,97 @@ class OSRelease extends mysqlObj
   }
 
  
+  public static function checksum($rdir) {
+    global $config;
+
+    if (!is_dir($rdir))
+      return -1;  
+
+    $rfile = $rdir."/Solaris_10/Product/SUNWsolnm/reloc/etc/release";
+
+    if (!file_exists($rfile))
+      return -1;
+
+    $release = file($rfile);
+    $release = trim($release[0]); // first line
+    
+    $f = explode(" ", $release);
+    $major = $f[1];
+    $r_date = $f[2];
+
+    $osr = new OSRelease();
+    $osr->major = $major;
+    $osr->u_date = $r_date;
+    if ($osr->fetchFromFields(array("major", "u_date"))) {
+      echo "[-] Unknown release, inserting $major / $r_date solaris release\n";
+      $osr->insert();
+    }
+
+    $osr->fetchFiles();
+
+    foreach (glob($rdir."/Solaris_10/Product/*", GLOB_ONLYDIR) as $pkg) {
+      if (!is_dir($pkg))
+        continue;
+
+      if (!file_exists($pkg."/pkgmap"))
+        continue;
+
+      $pkgname = explode("/", $pkg);
+      $pkgname = $pkgname[count($pkgname)-1];
+      echo "[>] Found $pkgname:\n";
+
+      /* Find files modified by this package */
+      $pkgmap = file($pkg."/pkgmap");
+      foreach($pkgmap as $line) {
+        $line = trim($line);
+
+        if (empty($line))
+          continue;
+
+        if($line[0] == '#')
+          continue;
+
+        $fields = explode(" ", $line);
+        if ($fields[1] != 'f')
+          continue;
+
+        $fpath = $pkg."/reloc/".$fields[3];
+        $fname = "/".$fields[3];
+
+        /* Check that the file do exist inside the reloc/ dir */
+        if (!file_exists($fpath)) {
+          echo "[!] $fpath does not exist\n";
+          continue;
+        }
+
+        /* Check that the file is already linked to this patch... */
+        if (!$osr->isFile($fname)) {
+          $file = new File();
+          $file->name = $fname;
+          if ($file->fetchFromField("name")) {
+            $file->insert();
+            echo "\t* ".$file->name." added to db\n";
+          }
+	  $osr->addFile($file);
+          echo "\t* linking $fname to this release\n";
+        }
+
+        $size = filesize($fpath);
+        $h_md5 = md5_file($fpath);
+        $h_pkg = $pkgname;
+        $h_sha1 = sha1_file($fpath);
+
+        $osr->setFileAttr($fname, $size, $h_md5, $h_sha1, $h_pkg);
+        echo "[>] Updated $fname with:\n";
+        echo "\t> size: $size\n";
+        echo "\t> h_md5: $h_md5\n";
+        echo "\t> h_sha1: $h_sha1\n";
+        echo "\t> pkg: $h_pkg\n";
+      }
+    }
+
+    return 0;
+  }
 
  /**
   * Constructor

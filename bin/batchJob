@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::j::hxpdrntfcbuselkvgmo";
+  $shortopts = "a::i::j::hxpdrntfcbuselkvgmow";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -45,6 +45,7 @@
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
     echo "\t -o\tInsert readmes of patches inside database...\n";
+    echo "\t -w\tThreat the -a= directory as new solaris release to checksum..\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
   }
@@ -129,6 +130,17 @@
     echo $p->name().":$db:$readme:$archive\n";
     return 0;
   }
+  /* check for solaris release inside -a=<pwd> */
+  if (isset($opts['w'])) {
+    if (!isset($opts['a'])) {
+      echo "[!] No directory providden...\n";
+      die();
+    }
+    $dir = $opts['a'];
+    OSRelease::checksum($dir);
+    return;
+  }
+
 
   /* check for patches checksumming */
   if (isset($opts['k'])) {

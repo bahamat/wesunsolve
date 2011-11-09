@@ -949,7 +949,7 @@ class Patch extends mysqlObj
 
     $this->a_files = array();
     $table = "`jt_patches_files`";
-    $index = "`fileid`, `size`, `md5`, `sha1`";
+    $index = "`fileid`, `size`, `pkg`, `md5`, `sha1`";
     $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
@@ -960,6 +960,7 @@ class Patch extends mysqlObj
   	$k->size = $t['size'];
   	$k->md5 = $t['md5'];
   	$k->sha1 = $t['sha1'];
+  	$k->pkg = $t['pkg'];
         array_push($this->a_files, $k);
       }
     }
@@ -979,7 +980,7 @@ class Patch extends mysqlObj
     return 0;
   }
 
-  function setFileAttr($k, $size = 0, $md5 = "", $sha1 = "") {
+  function setFileAttr($k, $size = 0, $md5 = "", $sha1 = "", $pkg = "") {
 
     $file = null;
     foreach ($this->a_files as $ak => $v) {
@@ -994,9 +995,10 @@ class Patch extends mysqlObj
     $file->md5 = $md5;
     $file->sha1 = $sha1;
     $file->size = $size;
+    $file->pkg = $pkg;
 
     $table = "jt_patches_files";
-    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."', `pkg`='".$file->pkg."'";
     $where = " WHERE `fileid`='".$file->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
@@ -1962,11 +1964,12 @@ class Patch extends mysqlObj
         $h_md5 = md5_file($fpath);
         $h_sha1 = sha1_file($fpath);
 
-	$this->setFileAttr($fname, $size, $h_md5, $h_sha1);
+	$this->setFileAttr($fname, $size, $h_md5, $h_sha1, $pkgname);
         echo "[>] Updated $fname with:\n";
 	echo "\t> size: $size\n";
 	echo "\t> h_md5: $h_md5\n";
 	echo "\t> h_sha1: $h_sha1\n";
+	echo "\t> pkg: $pkgname\n";
 
       }
 
