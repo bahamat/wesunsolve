@@ -69,17 +69,24 @@ class Login extends mysqlObj
     $table = "`jt_login_mlist`";
     $where = " WHERE `id_login`='".$this->id."' AND `id_mlist`='".$k->id."'";
 
-    if (mysqlCM::getInstance()->delete($table, $where)) {
+    if (mysqlCM::getInstance()->delete($table, $where) == -1) {
       return -1;
     }
     foreach ($this->a_mlists as $ak => $v) {
       if ($k->id == $v->id) {
         unset($this->a_mlists[$ak]);
+	break;
       }
     }
     return 0;
   }
 
+  function isMList($p) {
+    foreach($this->a_mlists as $po)
+      if ($p->id == $po->id)
+        return TRUE;
+    return FALSE;
+  }
 
   public function fetchUCLists() {
     $table = "`u_clist`";
