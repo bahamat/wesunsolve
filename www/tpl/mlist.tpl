@@ -26,6 +26,7 @@
 	  <th>Description</th>
 	  <th>Frequency</th>
 	  <th></th>
+	  <th># Subscribers</th>
 	  <th>Subscribe?</th>
 	</tr>
 <?php foreach ($mlists as $mlist) { ?>
@@ -34,6 +35,7 @@
 	  <td><?php echo $mlist->sdesc; ?></td>
 	  <td><?php echo $mlist->frequency; ?></td>
 	  <td><a href="/mlist_ex/id/<?php echo $mlist->id; ?>">Example</a></td>
+	  <td><?php echo $mlist->liveCount(); ?></td>
 	  <td><input type="checkbox" name="ml[<?php echo $mlist->id; ?>]" value="1" <?php if ($lo->isMList($mlist)) echo "checked"; ?>/></td>
 	</tr>
 <?php } ?>

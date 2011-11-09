@@ -17,6 +17,11 @@ class File extends mysqlObj
   /* Data Var */
   public $id = -1;
   public $name = "";
+
+  /* Optionnal fields */
+  public $size = 0;
+  public $md5 = "";
+  public $sha1 = "";
   
   /* Lists */
   public $a_patches = array();

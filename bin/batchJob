@@ -41,7 +41,7 @@
     echo "\t -r\tParse the readme anyway\n";
     echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
-    echo "\t -k\tCheck for patches checksums\n";
+    echo "\t -k\tChecksum every file of a patch\n";
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
     echo "\t -o\tInsert readmes of patches inside database...\n";
@@ -131,7 +131,6 @@
   }
 
   /* check for patches checksumming */
-/*
   if (isset($opts['k'])) {
     $table = "`patches`";
     $index = "`patch`, `revision`";
@@ -145,28 +144,18 @@
     $where .= " ORDER BY `releasedate` DESC";
 
     $it = new mIterator("Patch", $index, $table, $where, $cindex);
+    $fields = array("patch", "revision", "when");
     while(($p = $it->next())) {
       $p->fetchFromId();
-      if (!$p->findArchive()) {
-        $rc = $p->checkPresence();
-	if($rc) {
-	  $p->tryDownload()
- 	}
-      }
-      $rc = $p->checkSum();
-      if ($rc == -3) {
-        echo "[CSUM] Not OK for ".$p->name()."\n";
-      } else if ($rc == 0) {
-        echo "[CSUM] OK for ".$p->name()."\n";
-	continue;
-      } else {
-        echo "[CSUM] problem for ".$p->name()."\n";
-      }
-
+      $archive = $p->findArchive();
+      if (!$archive)
+ 	continue;
+      echo "[-] Will try to checksum patch ".$p->name()."\n";
+      $p->checksum();
     }
+
     return;
   }
-*/
 
   /* add patches from dir */
   if (isset($opts['a'])) {

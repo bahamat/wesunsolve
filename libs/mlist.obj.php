@@ -23,6 +23,20 @@ class MList extends mysqlObj
 
   public $a_logins = array();
 
+  function liveCount() {
+    $table = "`jt_login_mlist`";
+    $index = "count(`id_login`) as c";
+    $where = "WHERE `id_mlist`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['c'])) {
+        return $idx[0]['c'];
+      }
+    }
+    return 0;
+  }
+
   function fetchLogins() {
     $this->a_logins = array();
     $table = "`jt_login_mlist`";
@@ -76,6 +90,24 @@ class MList extends mysqlObj
     return FALSE;
   }
 
+ /**
+  * Implementation of mailling list text generation for recurrents ones
+  *
+  */
+  static public function patchesWeekly() {
+    global $config;
+    $txt = $config['mlist']['header'];
+
+    $p_stop = time();
+    $p_start = $p_stop - (3600*24*7);
+    $d_stop = date(HTTP::getDateFormat(), $p_stop);
+    $d_start = date(HTTP::getDateFormat(), $p_start);
+    
+
+
+    $txt .= "\n".$config['mlist']['footer'];
+    return $txt;
+  }
 
  /**
   * Constructor

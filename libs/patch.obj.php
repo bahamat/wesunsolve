@@ -949,7 +949,7 @@ class Patch extends mysqlObj
 
     $this->a_files = array();
     $table = "`jt_patches_files`";
-    $index = "`fileid`";
+    $index = "`fileid`, `size`, `md5`, `sha1`";
     $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
@@ -957,6 +957,9 @@ class Patch extends mysqlObj
       foreach($idx as $t) {
         $k = new File($t['fileid']);
         $k->fetchFromId();
+  	$k->size = $t['size'];
+  	$k->md5 = $t['md5'];
+  	$k->sha1 = $t['sha1'];
         array_push($this->a_files, $k);
       }
     }
@@ -974,6 +977,33 @@ class Patch extends mysqlObj
     }
     array_push($this->a_files, $k);
     return 0;
+  }
+
+  function setFileAttr($k, $size = 0, $md5 = "", $sha1 = "") {
+
+    $file = null;
+    foreach ($this->a_files as $ak => $v) {
+      if (!strcmp($k->name, $v->name)) {
+        $file = $v;
+	break;
+      }
+    }
+    if (!$file)
+      return -1;
+  
+    $file->md5 = $md5;
+    $file->sha1 = $sha1;
+    $file->size = $size;
+
+    $table = "`jt_patches_files`";
+    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $where = " WHERE `fileid`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->update($table, $set, $where)) {
+      return -1;
+    }
+    return 0;
+
   }
 
   function delFile($k) {
@@ -1861,6 +1891,7 @@ class Patch extends mysqlObj
   
     $xml->pop();
   }
+
 
  /**
   * Constructor
