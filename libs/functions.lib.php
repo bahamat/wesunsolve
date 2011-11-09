@@ -48,4 +48,25 @@ function getData($obj, $arg) {
   }
 }
 
+function extractTmp($a, $odir) {
+
+  $e = explode(".", $a);
+  $ext = $e[count($e)-1];
+  switch($ext) {
+    case "zip":
+    case "ZIP":
+      $cmd = "/usr/bin/unzip -d $odir $a > /dev/null 2>&1";
+      $ret = `$cmd`;
+    break;
+    case "Z":
+      $cmd = "/bin/gzip -dc $a | /bin/tar -C $odir -xf - > /dev/null 2>&1";
+      $ret = `$cmd`;
+    break;
+    default:
+      return -1;
+    break;
+  }
+  return 0;
+}
+
 ?>

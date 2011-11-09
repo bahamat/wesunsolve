@@ -151,7 +151,7 @@
       if (!$archive)
  	continue;
       echo "[-] Will try to checksum patch ".$p->name()."\n";
-      $p->checksum();
+      $p->mkFilesSum();
     }
 
     return;
