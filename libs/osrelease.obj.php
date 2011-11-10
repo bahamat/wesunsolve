@@ -232,11 +232,10 @@ class OSRelease extends mysqlObj
       }
 
       /* is there an archive/none.7z file ? */
-      $op = null;
       if (file_exists($pkg."/archive/none.7z")) {
         $op = $config['tmppath']."/cksum/$pkgname";
         if (!is_dir($op)) mkdir($op);
-	$cmd = "cd $op ; /usr/bin/7z x $pkg/archive/none.7z -so -bd -y 2>/dev/null | /bin/cpio -id --no-preserve-owner --quiet ";
+	$cmd = "cd $op ; /usr/bin/7z x $pkg/archive/none.7z -so -bd -y 2>/dev/null | /bin/cpio -id --no-preserve-owner --quiet";
         echo "[-] Extracting none.bz2 for $pkgname...\n";
 	$r = `$cmd`;
       }
