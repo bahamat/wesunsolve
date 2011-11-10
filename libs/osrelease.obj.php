@@ -23,8 +23,52 @@ class OSRelease extends mysqlObj
 
   public $a_files = array();
 
+  public function countFiles() {
+    $table = "`jt_osrelease_files`";
+    $index = "count(`fileid`) as c";
+    $where = "WHERE `id_release`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['c'])) {
+        return $idx[0]['c'];
+      }
+    }
+    return 0;
+  }
+
+  public function countPackages() {
+    $table = "`jt_osrelease_files`";
+    $index = "count(distinct `pkg`) as c";
+    $where = "WHERE `id_release`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['c'])) {
+        return $idx[0]['c'];
+      }
+    }
+    return 0;
+
+  }
+
+  public function countSize() {
+    $table = "`jt_osrelease_files`";
+    $index = "round(sum(`size` / 1024 / 1024)) as c";
+    $where = "WHERE `id_release`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['c'])) {
+        return $idx[0]['c'];
+      }
+    }
+    return 0;
+  }
+
+
   /* Files */
-  function fetchFiles($all=1) {
+  public function fetchFiles($all=1) {
 
     $this->a_files = array();
     $table = "`jt_osrelease_files`";

@@ -21,6 +21,11 @@
       <li class="m_header">Bugs</li> 
       <li class="m_element"><a href="/bsearch">Bug search</a></li> 
      </ul> 
+     <ul>
+      <li class="m_header">Files</li>
+      <li class="m_element"><a href="/releases">Referenced releases</a></li>
+      <li class="m_element"><a href="#">File search</a> (soon)</li>
+     </ul>
      <ul> 
       <li class="m_header">User</li> 
 <?php $lm = loginCM::getInstance(); if (!isset($lm->o_login) || !$lm->o_login) { ?>
