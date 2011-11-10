@@ -115,10 +115,23 @@ class OSRelease extends mysqlObj
     if (!is_dir($rdir))
       return -1;  
 
-    $rfile = $rdir."/Solaris_10/Product/SUNWsolnm/reloc/etc/release";
+    $rfiles10 = $rdir."/Solaris_10/Product/SUNWsolnm/reloc/etc/release";
+    $rfiles9 = $rdir."/Solaris_9/Product/SUNWsolnm/reloc/etc/release";
+    $rfiles8 = $rdir."/Solaris_8/Product/SUNWsolnm/reloc/etc/release";
 
-    if (!file_exists($rfile))
-      return -1;
+    if (!file_exists($rfile10)) {
+      if (!file_exists($rfiles9)) {
+        if (!file_exists($rfiles8)) {
+	  return -1;
+	} else {
+	  $rfile = $rfiles8;
+	}
+      } else {
+        $rfile = $rfiles9;
+      }
+    } else {
+      $rfile = $rfiles10;
+    }
 
     $release = file($rfile);
     $release = trim($release[0]); // first line
