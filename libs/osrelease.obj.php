@@ -119,7 +119,7 @@ class OSRelease extends mysqlObj
     $rfiles9 = $rdir."/Solaris_9/Product/SUNWsolnm/reloc/etc/release";
     $rfiles8 = $rdir."/Solaris_8/Product/SUNWsolnm/reloc/etc/release";
 
-    if (!file_exists($rfile10)) {
+    if (!file_exists($rfiles10)) {
       if (!file_exists($rfiles9)) {
         if (!file_exists($rfiles8)) {
 	  return -1;
@@ -150,7 +150,7 @@ class OSRelease extends mysqlObj
 
     $osr->fetchFiles();
 
-    foreach (glob($rdir."/Solaris_10/Product/*", GLOB_ONLYDIR) as $pkg) {
+    foreach (glob($rdir."/Solaris_".$osr->major."/Product/*", GLOB_ONLYDIR) as $pkg) {
       if (!is_dir($pkg))
         continue;
 
