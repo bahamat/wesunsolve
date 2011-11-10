@@ -16,6 +16,7 @@ class OSRelease extends mysqlObj
 {
   /* Data Var */
   public $id = -1;
+  public $arch = "";
   public $major = "";
   public $u_date = "";
   public $u_number = -1;
@@ -140,11 +141,26 @@ class OSRelease extends mysqlObj
     $major = $f[1];
     $r_date = $f[2];
 
+    $arch = null;
+    switch($f[count($f)-1]) {
+      case "SPARC":
+	$arch = "sparc";
+	break;
+      case "X86":
+	$arch = "x86";
+	break;
+      default:
+	$arch = "sparc";
+	break;
+    }
+    if (!$arch) $arch = "sparc"; // default to sparc
+
     $osr = new OSRelease();
     $osr->major = $major;
     $osr->u_date = $r_date;
-    if ($osr->fetchFromFields(array("major", "u_date"))) {
-      echo "[-] Unknown release, inserting $major / $r_date solaris release\n";
+    $osr->arch = $arch;
+    if ($osr->fetchFromFields(array("arch", "major", "u_date"))) {
+      echo "[-] Unknown release, inserting $arch / $major / $r_date solaris release\n";
       $osr->insert();
     }
 
@@ -243,6 +259,7 @@ class OSRelease extends mysqlObj
     $this->_nfotable = "";
     $this->_my = array(
                         "id" => SQL_INDEX,
+                        "arch" => SQL_PROPE,
                         "major" => SQL_PROPE,
                         "u_date" => SQL_PROPE,
                         "u_number" => SQL_PROPE
@@ -250,6 +267,7 @@ class OSRelease extends mysqlObj
 
     $this->_myc = array( /* mysql => class */
                         "id" => "id",
+                        "arch" => "arch",
                         "major" => "major",
                         "u_date" => "u_date",
                         "u_number" => "u_number"
