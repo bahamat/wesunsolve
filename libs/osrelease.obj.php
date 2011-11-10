@@ -148,6 +148,16 @@ class OSRelease extends mysqlObj
       $pkgname = $pkgname[count($pkgname)-1];
       echo "[>] Found $pkgname:\n";
 
+      /* is there an archive/none.bz2 file ? */
+      $op = null;
+      if (file_exists($pkg."/archive/none.bz2")) {
+        $op = $config['tmppath']."/cksum/$pkgname";
+        if (!is_dir($op)) mkdir($op);
+	$cmd = "cd $op ; /bin/bzip2 -dc $pkg/archive/none.bz2 | cpio -id --no-preserve-owner --quiet";
+        echo "[-] Extracting none.bz2 for $pkgname...\n";
+	$r = `$cmd`;
+      }
+
       /* Find files modified by this package */
       $pkgmap = file($pkg."/pkgmap");
       foreach($pkgmap as $line) {
@@ -164,13 +174,17 @@ class OSRelease extends mysqlObj
           continue;
 
         $fpath = $pkg."/reloc/".$fields[3];
+        $fpnone = $op."/".$fields[3];
         $fname = "/".$fields[3];
 
         /* Check that the file do exist inside the reloc/ dir */
-        if (!file_exists($fpath)) {
+        if (!file_exists($fpath) && !file_exists($fpnone)) {
           echo "[!] $fpath does not exist\n";
           continue;
         }
+        if (!file_exists($fpath) && file_exists($fpnone)) {
+          $fpath = $fpnone;
+	}
 
         /* Check that the file is already linked to this patch... */
         if (!$osr->isFile($fname)) {
@@ -195,6 +209,11 @@ class OSRelease extends mysqlObj
         echo "\t> h_md5: $h_md5\n";
         echo "\t> h_sha1: $h_sha1\n";
         echo "\t> pkg: $h_pkg\n";
+      }
+      if (isset($op) && $op && is_dir($op)) {
+        echo "[-] Cleaning up none dir for $pkgname\n";
+        $cmd = "rm -rf \"$op\"";
+        $r = `$cmd`;
       }
     }
 
