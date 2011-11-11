@@ -163,11 +163,18 @@ class OSRelease extends mysqlObj
     $rfiles10 = $rdir."/Solaris_10/Product/SUNWsolnm/reloc/etc/release";
     $rfiles9 = $rdir."/Solaris_9/Product/SUNWsolnm/reloc/etc/release";
     $rfiles8 = $rdir."/Solaris_8/Product/SUNWsolnm/reloc/etc/release";
+    $rfiles8_2 = $rdir."/Trusted_Solaris_8/Product/SUNWsolnm/reloc/etc/release";
 
+    $trusted = false;
     if (!file_exists($rfiles10)) {
       if (!file_exists($rfiles9)) {
         if (!file_exists($rfiles8)) {
-	  return -1;
+	  if (!file_exists($rfiles8_2)) {
+	    return -1;
+          } else {
+	    $rfile = $rfiles8_2;
+	    $trusted = true;
+  	  }
 	} else {
 	  $rfile = $rfiles8;
 	}
@@ -183,7 +190,11 @@ class OSRelease extends mysqlObj
     
     $f = explode(" ", $release);
     $major = $f[1];
-    $r_date = $f[2];
+    if ($major == 8) {
+      $r_date = $f[3];
+    } else {
+      $r_date = $f[2];
+    }
 
     $arch = null;
     switch($f[count($f)-1]) {
@@ -210,7 +221,13 @@ class OSRelease extends mysqlObj
 
     $osr->fetchFiles();
 
-    foreach (glob($rdir."/Solaris_".$osr->major."/Product/*", GLOB_ONLYDIR) as $pkg) {
+    if ($trusted) {
+      $pkgpath = $rdir."/Trusted_Solaris_".$osr->major."/Product/*";
+    } else {
+      $pkgpath = $rdir."/Solaris_".$osr->major."/Product/*";
+    }
+
+    foreach (glob($pkgpath, GLOB_ONLYDIR) as $pkg) {
       if (!is_dir($pkg))
         continue;
 
