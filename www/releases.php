@@ -17,7 +17,7 @@
  $rls = array();
  $table = "`osrelease`";
  $index = "`id`";
- $where = " ORDER BY `major`,`u_number` ASC";
+ $where = " ORDER BY `major` ASC, `update` ASC";
 
  if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
  {
@@ -30,7 +30,6 @@
 
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
- $head->set("head_add", $head_add);
  $menu = new Template("./tpl/menu.tpl");
  $foot = new Template("./tpl/foot.tpl");
  $foot->set("start_time", $start_time);

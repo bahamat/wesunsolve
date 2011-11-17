@@ -1,0 +1,28 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add news Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "d::h";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h']) || !isset($opts['d'])) {
+    echo $argv[0]." [-d=<dir>]\n";
+    exit();
+  }
+
+  OSRelease::extract($opts['d']);
+?>

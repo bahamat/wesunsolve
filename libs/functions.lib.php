@@ -69,4 +69,13 @@ function extractTmp($a, $odir) {
   return 0;
 }
 
+function chdirmod($dir, $mod) {
+  if (is_dir($dir)) {
+    chmod($dir, $mod);
+    foreach(glob($dir.'/*', GLOB_ONLYDIR) as $d) {
+      chdirmod($d, $mod);
+    }
+  }
+}
+
 ?>

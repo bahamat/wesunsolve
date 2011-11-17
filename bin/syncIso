@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo "$0 <iso>";
+  exit;
+fi
+
+if [ ! -f ${1} ]; then
+  echo "[!] ${1} does not exist";
+  exit;
+fi;
+
+isofile=$1
+
+TMPDIR=/tmp/${0}-${RANDOM}
+mkdir -p ${TMPDIR};
+sudo mount -o loop ${isofile} ${TMPDIR}
+rsync -va ${TMPDIR}/ .
+sudo umount -l ${TMPDIR}
+rm -rf ${TMPDIR};
+

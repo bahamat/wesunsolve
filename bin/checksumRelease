@@ -1,0 +1,80 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add news Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "a::r::u::s::m::d::h";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h']) || !isset($opts['d'])) {
+    echo $argv[0]."\n";
+    echo "\t [-d=<dir>]\n";
+    echo "\t [-a=<arch>]\n";
+    echo "\t [-r=<date string>]\n";
+    echo "\t [-u=<update>]\n";
+    echo "\t [-s=<release string>]\n";
+    echo "\t [-m=<major>]\n";
+    exit();
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $f = array();
+  $major = null;
+  $update = null;
+  $rstring = null;
+  $dstring = null;
+  $arch = null;
+  if (isset($opts['a'])) {
+    $arch = $opts['a'];
+    $f[] = "arch";
+  }
+  if (isset($opts['u'])) {
+    $update = $opts['u'];
+    $f[] = "update";
+  }
+  if (isset($opts['s'])) {
+    $rstring = $opts['s'];
+    $f[] = "rstring";
+  }
+  if (isset($opts['m'])) {
+    $major = $opts['m'];
+    $f[] = "major";
+  }
+  if (isset($opts['r'])) {
+    $dstring = $opts['r'];
+    $f[] = "dstring";
+  }
+
+  $osr = new OSRelease();
+  $osr->major = $major;
+  $osr->arch = $arch;
+  $osr->update = $update;
+  $osr->rstring = $rstring;
+  $osr->dstring = $dstring;
+
+  if ($osr->fetchFromFields($f)) {
+    echo "[!] Specified Release not found...\n";
+    exit();
+  }
+  echo "[-] Linking to OSR id ".$osr->id."\n";
+
+  OSRelease::checksum($opts['d'], $osr);
+  
+?>
