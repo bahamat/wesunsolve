@@ -12,7 +12,7 @@ fi;
 
 isofile=$1
 
-TMPDIR=/tmp/${0}-${RANDOM}
+TMPDIR=/tmp/ws2-${RANDOM}
 mkdir -p ${TMPDIR};
 sudo mount -o loop ${isofile} ${TMPDIR}
 rsync -va ${TMPDIR}/ .

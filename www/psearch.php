@@ -6,6 +6,7 @@
  if ($m->connect()) {
    HTTP::getInstance()->errMysql();
  }
+
  $lm = loginCM::getInstance();
  $lm->startSession();
 

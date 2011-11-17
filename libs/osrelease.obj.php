@@ -25,6 +25,10 @@ class OSRelease extends mysqlObj
 
   public $a_files = array();
 
+  public function toString() {
+    return 'Solaris '.$this->major.' (Update '.$this->update.') '.$this->dstring.' ('.$this->arch.')';
+  }
+
   public function countFiles() {
     $table = "`jt_osrelease_files`";
     $index = "count(`fileid`) as c";

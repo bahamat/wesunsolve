@@ -20,10 +20,24 @@
 <?php if (isset($error)) { ?>
 <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>
-  <form method="post" action="/fsearch/form/1">
-  <div class="ctable">
   <p>Search files using a string or a MD5/SHA1 checksum, we'll try to find to which release or patch it correspond...</p>
   <p>You can use % as a wildcard</p>
+  <h3>Search inside Solaris Releases:</h3>
+  <form method="post" action="/fsearch/form/1">
+  <input type="hidden" name="what" value="release"/>
+  <div class="ctable">
+  <table class="ctable">
+    <tr><th>File pattern:</th><td><input type="text" name="fpa"/></td></tr>
+    <tr><th>MD5:</th><td><input type="text" name="md5"/></td></tr>
+    <tr><th>SHA1:</th><td><input type="text" name="sha1"/></td></tr>
+    <tr><td></td><td><input type="submit" value="search"/></td></tr>
+  </table>
+  </div>
+  </form>
+  <h3>Search inside Solaris Patches:</h3>
+  <form method="post" action="/fsearch/form/1">
+  <input type="hidden" name="what" value="patches"/>
+  <div class="ctable">
   <table class="ctable">
     <tr><th>File pattern:</th><td><input type="text" name="fpa"/></td></tr>
     <tr><th>MD5:</th><td><input type="text" name="md5"/></td></tr>
