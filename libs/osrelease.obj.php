@@ -25,7 +25,9 @@ class OSRelease extends mysqlObj
 
   public $a_files = array();
 
-  public function toString() {
+  public $o_mfile = null;
+
+  public function __toString() {
     return 'Solaris '.$this->major.' (Update '.$this->update.') '.$this->dstring.' ('.$this->arch.')';
   }
 

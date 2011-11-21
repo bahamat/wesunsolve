@@ -42,6 +42,7 @@ class Patch extends mysqlObj
   public $o_latest = null;
   public $o_current = null;
   public $o_csum = null;
+  public $o_mfile = null;
   
   /* Lists */
   public $a_files = array();

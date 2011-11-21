@@ -41,23 +41,6 @@
    $files = array();
    $f_hash = $f_md5 = $f_sha1 = $f_fpa = false;
 
-  if (isset($_POST['page']) && !empty($_POST['page'])) {
-    $page = $_POST['page'];
-  } else if (isset($_GET['page']) && !empty($_GET['page'])) {
-    $page = $_GET['page'];
-  } else {
-    $page = 1;
-  }
-  $nb_page = 0;
-
-   if (isset($_POST['what']) && !empty($_POST['what'])) {
-     $s_what = $_POST['what'];
-     $str .= "/what/".urlencode($s_what);
-   } else {
-     $content = new Template("./tpl/fsearch.tpl");
-     $content->set("error", "Nothing in what...");
-     goto screen;
-   }
    if (isset($_POST['md5']) && !empty($_POST['md5'])) {
      $f_md5 = true;
      $f_hash = true;
@@ -86,8 +69,6 @@
      $content->set("error", "Can't use both Pattern search and checksum at the same time...");
      goto screen;
    }
-   switch($s_what) {
-     case "patches":
        if ($f_hash) { // Digest search
          $idx = "`fileid`, `patchid`, `revision`, `pkg`, `md5`, `sha1`, `size`";
 	 $table = "jt_patches_files";
@@ -115,14 +96,50 @@
                $mfile->size = $t['size'];
                $mfile->sha1 = $t['sha1'];
                $mfile->md5 = $t['md5'];
-               $mfile->pkg = $t['pkg'];
+	       $g->o_mfile = clone $mfile;
+               $g->o_mfile->pkg = $t['pkg'];
 	     }
              array_push($patches, $g);
            }
          }
-         $content = new Template("./tpl/fs_patch.tpl");
+	// releases
+         $idx = "`fileid`, `id_release`, `md5`, `sha1`, `size`, `pkg`";
+	 $table = "jt_osrelease_files";
+	 if ($f_md5) {
+           $where = "WHERE `md5`='".$s_md5."'";
+	 }
+         if ($f_sha1) {
+           $where = "WHERE `sha1`='".$s_sha1."'";
+         }
+
+	 $mfile = null;
+         $osrs = array();
+         if (($i = $my->fetchIndex($idx, $table, $where)))
+         {
+           foreach($i as $t) {
+             $g = new OSRelease($t['id_release']);
+             $g->fetchFromId();
+  	     if (!$mfile) {
+		$mfile = new File($t['fileid']);
+		if ($mfile->fetchFromId()) {
+		  $mfile = null;
+	        }
+	     }
+	     if ($mfile) {
+	       $mfile->size = $t['size'];
+	       $mfile->sha1 = $t['sha1'];
+	       $mfile->md5 = $t['md5'];
+	       $g->o_mfile = clone $mfile;
+               $g->o_mfile->pkg = $t['pkg'];
+	     }
+             array_push($osrs, $g);
+           }
+         }
+         $content = new Template("./tpl/fs_results.tpl");
+         $content->set("osrs", $osrs);
          $content->set("patches", $patches);
          $content->set("mfile", $mfile);
+         $content->set("namebased", false);
 
        } else { // filename search
          $mfile = new File();
@@ -148,65 +165,16 @@
                 }
              }
   	     if ($mfile) {
-	       $mfile->size = $t['size'];
-	       $mfile->sha1 = $t['sha1'];
-	       $mfile->md5 = $t['md5'];
+               $g->o_mfile = clone $mfile;
+	       $g->o_mfile->size = $t['size'];
+	       $g->o_mfile->pkg = $t['pkg'];
+	       $g->o_mfile->sha1 = $t['sha1'];
+	       $g->o_mfile->md5 = $t['md5'];
 	     }
              array_push($patches, $g);
            }
          }
-	 $content = new Template("./tpl/fs_patch.tpl");
-         $content->set("patches", $patches);
-	 $content->set("mfile", $mfile);
-
-       }
-
-     break;
-     case "release":
-       if ($f_hash) { // Digest search
-         $idx = "`fileid`, `id_release`, `md5`, `sha1`, `size`";
-	 $table = "jt_osrelease_files";
-	 if ($f_md5) {
-           $where = "WHERE `md5`='".$s_md5."'";
-	 }
-         if ($f_sha1) {
-           $where = "WHERE `sha1`='".$s_sha1."'";
-         }
-
-	 $mfile = null;
-         $osrs = array();
-         if (($i = $my->fetchIndex($idx, $table, $where)))
-         {
-           foreach($i as $t) {
-             $g = new OSRelease($t['id_release']);
-             $g->fetchFromId();
-  	     if (!$mfile) {
-		$mfile = new File($t['fileid']);
-		if ($mfile->fetchFromId()) {
-		  $mfile = null;
-	        }
-	     }
-	     if ($mfile) {
-               $mfile->size = $t['size'];
-               $mfile->sha1 = $t['sha1'];
-               $mfile->md5 = $t['md5'];
-	     }
-             array_push($osrs, $g);
-           }
-         }
-         $content = new Template("./tpl/fs_release.tpl");
-         $content->set("osrs", $osrs);
-         $content->set("mfile", $mfile);
-
-       } else { // filename search
-         $mfile = new File();
-         $mfile->name = $s_fpa;
-	 if ($mfile->fetchFromField("name")) {
-           $content = new Template("./tpl/fsearch.tpl");
-           $content->set("error", "File not found in database");
-           goto screen;
-	 }
-         $idx = "`id_release`, `md5`, `sha1`, `size`";
+	 $idx = "`id_release`, `md5`, `pkg`, `sha1`, `size`";
 	 $table = "jt_osrelease_files";
 	 $where = "WHERE `fileid`='".$mfile->id."'";
          $osrs = array();
@@ -215,24 +183,36 @@
            foreach($i as $t) {
 	     $g = new OSRelease($t['id_release']);
 	     $g->fetchFromId();
-	     $mfile->size = $t['size'];
-	     $mfile->sha1 = $t['sha1'];
-	     $mfile->md5 = $t['md5'];
+             if (!$mfile) {
+                $mfile = new File($t['fileid']);
+                if ($mfile->fetchFromId()) {
+                  $mfile = null;
+                }
+             }
+             if ($mfile) {
+               $g->o_mfile = clone $mfile;
+	       $g->o_mfile->size = $t['size'];
+	       $g->o_mfile->pkg = $t['pkg'];
+	       $g->o_mfile->sha1 = $t['sha1'];
+	       $g->o_mfile->md5 = $t['md5'];
+  	     }
              array_push($osrs, $g);
            }
          }
-	 $content = new Template("./tpl/fs_release.tpl");
+	 if ($mfile) {
+	   $mfile->pkg = "";
+	   $mfile->md5 = "";
+	   $mfile->sha1 = "";
+	   $mfile->size = 0;
+	 }
+	 $content = new Template("./tpl/fs_results.tpl");
          $content->set("osrs", $osrs);
-	 $content->set("mfile", $mfile);
+         $content->set("patches", $patches);
+         $content->set("namebased", true);
+         $content->set("mfile", $mfile);
 
        }
-     break;
-     default:
-       $content = new Template("./tpl/fsearch.tpl");
-       $content->set("error", "You little sneaky one...");
-       goto screen;
-     break;
-   }
+
 
    $title = "We Sun Solve - File Search Results";
 

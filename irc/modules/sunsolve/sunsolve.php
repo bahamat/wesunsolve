@@ -314,6 +314,116 @@ class sunsolve extends module {
 		}
 	}
 
+	public function priv_sum($line, $args)
+	{
+		$channel = $line['to'];
+
+		if ($channel == $this->ircClass->getNick())
+		{
+			return;
+		}
+
+		if ($args['nargs'] == 0)
+		{
+			$msg = "!sum <md5sum>";
+			$this->ircClass->privMsg($channel, $msg);
+		}
+		else
+		{
+			$sum = trim($args['arg1']);
+			$m = mysqlCM::getInstance();
+			if ($m->connect()) {
+				$this->ircClass->privMsg($channel, "Unable to connect to MySQL server...");
+				$m->disconnect();
+				return;
+			} else {
+			 $idx = "`fileid`, `patchid`, `revision`, `pkg`, `md5`, `sha1`, `size`";
+			 $table = "jt_patches_files";
+			 $where = "WHERE `md5`='".$sum."'";
+
+			 $mfile = null;
+			 $patches = array();
+			 if (($i = $m->fetchIndex($idx, $table, $where)))
+			 {
+			   foreach($i as $t) {
+			     $g = new Patch($t['patchid'], $t['revision']);
+			     $g->fetchFromId();
+			     if (!$mfile) {
+				$mfile = new File($t['fileid']);
+				if ($mfile->fetchFromId()) {
+				  $mfile = null;
+				}
+			     }
+			     if ($mfile) {
+			       $mfile->size = $t['size'];
+			       $mfile->sha1 = $t['sha1'];
+			       $mfile->md5 = $t['md5'];
+			       $g->o_mfile = clone $mfile;
+			       $g->o_mfile->pkg = $t['pkg'];
+			     }
+			     array_push($patches, $g);
+			   }
+			 }
+			 // releases
+			 $idx = "`fileid`, `id_release`, `md5`, `sha1`, `size`, `pkg`";
+			 $table = "jt_osrelease_files";
+			 $where = "WHERE `md5`='".$sum."'";
+
+			 $osrs = array();
+			 if (($i = $m->fetchIndex($idx, $table, $where)))
+			 {
+			   foreach($i as $t) {
+			     $g = new OSRelease($t['id_release']);
+			     $g->fetchFromId();
+			     if (!$mfile) {
+				$mfile = new File($t['fileid']);
+				if ($mfile->fetchFromId()) {
+				  $mfile = null;
+				}
+			     }
+			     if ($mfile) {
+			       $mfile->size = $t['size'];
+			       $mfile->sha1 = $t['sha1'];
+			       $mfile->md5 = $t['md5'];
+			       $g->o_mfile = clone $mfile;
+			       $g->o_mfile->pkg = $t['pkg'];
+			     }
+			     array_push($osrs, $g);
+			   }
+			 }
+		         $m->disconnect();
+			}
+			if (!$mfile) {
+			  $this->ircClass->privMsg($channel, "Checksum not found.");
+			} else {
+			  $msg = "File: ".$mfile->name." found in ".count($osrs)." releases and ".count($patches)." patches";
+			  $this->ircClass->privMsg($channel, $msg);
+			  if (count($osrs)) {
+			    $msg = " found in releases: ";
+			    $c = 0;
+			    foreach($osrs as $osr) {
+			      if($c==2) break;
+			      $msg .= $osr->__toString().', ';
+			      $c++;
+			    }
+			    if (count($osrs) > 2) $msg.= (count($osrs) - 2)."+ more";
+			    $this->ircClass->privMsg($channel, $msg);
+			  }
+			  if (count($patches)) {
+			    $msg = " found in patches: ";
+			    $c = 0;
+			    foreach($patches as $p) {
+			      if($c==5) break;
+			      $msg .= $p->name().', ';
+			      $c++;
+			    }
+			    if (count($patches) > 5) $msg.= (count($patches) - 5)."+ more";
+			    $this->ircClass->privMsg($channel, $msg);
+			  }
+			}
+		}
+	}
+
 	public function priv_patch($line, $args)
 	{
 		$channel = $line['to'];

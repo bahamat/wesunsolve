@@ -511,6 +511,10 @@ ul.listinfo {
   padding-bottom: 2px;
 }
 
+.lisub {
+  background-image: none;
+}
+
 
 ul.listlink {
   list-style-type:none;

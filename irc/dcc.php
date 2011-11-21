@@ -425,7 +425,7 @@ class dcc {
 
 		$id = $this->highestId();
 
-		$file = new file($id, $nick, $sockInt, $host, $port, $type, $reverse);
+		$file = new myfile($id, $nick, $sockInt, $host, $port, $type, $reverse);
 
 		if ($file->transferType == UPLOAD)
 		{
