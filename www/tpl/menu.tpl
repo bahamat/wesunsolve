@@ -22,7 +22,7 @@
       <li class="m_element"><a href="/bsearch">Bug search</a></li> 
      </ul> 
      <ul>
-      <li class="m_header">Files</li>
+      <li class="m_header">Fingerprint Database</li>
       <li class="m_element"><a href="/releases">Referenced releases</a></li>
       <li class="m_element"><a href="/fsearch">File search</a></li>
      </ul>
