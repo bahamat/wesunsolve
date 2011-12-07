@@ -31,7 +31,7 @@
      break;
    }
  }
- if (!$li) { die("This list does not belong to your user!"); }
+ if (!isset($li) || !$li) { die("This list does not belong to your user!"); }
 
  if (isset($_GET['pl']) && !empty($_GET['pl'])) {
    $pl = $_GET['pl'];

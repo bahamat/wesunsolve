@@ -29,6 +29,7 @@
      HTTP::errWWW("error, id not found");
    }
    if (file_exists($config['pdiagpath']."/".$pd->filename)) {
+     HTTP::piwikDownload($pd->filename);
      header("Content-type: text/plain");
      header("Content-Disposition: filename=patchdiag.xref");
      echo file_get_contents($config['pdiagpath']."/".$pd->filename);

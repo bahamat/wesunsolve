@@ -175,7 +175,9 @@ class OSRelease extends mysqlObj
 
     $pdirs = array(
 			"Solaris_10",
-			"Solaris_9"
+			"Solaris_9",
+			"Solaris_8",
+			"Trusted_Solaris_8"
 		  );
 
     foreach($pdirs as $pdir) {
@@ -197,8 +199,18 @@ class OSRelease extends mysqlObj
           $pkgname = $pkgname[count($pkgname)-1];
           echo "[>] Found $pkgname:\n";
 
-          /* is there an archive/none.bz2 file ? */
           $op = null;
+          /* is there an archive/none file ? */
+	  if (file_exists($pkg."/archive/none")) {
+            $op = $pkg."/reloc";
+            if (!is_dir($op)) mkdir($op);
+            chdirmod($op, 0755);
+            $cmd = "cd $op ; /usr/bin/unzip -oq $pkg/archive/none";
+            echo "\t* Extracting none for $pkgname...\n";
+            $r = `$cmd`;
+          }
+
+          /* is there an archive/none.bz2 file ? */
           if (file_exists($pkg."/archive/none.bz2")) {
             $op = $pkg."/reloc";
             if (!is_dir($op)) mkdir($op);
@@ -235,7 +247,9 @@ class OSRelease extends mysqlObj
 
     $pdirs = array(
                         "Solaris_10",
-                        "Solaris_9"
+			"Solaris_9",
+			"Solaris_8",
+			"Trusted_Solaris_8"
                   );
 
     foreach($pdirs as $pdir) {

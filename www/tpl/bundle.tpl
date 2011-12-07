@@ -32,11 +32,30 @@ add_comment/id_on/<?php echo $bundle->id; ?>/type/bundle">add</a></p>
 		</ul>
                 <h3>Patch included in this cluster</h3>
                 <?php if (!count($bundle->a_patches)) { echo "<p>There is no patch included in ".$bundle->synopsis."</p>"; } else { ?>
-                <ul>
-                <?php foreach ($bundle->a_patches as $p) { ?>
-                 <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> : <?php echo $p->synopsis; ?></li>
+  <div class="ctable">
+   <table id="legend" class="ctable"><tr>
+                                <td class="greentd">RECOMMENDED</td>
+                                <td class="orangetd">SECURITY</td>
+                                <td class="redtd">WITHDRAWN</td>
+                                <td class="violettd">OBSOLETE</td>
+                        </tr></table>
+		<table id="tbl_patches" class="ctable">
+		<tr>
+    		  <th>Patch ID</th>
+		  <th>Release date</th>
+    		  <th>Synopsis</th>
+	        </tr>
+                <?php foreach ($bundle->a_patches as $p) { 
+	          $f = $p->flags();
+	          $isf = strlen($f);
+		?>
+		<tr>
+		 <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } ?><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
+	         <td><?php echo date(HTTP::getDateFormat(), $p->releasedate); ?></td>
+                 <td style="text-align: left"><?php if ($isf) echo '['.$f.']'; ?><?php echo HTTP::linkize(substr($p->synopsis,0, $h->css->s_strip)); ?></td>
+		</tr>
                 <?php } ?>
-                </ul>
+		</table>
                 <?php } ?>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->

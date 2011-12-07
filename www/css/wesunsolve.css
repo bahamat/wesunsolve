@@ -395,6 +395,16 @@ p.warning {
   color: #ffffff;
 }
 
+.violettd {
+  background-color: violet;
+  color: #ffffff;
+}
+
+.violettd a {
+  color: #ffffff;
+}
+
+
 /* Nav bar & legend */
 
 .navtd {

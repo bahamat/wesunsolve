@@ -1644,13 +1644,21 @@ class Patch extends mysqlObj
 
     return $str;
   }
+  public function flags() {
+    $f = "";
+    if ($this->pca_bad) $f .= 'B';
+    if (!strcmp($this->status, 'OBSOLETE')) $f .= 'O';
+    if ($this->pca_sec) $f .= 'S';
+    if ($this->pca_rec) $f .= 'R';
+    return $f;
+  }
 
   public function color() {
     if ($this->pca_bad) {
       return "class=\"redtd\"";
     }
     if (!strcmp($this->status, 'OBSOLETE')) {
-      return "class=\"browntd\"";
+      return "class=\"violettd\"";
     }
     if ($this->pca_sec) {
       return "class=\"orangetd\"";

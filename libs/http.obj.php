@@ -96,13 +96,42 @@ class HTTP
     die();
   }
 
+  public static function piwikLogin($uname) {
+    global $config, $_SERVER;
+    include_once($config['rootpath'].'/libs/PiwikTracker.php');
+    /* Log visit on piwik */
+    $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
+    $piwikTracker->setUrl( $_SERVER['REQUEST_URI'] );
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
+    $piwikTracker->setTokenAuth( $config['piwikToken'] );
+    $piwikTracker->setCustomVariable( 1, "LoggedIn", $uname, 'visit');
+    $piwikTracker->doTrackPageView('Login');
+    return true;
+  }
+
+  public static function piwikDownload($file) {
+    global $config, $_SERVER;
+    include_once($config['rootpath'].'/libs/PiwikTracker.php');
+     /* Log visit on piwik */
+    $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
+    $piwikTracker->setUrl( $_SERVER['REQUEST_URI'].'/'.$file );
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
+    $piwikTracker->setTokenAuth( $config['piwikToken'] );
+    $lm = loginCM::getInstance();
+    if ($lm->o_login) {
+      $piwikTracker->setCustomVariable( 1, "LoggedIn", $lm->o_login->username, 'visit');
+    }
+    $piwikTracker->doTrackAction($_SERVER['REQUEST_URI'].'/'.$file, 'download');
+    return true;
+  }
 
   public static function Piwik($title) {
     global $config;
-    @require_once('../../../libs/PiwikTracker.php');
      /* Log visit on piwik */
+    include_once($config['rootpath'].'/libs/PiwikTracker.php');
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
     $piwikTracker->setUrl( $_SERVER['REQUEST_URI'] );
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setTokenAuth( $config['piwikToken'] );
     $piwikTracker->doTrackPageView("Site News RSS Feed");
     return true;
