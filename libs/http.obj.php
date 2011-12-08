@@ -97,7 +97,7 @@ class HTTP
   }
 
   public static function piwikLogin($uname) {
-    global $config, $_SERVER;
+    global $config;
     include_once($config['rootpath'].'/libs/PiwikTracker.php');
     /* Log visit on piwik */
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
@@ -110,7 +110,7 @@ class HTTP
   }
 
   public static function piwikDownload($file) {
-    global $config, $_SERVER;
+    global $config;
     include_once($config['rootpath'].'/libs/PiwikTracker.php');
      /* Log visit on piwik */
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
@@ -133,7 +133,7 @@ class HTTP
     $piwikTracker->setUrl( $_SERVER['REQUEST_URI'] );
     $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setTokenAuth( $config['piwikToken'] );
-    $piwikTracker->doTrackPageView("Site News RSS Feed");
+    $piwikTracker->doTrackPageView($title);
     return true;
   }
 
