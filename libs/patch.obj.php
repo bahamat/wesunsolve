@@ -538,10 +538,18 @@ class Patch extends mysqlObj
     }
   }
 
+  public function extPath() {
+
+    global $config;
+    $dir1 = substr($this->patch, 0, 2);
+    $dir2 = substr($this->patch, 2, 2);
+    return $config['extpath']."/$dir1/$dir2";
+  }
+
+
   public function path() {
 
     global $config;
-
     $dir1 = substr($this->patch, 0, 2);
     $dir2 = substr($this->patch, 2, 2);
     return $config['ppath']."/$dir1/$dir2";
@@ -949,15 +957,15 @@ class Patch extends mysqlObj
   function fetchFiles($all=1) {
 
     $this->a_files = array();
-    $table = "`jt_patches_files`";
-    $index = "`fileid`, `size`, `pkg`, `md5`, `sha1`";
-    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+    $table = "`jt_patches_files` jt, `files` f";
+    $index = "`name`, `fileid`, `size`, `pkg`, `md5`, `sha1`";
+    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."' AND f.id=jt.fileid";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     { 
       foreach($idx as $t) {
         $k = new File($t['fileid']);
-        $k->fetchFromId();
+  	$k->name = $t['name'];
   	$k->size = $t['size'];
   	$k->md5 = $t['md5'];
   	$k->sha1 = $t['sha1'];
@@ -1903,26 +1911,33 @@ class Patch extends mysqlObj
     $xml->pop();
   }
 
+  public function extract() {
+    global $config;
+
+    $af = $this->findArchive();
+    if (!$af) return -1;
+    if (!file_exists($af)) return -1;
+    if (is_dir($this->extPath().'/'.$this->name())) return 0; /* Already done */
+    
+    $odir = $this->extPath();
+    $rc = extractTmp($af, $odir);
+
+    if (!$rc) {
+      return 0;
+    }
+
+    return -1;
+  }
+
   public function mkFilesSum() {
     global $config;
 
     $this->fetchFiles();
-    $af = $this->findArchive();
-    if (!$af)
-      return -1;
-
-    $rc = extractTmp($af, $config['tmppath']."/cksum/");
-    if (!$rc) {
-      echo "[-] Archive extracted into tmpdir\n"; 
-    } else {
-      echo "[-] Cannot extract archive\n"; 
-      return -1;
-    }
   
-    $tp = $config['tmppath']."/cksum/".$this->name();
+    $tp = $this->extPath().'/'.$this->name();
 
     if (!is_dir($tp)) {
-      echo "[-] Can't found patch directory\n"; 
+      echo "[-] Can't find patch directory\n"; 
       return -1;
     }
 
@@ -1965,8 +1980,13 @@ class Patch extends mysqlObj
 
 	/* Check that the file is already linked to this patch... */
 	if (!$this->isFile($fname)) {
-          echo "[!] $fname not linked to the patch\n";
-          continue;
+          echo "[!] linking $fname the patch\n";
+          $file = new File();
+	  $file->name = $fname;
+          if ($file->fetchFromField("name")) {
+            $file->insert();
+	  }
+          $this->addFile($file);
 	}
 
 	$size = filesize($fpath);
@@ -1981,15 +2001,26 @@ class Patch extends mysqlObj
 	echo "\t> pkg: $pkgname\n";
 
       }
-
-
     }
-
-    /* Cleanup of tmp cksum dir */
-    $cmd = "rm -rf \"$tp\"";
-    $r = `$cmd`;
-
     return 0;
+  }
+
+  public function getFromMaster() {
+    global $config;
+
+    if (file_exists($this->path().'/.'.$this->name())) return -1;
+    $remotef = $this->path().'/'.$this->name().".*";
+    $localf = $this->path().'/';
+    $this->checkPath();
+
+    $cmd = "/usr/bin/scp -i ".$config['rsapath']." ".$config['ws2master'].":$remotef $localf";
+    $ret = `$cmd`;
+
+    $af = $this->findArchive();
+    if ($af && file_exists($af)) {
+      return 0;
+    }
+    return -1;
   }
 
 

@@ -50,6 +50,9 @@ function getData($obj, $arg) {
 
 function extractTmp($a, $odir) {
 
+  if (!is_dir($odir)) 
+    mkdir ($odir, 0755, true);
+
   $e = explode(".", $a);
   $ext = $e[count($e)-1];
   switch($ext) {
