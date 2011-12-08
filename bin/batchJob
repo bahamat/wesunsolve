@@ -158,10 +158,19 @@
     $it = new mIterator("Patch", $index, $table, $where, $cindex);
     $fields = array("patch", "revision", "when");
     while(($p = $it->next())) {
+      echo "[-] Treating ".$p->name()."...\n";
       $p->fetchFromId();
       $archive = $p->findArchive();
-      if (!$archive)
- 	continue;
+      if (!$archive) {
+        echo "[-] Archive not found, trying to get it from master...\n";
+	$rc = $p->getFromMaster();
+        if ($rc) continue;
+      }
+      echo "[-] Archive being extracted if needed...\n";
+      /* Check if archive is already extracted */
+      if ($p->extract()) {
+        continue;
+      }
       echo "[-] Will try to checksum patch ".$p->name()."\n";
       $p->mkFilesSum();
     }
