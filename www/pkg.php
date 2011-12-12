@@ -33,7 +33,7 @@
             $what = "pkg";
             $number = $id;
 	 } else {
-           $pkg->fetchAll(2);
+           $pkg->fetchAll(1);
 	 }
         $pkg->viewed();
    

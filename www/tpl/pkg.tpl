@@ -3,7 +3,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Package <?php echo $pkg; ?></h2>
+     <h2 class="grid_10 push_1 alpha omega">Package <?php echo $pkg->shortName(); ?></h2>
      <p id="titlecomment" class="push_4 grid_5"><?php echo count($pkg->a_comments); ?> Comments | <a href="#comments">view</a> / <a href="/add_comment/id_on/<?php echo $pkg->id; ?>/type/pkg">add</a></p>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
@@ -21,10 +21,26 @@
     <a id="top"></a>
     <h4><?php echo $pkg->summary; ?></h4>
 	     <h3>General informations</h3>
-		 <li>Release date: <?php if($pkg->pstamp) echo date(HTTP::getDateFormat(), $pkg->pstamp); ?></li>
+		 <li>Full name: <?php echo $pkg; ?></li>
 		 <li>Summary: <?php echo $pkg->summary; ?></li>
 		 <li>Description: <?php echo $pkg->desc; ?></li>
+		 <li>IPS Path: <?php echo $pkg->path; ?></li>
+		 <li>Product version: <?php echo $pkg->version; ?></li>
+		 <li>Build version: <?php echo $pkg->buildver; ?></li>
+		 <li>Branch version: <?php echo $pkg->branchver; ?></li>
+		 <li>Full FMRI: <?php echo $pkg->fmri; ?></li>
+		 <li>Release date: <?php if($pkg->pstamp) echo date(HTTP::getDateFormat(), $pkg->pstamp); ?></li>
 		</ul>
+	     <h3>Bugs fixed in this package release</h3>
+<?php if (count($pkg->a_bugids)) { ?>
+		<ul>
+		<?php foreach($this->a_bugids as $bug) { ?>
+                 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+		<?php } ?>
+		</ul>
+<?php } else { ?>
+		<p>There is no related bug fixed in this package release</p>
+<?php } ?>
  	        <h3><a id="comments"></a>Comments</h3>
 		<?php if (!count($pkg->a_comments)) { ?>
 		  <p>There is no comments for this pkg yet. <a href="/add_comment/id_on/<?php echo $pkg->id; ?>/type/pkg">add one</a>.</p>

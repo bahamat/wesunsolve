@@ -298,7 +298,8 @@ class Pkg extends mysqlObj
 
   public function fetchAll($all=1) {
     $this->fetchComments();
-    $this->fetchFiles(); 
+    if ($all == 1) $this->fetchFiles(); 
+    $this->fetchBugids(); 
   }
 
     /* Users comments */
@@ -359,6 +360,14 @@ class Pkg extends mysqlObj
 
   public function __toString() {
     return $this->path.$this->name."@".$this->fmri;
+  }
+
+  public function shortName() {
+    return $this->name;
+  }
+
+  public function name() {
+    return $this->name."@".$this->fmri;
   }
 
 
@@ -490,7 +499,7 @@ class Pkg extends mysqlObj
     $this->a_bugids = array();
     $table = "`jt_pkg_bugids`";
     $index = "`bugid`, `id_fixed`";
-    $where = "WHERE `id`='".$this->id."'";
+    $where = "WHERE `id_pkg`='".$this->id."'";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
@@ -507,7 +516,7 @@ class Pkg extends mysqlObj
   function addBugid($k) {
 
     $table = "`jt_pkg_bugids`";
-    $names = "`bugid`, `id`, `id_fixed`";
+    $names = "`bugid`, `id_pkg`, `id_fixed`";
     $values = "'$k->id', '".$this->id."', '".$k->id_fixed."'";
 
     if (mysqlCM::getInstance()->insert($names, $values, $table)) {
@@ -520,7 +529,7 @@ class Pkg extends mysqlObj
   function delBugid($k) {
 
     $table = "`jt_pkg_bugids`";
-    $where = " WHERE `bugid`='".$k->id."' AND `id`='".$this->id."'";
+    $where = " WHERE `bugid`='".$k->id."' AND `id_pkg`='".$this->id."'";
 
     if (mysqlCM::getInstance()->delete($table, $where)) {
       return -1;
