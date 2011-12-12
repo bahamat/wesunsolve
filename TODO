@@ -16,7 +16,6 @@ Frontend:
 
 Processing:
 
-- pkg list -u parser
 - better Architecture parsing and sorting
 - Add checksum check when downloading patches
 - History for bundles (in/out and updated patches)

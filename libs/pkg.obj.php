@@ -222,11 +222,15 @@ class Pkg extends mysqlObj
   public $desc = "";
   public $summary = "";
   public $arch = "";
+  public $updated = 0;
+  public $added = 0;
+  public $views = 0;
 
   /* Lists */
   public $a_patches = array();
   public $a_files = array();
   public $a_rls = array();
+  public $a_comments = array();
 
   /* Obj */
   public $o_ips = null;
@@ -234,6 +238,52 @@ class Pkg extends mysqlObj
   /* Parsing */
 
   public static $a_tokens = array();
+
+  public function fetchAll($all=1) {
+    $this->fetchComments();
+    $this->fetchFiles(); 
+  }
+
+    /* Users comments */
+  function fetchComments($all=1) {
+
+    $lm = loginCM::getInstance();
+    if (!isset($lm->o_login) || !$lm->o_login) {
+      $id = -1;
+    } else {
+      $id = $lm->o_login->id;
+    }
+
+    $this->a_comments = array();
+    $table = "`u_comments`";
+    $index = "`id`";
+    $where = "WHERE `type`='pkg' AND `id_on`='".$this->id."' AND (`is_private`=0 OR (`id_login`=$id AND `is_private`=1)) ORDER BY `added` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UComment($t['id']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_comments, $k);
+      }
+    }
+    return 0;
+  }
+
+  public function update() {
+    $this->updated = time();
+    parent::update();
+  }
+
+  public function insert() {
+    $this->added = time();
+    parent::insert();
+  }
+
+  public function viewed() {
+     $q = 'UPDATE '.$this->_table.' SET `views`=`views`+1 WHERE `id`='.$this->id;
+     return MysqlCM::getInstance()->rawQuery($q);
+  }
 
   public function parseFMRI() {
     $fmri = preg_split("/[\,\-\:]/", $this->fmri);
