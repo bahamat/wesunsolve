@@ -81,4 +81,14 @@ function chdirmod($dir, $mod) {
   }
 }
 
+function strip_quote($str) {
+  if ($str[0] == '"') {
+    $str = substr($str, 1);
+  }
+  if ($str[strlen($str) - 1] == '"') {
+    $str = substr($str, 0, strlen($str) - 1);
+  }
+  return $str;
+}
+
 ?>

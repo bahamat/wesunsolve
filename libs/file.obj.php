@@ -23,6 +23,7 @@ class File extends mysqlObj
   public $md5 = "";
   public $sha1 = "";
   public $pkg = "";
+  public $version = "";
   
   /* Lists */
   public $a_patches = array();

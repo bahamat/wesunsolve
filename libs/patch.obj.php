@@ -1932,6 +1932,10 @@ class Patch extends mysqlObj
   public function mkFilesSum() {
     global $config;
 
+    $this->fetchData();
+    if ($this->data("cksum_done") == 1) {
+      return 0;
+    }
     $this->fetchFiles();
   
     $tp = $this->extPath().'/'.$this->name();
@@ -2002,6 +2006,7 @@ class Patch extends mysqlObj
 
       }
     }
+    $this->setData("cksum_done", 1);
     return 0;
   }
 
