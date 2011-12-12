@@ -113,6 +113,7 @@ class IPSToken
           echo "  > Inserted $pkgname @ $fmri\n";
           $pkg->insert();
         }
+        $pkg->parseFMRI();
       case "description":
       case "pkg.description":
 	$value = $values[0];
@@ -215,6 +216,8 @@ class Pkg extends mysqlObj
   public $name = "";
   public $fmri = "";
   public $version = "";
+  public $buildver = "";
+  public $branchver = "";
   public $pstamp = "";
   public $desc = "";
   public $summary = "";
@@ -231,6 +234,19 @@ class Pkg extends mysqlObj
   /* Parsing */
 
   public static $a_tokens = array();
+
+  public function parseFMRI() {
+    $fmri = preg_split("/[\,\-\:]/", $this->fmri);
+    $this->version = $fmri[0];
+    if (isset($fmri[3])) {
+      $this->pstamp = $fmri[3];
+      $this->pstamp = strtotime($fmri[3]);
+    }
+    $this->buildver = $fmri[1];
+    if (isset($fmri[2])) {
+      $this->branchver = $fmri[2];
+    }
+  }
 
   public function __toString() {
     return $this->name."@".$this->fmri;
@@ -365,6 +381,8 @@ class Pkg extends mysqlObj
                         "name" => SQL_PROPE,
                         "fmri" => SQL_PROPE,
                         "version" => SQL_PROPE,
+                        "buildver" => SQL_PROPE,
+                        "branchver" => SQL_PROPE,
                         "pstamp" => SQL_PROPE,
                         "desc" => SQL_PROPE,
                         "summary" => SQL_PROPE,
@@ -376,6 +394,8 @@ class Pkg extends mysqlObj
                         "name" => "name",
                         "fmri" => "fmri",
                         "version" => "version",
+                        "buildver" => "buildver",
+                        "branchver" => "branchver",
                         "pstamp" => "pstamp",
                         "desc" => "desc",
                         "summary" => "summary",
