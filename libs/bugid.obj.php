@@ -41,8 +41,8 @@ class Bugid extends mysqlObj
   public $is_raw = 0;
   public $views = 0;
 
-  public $id_fixed = -1;
-  public $o_fixed = null;
+  public $id_affect = -1;
+  public $o_affect = null;
 
   /* Fulltext */
   private $_ft;
@@ -413,10 +413,12 @@ class Bugid extends mysqlObj
   
   /* Lists */
   public $a_patches = array();
+  public $a_pkgs = array();
   public $a_keywords = array();
 
   public function fetchAll() {
     $this->fetchPatches();
+    $this->fetchPkgs();
     $this->fetchComments();
 
   }
@@ -449,6 +451,22 @@ class Bugid extends mysqlObj
     }
     return 0;
   }
+
+  public function fetchPkgs() {
+    $index = "`id`";
+    $table = "`pkg`";
+    $where = "WHERE `bugid`='".$this->id."'";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Pkg($t['id_pkg']);
+        $k->fetchFromId();
+        array_push($this->a_pkgs, $k);
+      }
+    }
+    return 0;
+  }
+
 
   public function viewed() {
      $q = 'UPDATE '.$this->_table.' SET `views`=`views`+1 WHERE `id`='.$this->id;

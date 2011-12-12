@@ -22,6 +22,14 @@
 		<ul>
 		 <li>Synopsis: <?php echo htmlentities($bug->synopsis); ?></li>
 		</ul>
+             <h3>Packages that fixes the bug</h3>
+             <?php if (!count($bug->a_pkgs)) { echo "<p>There is no packages update for this bug</p>"; } else { ?>
+              <ul>
+                <?php foreach($bug->a_pkgs as $p) { ?>
+                <li><a href="/pkg/id/<?php echo $p->id; ?>"><?php echo $p->name(); ?></a> : <?php echo $p->summary; ?></li>
+                <?php } ?>
+              </ul>
+             <?php } ?>
              <h3>Patches that fixes the bug</h3>
 	     <?php if (!count($bug->a_patches)) { echo "<p>There is no patch for this bug</p>"; } else { ?>
 	      <ul>

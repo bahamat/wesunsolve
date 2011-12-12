@@ -498,14 +498,14 @@ class Pkg extends mysqlObj
 
     $this->a_bugids = array();
     $table = "`jt_pkg_bugids`";
-    $index = "`bugid`, `id_fixed`";
+    $index = "`bugid`, `id_affect`";
     $where = "WHERE `id_pkg`='".$this->id."'";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
       foreach($idx as $t) {
         $k = new Bugid($t['bugid']);
-	$k->id_fixed = $t['id_fixed'];
+	$k->id_affect = $t['id_affect'];
         if ($all) $k->fetchFromId();
         array_push($this->a_bugids, $k);
       }
@@ -516,8 +516,8 @@ class Pkg extends mysqlObj
   function addBugid($k) {
 
     $table = "`jt_pkg_bugids`";
-    $names = "`bugid`, `id_pkg`, `id_fixed`";
-    $values = "'$k->id', '".$this->id."', '".$k->id_fixed."'";
+    $names = "`bugid`, `id_pkg`, `id_affect`";
+    $values = "'$k->id', '".$this->id."', '".$k->id_affect."'";
 
     if (mysqlCM::getInstance()->insert($names, $values, $table)) {
       return -1;
