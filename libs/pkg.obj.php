@@ -295,7 +295,7 @@ class Pkg extends mysqlObj
   }
 
   /* Files */
-  function fetchFiles($all=1) {
+  public function fetchFiles($all=1) {
 
     $this->a_files = array();
     $table = "`jt_pkg_files` jt, `files` f";
@@ -316,7 +316,7 @@ class Pkg extends mysqlObj
     return 0;
   }
 
-  function addFile($k) {
+  public function addFile($k) {
 
     $table = "`jt_pkg_files`";
     $names = "`fileid`, `id_pkg`";
@@ -329,7 +329,7 @@ class Pkg extends mysqlObj
     return 0;
   }
 
-  function setFileAttr($file) {
+  public function setFileAttr($file) {
 
     if (!$file)
       return -1;
@@ -345,7 +345,7 @@ class Pkg extends mysqlObj
 
   }
 
-  function delFile($k) {
+  public function delFile($k) {
 
     $table = "`jt_pkg_files`";
     $where = " WHERE `fileid`='".$k->id."' AND `id_pkg`='".$this->id."'";
@@ -361,11 +361,18 @@ class Pkg extends mysqlObj
     return 0;
   }
 
-  function isFile($k) {
+  public function isFile($k) {
     foreach($this->a_files as $ko)
       if (!strcasecmp($ko->name, $k->name))
         return TRUE;
     return FALSE;
+  }
+
+  public function isNew() {
+    $now = time();
+    if (($now - $this->pstamp) < 3600*24*15)
+      return true;
+    return false;
   }
 
  /**
