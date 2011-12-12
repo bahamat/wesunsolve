@@ -61,7 +61,7 @@
 	 } else {
            $content->set("pkg", $pkg);
 	   if ($lm->o_login && $lm->o_login->is_log) {
-	     $lm->o_login->logAction('pkg', $pkg);
+	     $lm->o_login->logAction('pkg', $pkg->id);
 	   }
          }
    $index->set("content", $content);

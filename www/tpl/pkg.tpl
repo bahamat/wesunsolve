@@ -34,7 +34,7 @@
 	     <h3>Bugs fixed in this package release</h3>
 <?php if (count($pkg->a_bugids)) { ?>
 		<ul>
-		<?php foreach($this->a_bugids as $bug) { ?>
+		<?php foreach($pkg->a_bugids as $bug) { ?>
                  <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
 		<?php } ?>
 		</ul>

@@ -453,8 +453,8 @@ class Bugid extends mysqlObj
   }
 
   public function fetchPkgs() {
-    $index = "`id`";
-    $table = "`pkg`";
+    $index = "`id_pkg`";
+    $table = "`jt_pkg_bugids`";
     $where = "WHERE `bugid`='".$this->id."'";
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
