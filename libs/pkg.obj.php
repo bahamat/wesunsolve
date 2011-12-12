@@ -46,41 +46,50 @@ class IPSToken
     $file = null;
 
     $vars = IPSToken::parseStringVars($nline);
-    foreach($vars as $var) {
-      foreach($var as $k => $v) {
-	$up = false;
-        if (!strcmp($k, 'path')) {
-          $file = new File();
-	  $file->name = '/'.$v;
-	  if ($file->fetchFromField("name")) {
-	    $file->insert();
-	    echo "   |---> Added file $v to DB\n";
-	  }
-	  if (strcmp($file->sha1, $hash)) {
-            $file->sha1 = $hash;
-	    $up = true;
-	  }
-          if (empty($file->md5) || $file->md5 == -1) { 
-	    $file->md5 = $pkg->o_ips->md5Sum($file);
-	    $up = true;
-	    echo "   |---> Updated md5 sum to be ".$file->md5."\n";
-	  }
-	  if ($pkg->id && $pkg->id != -1) {
-            if (!$pkg->isFile($file)) {
-	      $pkg->addFile($file);
-	      echo "  |---> linked $v to $pkg\n";
-	    }
-	  }
-	} else if (!strcmp($k, 'pkg.size')) {
-          if ($file && $file->size != $v) {
-	    $file->size = $v;
-	    $up = true;
-	  }
-        }
-	if ($up) $pkg->setFileAttr($file);
+    $path = IPSToken::getVar($vars, 'path');
+    $size = IPSToken::getVar($vars, 'pkg.size');
+    $elfarch = IPSToken::getVar($vars, 'elfarch');
+    $file = new File();
+    $file->name = '/'.$path;
+    if ($file->fetchFromField("name")) {
+      $file->insert();
+      echo "   |---> Added file $v to DB\n";
+    }
+    if (strcmp($file->sha1, $hash)) {
+      $file->sha1 = $hash;
+      $up = true;
+    }
+    if (empty($file->md5) || $file->md5 == -1) {
+      $file->md5 = $pkg->o_ips->md5Sum($file);
+      $up = true;
+      echo "   |---> Updated md5 sum to be ".$file->md5."\n";
+    }
+    if ($pkg->id && $pkg->id != -1) {
+      if (!$pkg->isFile($file)) {
+        $pkg->addFile($file);
+        echo "  |---> linked $v to $pkg\n";
       }
     }
+    if ($size && $size != 0) {
+      $file->size = $v;
+      $up = true;
+    }
+    if ($elfarch && !empty($elfarch)) {
+      $file->arch = $elfarch;
+    }
+    if ($up) $pkg->setFileAttr($file);
     return $vars;
+  }
+
+  public static function getVar($vars, $name) {
+    foreach($vars as $var) {
+      foreach($var as $k => $v) {
+        if (!strcmp($k, $name)) {
+          return $v;
+	}
+      }
+    }
+
   }
 
   public function t_set(&$pkg, $line) {
@@ -418,7 +427,7 @@ class Pkg extends mysqlObj
 
     $this->a_files = array();
     $table = "`jt_pkg_files` jt, `files` f";
-    $index = "`name`, `fileid`, `size`, `md5`, `sha1`";
+    $index = "`name`, `arch`, `fileid`, `size`, `md5`, `sha1`";
     $where = "WHERE `id_pkg`='".$this->id."' AND f.id=jt.fileid";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
@@ -427,6 +436,7 @@ class Pkg extends mysqlObj
         $k = new File($t['fileid']);
         $k->name = $t['name'];
         $k->size = $t['size'];
+        $k->arch = $t['arch'];
         $k->md5 = $t['md5'];
         $k->sha1 = $t['sha1'];
         array_push($this->a_files, $k);
@@ -454,7 +464,7 @@ class Pkg extends mysqlObj
       return -1;
 
     $table = "jt_pkg_files";
-    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $set = "`arch`='".$file->arch."', `size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
     $where = " WHERE `fileid`='".$file->id."' AND `id_pkg`='".$this->id."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
@@ -467,7 +477,7 @@ class Pkg extends mysqlObj
   public function delFile($k) {
 
     $table = "`jt_pkg_files`";
-    $where = " WHERE `fileid`='".$k->id."' AND `id_pkg`='".$this->id."'";
+    $where = " WHERE `fileid`='".$k->id."' AND `id_pkg`='".$this->id."' AND `arch`='".$this->arch."'";
 
     if (mysqlCM::getInstance()->delete($table, $where)) {
       return -1;
@@ -482,7 +492,7 @@ class Pkg extends mysqlObj
 
   public function isFile($k) {
     foreach($this->a_files as $ko)
-      if (!strcasecmp($ko->name, $k->name))
+      if (!strcasecmp($ko->name, $k->name) && !strcmp($ko->arch, $k->arch))
         return TRUE;
     return FALSE;
   }

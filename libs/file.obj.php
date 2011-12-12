@@ -20,6 +20,7 @@ class File extends mysqlObj
 
   /* Optionnal fields */
   public $size = 0;
+  public $arch = "";
   public $md5 = "";
   public $sha1 = "";
   public $pkg = "";
