@@ -293,6 +293,7 @@ class Pkg extends mysqlObj
     $this->path = $path;
     $this->fmri = $fmri;
     if (empty($this->path)) $this->path = "/";
+    if ($this->path[0] != '/') $this->path = '/'.$this->path;
     return true;
   }
 
