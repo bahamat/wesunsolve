@@ -16,13 +16,18 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "d::h";
+  $shortopts = "p::d::h";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
     echo $argv[0]."\n";
     echo "\t [-d=<dir>]\n";
     exit();
+  }
+
+  $pkg = "";
+  if (isset($opts['p'])) {
+   $pkg = $opts['p'];
   }
 
   $m = mysqlCM::getInstance();
@@ -39,7 +44,7 @@
   $ips = new IPS();
 //  $ips->root = $opts['d'];
   $ips->root = $config['ipspath'].'/publisher/solaris';
-  $ips->browse();
+  $ips->browse($pkg);
 
 
 ?>

@@ -41,11 +41,20 @@ class Bugid extends mysqlObj
   public $is_raw = 0;
   public $views = 0;
 
+  public $id_fixed = -1;
+  public $o_fixed = null;
+
   /* Fulltext */
   private $_ft;
   public $score = 0; // Score result from full text search
 
   public $a_comments = array();
+
+
+  public function __toString() {
+    return $this->id;
+  }
+
 
   public function unflag_update() {
     $my = mysqlCM::getInstance();

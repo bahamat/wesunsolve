@@ -37,7 +37,6 @@ class IPSToken
     if (!$pkg || !$pkg->id || $pkg->id == -1) {
       return -1;
     }
-    $pkg->fetchFiles();
 
     if (!($p = strpos($line, ' '))) {
       return -1;
@@ -49,19 +48,23 @@ class IPSToken
     $vars = IPSToken::parseStringVars($nline);
     foreach($vars as $var) {
       foreach($var as $k => $v) {
+	$up = false;
         if (!strcmp($k, 'path')) {
           $file = new File();
 	  $file->name = '/'.$v;
-          $file->sha1 = $hash;
 	  if ($file->fetchFromField("name")) {
 	    $file->insert();
 	    echo "   |---> Added file $v to DB\n";
 	  }
-          if (empty($file->md5) || $file->md5 == -1) {
+	  if (strcmp($file->sha1, $hash)) {
+            $file->sha1 = $hash;
+	    $up = true;
+	  }
+          if (empty($file->md5) || $file->md5 == -1) { 
 	    $file->md5 = $pkg->o_ips->md5Sum($file);
+	    $up = true;
 	    echo "   |---> Updated md5 sum to be ".$file->md5."\n";
 	  }
-
 	  if ($pkg->id && $pkg->id != -1) {
             if (!$pkg->isFile($file)) {
 	      $pkg->addFile($file);
@@ -69,11 +72,12 @@ class IPSToken
 	    }
 	  }
 	} else if (!strcmp($k, 'pkg.size')) {
-          if ($file) {
+          if ($file && $file->size != $v) {
 	    $file->size = $v;
+	    $up = true;
 	  }
         }
-	$pkg->setFileAttr($file);
+	if ($up) $pkg->setFileAttr($file);
       }
     }
     return $vars;
@@ -98,22 +102,53 @@ class IPSToken
 	}
       }
     }
+// set last-fmri=system/file-system/zfs@0.5.11,5.11-0.175.0.0.0.2.1:20111019T072820Z name=com.oracle.service.bugid value=6890231 value=7006046 value=7091693 value=7092930 value=7094901
 
     switch($name) {
       case "pkg.fmri";
 	$value = $values[0]; // only one
-        $value = explode('/', $value);
-        $pkgstring = $value[count($value)-1]; // BRCMbnx@0.5.11,5.11-0.133:20101027T183107Z
-        $fmri = explode("@", $pkgstring);
-        $pkgname = $fmri[0];                  // BRCMbnx
-        $fmri = $fmri[1];
-        $pkg->name = $pkgname;
-        $pkg->fmri = $fmri;
-        if ($pkg->fetchFromFields(array("name", "fmri"))) {
-          echo "  > Inserted $pkgname @ $fmri\n";
+        $pkg->fromString($value);
+        if ($pkg->fetchFromFields(array("name", "path", "fmri"))) {
+          echo "  > Inserted $pkg\n";
           $pkg->insert();
         }
+	$pkg->fetchFiles();
+        $pkg->fetchBugids();
         $pkg->parseFMRI();
+        $pkg->update();
+      case "com.oracle.service.bugid":
+        /* Find affected fmri */
+	$lastFMRI = "";
+	foreach($vars as $var) {
+	  foreach($var as $k => $v) {
+	    if (!strcmp($k, "last-fmri")) {
+	      $lastFMRI = $v;
+	      break;
+	    }
+	  }
+	}
+	if (empty($lastFMRI)) {
+	  return -1;
+	}
+	$po = new Pkg();
+	$po->fromString($lastFMRI);
+	if ($pkg->fetchFromFields(array("name", "path", "fmri"))) {
+          echo "  > Inserted ".$po."\n";
+          $po->insert();
+        }
+	foreach($values as $v) {
+ 	  $b = new Bugid($v);
+	  if ($b->fetchFromId()) {
+ 	    echo "  > New bugid found $b\n";
+	    $b->flag_update();
+	  }
+	  if (!$pkg->isBugid($b)) {
+	    $pkg->addBugid($b, $po); // link bug fixed with this package
+				   // second argument mention the affected package
+            echo "  > Linked $b fixed by $pkg\n";
+          }
+	}
+	break;
       case "description":
       case "pkg.description":
 	$value = $values[0];
@@ -214,6 +249,7 @@ class Pkg extends mysqlObj
   /* Data Var */
   public $id = -1;
   public $name = "";
+  public $path = "";
   public $fmri = "";
   public $version = "";
   public $buildver = "";
@@ -231,6 +267,7 @@ class Pkg extends mysqlObj
   public $a_files = array();
   public $a_rls = array();
   public $a_comments = array();
+  public $a_bugids = array();
 
   /* Obj */
   public $o_ips = null;
@@ -238,6 +275,26 @@ class Pkg extends mysqlObj
   /* Parsing */
 
   public static $a_tokens = array();
+
+  public function fromString($str) {
+    //last-fmri=system/file-system/zfs@0.5.11,5.11-0.175.0.0.0.2.1:20111019T072820Z
+    $value = preg_replace('/pkg:\/\/solaris/', '', $str);
+    $value = preg_replace('/pkg:/', '', $value);
+    $value = explode('/', $value);
+    $path = "";
+    $np = count($value) - 1; $i=0;
+// pkg://solaris
+    foreach($value as $val) { if($i >= $np) continue; $path .= $val.'/'; $i++; }
+    $pkgstring = $value[count($value)-1]; // BRCMbnx@0.5.11,5.11-0.133:20101027T183107Z
+    $fmri = explode("@", $pkgstring);
+    $pkgname = $fmri[0];                  // BRCMbnx
+    $fmri = $fmri[1];
+    $this->name = $pkgname;
+    $this->path = $path;
+    $this->fmri = $fmri;
+    if (empty($this->path)) $this->path = "/";
+    return true;
+  }
 
   public function fetchAll($all=1) {
     $this->fetchComments();
@@ -292,14 +349,16 @@ class Pkg extends mysqlObj
       $this->pstamp = $fmri[3];
       $this->pstamp = strtotime($fmri[3]);
     }
-    $this->buildver = $fmri[1];
+    if (isset($fmri[1])) {
+      $this->buildver = $fmri[1];
+    }
     if (isset($fmri[2])) {
       $this->branchver = $fmri[2];
     }
   }
 
   public function __toString() {
-    return $this->name."@".$this->fmri;
+    return $this->path.$this->name."@".$this->fmri;
   }
 
 
@@ -425,6 +484,63 @@ class Pkg extends mysqlObj
     return false;
   }
 
+  /* Bugids */
+  function fetchBugids($all=1) {
+
+    $this->a_bugids = array();
+    $table = "`jt_pkg_bugids`";
+    $index = "`bugid`, `id_fixed`";
+    $where = "WHERE `id`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Bugid($t['bugid']);
+	$k->id_fixed = $t['id_fixed'];
+        if ($all) $k->fetchFromId();
+        array_push($this->a_bugids, $k);
+      }
+    }
+    return 0;
+  }
+
+  function addBugid($k) {
+
+    $table = "`jt_pkg_bugids`";
+    $names = "`bugid`, `id`, `id_fixed`";
+    $values = "'$k->id', '".$this->id."', '".$k->id_fixed."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_bugids, $k);
+    return 0;
+  }
+
+  function delBugid($k) {
+
+    $table = "`jt_pkg_bugids`";
+    $where = " WHERE `bugid`='".$k->id."' AND `id`='".$this->id."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_bugids as $ak => $v) {
+      if ($k->id == $v->id) {
+        unset($this->a_bugids[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isBugid($k) {
+    foreach($this->a_bugids as $ko)
+      if ($ko->id == $k)
+        return TRUE;
+    return FALSE;
+  }
+
+
  /**
   * Constructor
   */
@@ -436,6 +552,7 @@ class Pkg extends mysqlObj
     $this->_my = array(
                         "id" => SQL_INDEX,
                         "name" => SQL_PROPE,
+                        "path" => SQL_PROPE,
                         "fmri" => SQL_PROPE,
                         "version" => SQL_PROPE,
                         "buildver" => SQL_PROPE,
@@ -443,12 +560,15 @@ class Pkg extends mysqlObj
                         "pstamp" => SQL_PROPE,
                         "desc" => SQL_PROPE,
                         "summary" => SQL_PROPE,
-                        "arch" => SQL_PROPE
+                        "arch" => SQL_PROPE,
+                        "added" => SQL_PROPE,
+                        "updated" => SQL_PROPE
                  );
 
     $this->_myc = array( /* mysql => class */
                         "id" => "id",
                         "name" => "name",
+                        "path" => "path",
                         "fmri" => "fmri",
                         "version" => "version",
                         "buildver" => "buildver",
@@ -456,7 +576,9 @@ class Pkg extends mysqlObj
                         "pstamp" => "pstamp",
                         "desc" => "desc",
                         "summary" => "summary",
-                        "arch" => "arch"
+                        "arch" => "arch",
+                        "added" => "added",
+                        "updated" => "updated"
                  );
 
 

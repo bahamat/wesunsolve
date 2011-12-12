@@ -36,7 +36,7 @@ class IPS extends mysqlObj
     return trim($ret);
   }
 
-  public function browse() {
+  public function browse($pkg = "") {
     global $config;
 
     if (!is_dir($this->root))
@@ -49,8 +49,14 @@ class IPS extends mysqlObj
       echo " > pkg/ subdir not found inside IPS repo\n";
       return -1;
     }
+    $filter = "";
+    if (!empty($pkg)) {
+      $filter = $d_pkg.'/*'.$pkg.'*';
+    } else {
+      $filter = $d_pkg.'/*';
+    }
 
-    foreach (glob($d_pkg.'/*', GLOB_ONLYDIR) as $pkg) {
+    foreach (glob($filter, GLOB_ONLYDIR) as $pkg) {
       foreach(glob($pkg.'/*') as $pstamp) {
         $content = file_get_contents($pstamp);
         $po = new Pkg();
