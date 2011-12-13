@@ -278,9 +278,32 @@ class Pkg extends mysqlObj
   public $a_rls = array();
   public $a_comments = array();
   public $a_bugids = array();
+  public $a_affect = array();
+  public $a_previous = array();
 
   /* Obj */
   public $o_ips = null;
+  public $o_latest = null;
+
+  public function fetchLatest() {
+    $index = "`id`";
+    $table = "`pkg`";
+    $where = "WHERE `name`='".$this->name."' AND `path`='".$this->path."' AND `pstamp`>".$this->pstamp." ORDER BY `pstamp` DESC LIMIT 0,1";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (!count($idx)) {
+        return null;
+      }
+      $this->o_latest = new Pkg($idx[0]['id']);
+      if ($this->o_latest->id == $this->id) {
+	$this->o_latest = null;
+	return 0;
+      }
+      $this->o_latest->fetchFromId();
+    }
+    return 0;
+  }
 
   /* Parsing */
 
@@ -311,6 +334,9 @@ class Pkg extends mysqlObj
     $this->fetchComments();
     if ($all == 1) $this->fetchFiles(); 
     $this->fetchBugids(); 
+    $this->fetchAffect(); 
+    $this->fetchLatest(); 
+    $this->fetchPrevious(); 
   }
 
     /* Users comments */
@@ -367,6 +393,10 @@ class Pkg extends mysqlObj
     if (isset($fmri[2])) {
       $this->branchver = $fmri[2];
     }
+  }
+ 
+  public function link() {
+    return '<a href="/pkg/id/'.$this->id.'">'.$this->name().'</a>';
   }
 
   public function __toString() {
@@ -505,6 +535,24 @@ class Pkg extends mysqlObj
     return false;
   }
 
+  function fetchAffect($all=1) {
+
+    $this->a_affect = array();
+    $table = "`jt_pkg_bugids`";
+    $index = "`bugid`, `id_pkg`";
+    $where = "WHERE `id_affect`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Bugid($t['bugid']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_affect, $k);
+      }
+    }
+    return 0;
+  }
+
   /* Bugids */
   function fetchBugids($all=1) {
 
@@ -559,6 +607,23 @@ class Pkg extends mysqlObj
       if ($ko->id == $k)
         return TRUE;
     return FALSE;
+  }
+
+  public function fetchPrevious() {
+    $this->a_previous = array();
+    $table = "`pkg`";
+    $index = "`id`";
+    $where = "WHERE `name`='".$this->name."' AND `path`='".$this->path."' AND `pstamp`<".$this->pstamp." ORDER BY `pstamp` DESC";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Pkg($t['id']);
+        $k->fetchFromId();
+        $k->fetchBugids();
+        array_push($this->a_previous, $k);
+      }
+    }
+    return 0;
   }
 
 

@@ -20,7 +20,14 @@
        <div class="clear clearfix"></div>
     <a id="top"></a>
     <h4><?php echo $pkg->summary; ?></h4>
+             <?php if ($pkg->o_latest) { ?>
+                <p class="warning">There is a newer release of this package which may fixes some bugs, consider upgrading !</p>
+             <?php } ?>
 	     <h3>General informations</h3>
+	      <ul class="listinfo">
+<?php if ($pkg->o_latest) { ?>
+		<li>Latest release: <?php echo $pkg->o_latest->link(); ?></li>
+<?php } ?>
 		 <li>Full name: <?php echo $pkg; ?></li>
 		 <li>Summary: <?php echo $pkg->summary; ?></li>
 		 <li>Description: <?php echo $pkg->desc; ?></li>
@@ -30,7 +37,17 @@
 		 <li>Branch version: <?php echo $pkg->branchver; ?></li>
 		 <li>Full FMRI: <?php echo $pkg->fmri; ?></li>
 		 <li>Release date: <?php if($pkg->pstamp) echo date(HTTP::getDateFormat(), $pkg->pstamp); ?></li>
-		</ul>
+	       </ul>
+             <h3>Bugs affecting this package release</h3>
+<?php if (count($pkg->a_affect)) { ?>
+                <ul>
+                <?php foreach($pkg->a_affect as $bug) { ?>
+                 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+                <?php } ?>
+                </ul>
+<?php } else { ?>
+                <p>There is no current known bugs affecting this package release</p>
+<?php } ?>
 	     <h3>Bugs fixed in this package release</h3>
 <?php if (count($pkg->a_bugids)) { ?>
 		<ul>
@@ -41,6 +58,24 @@
 <?php } else { ?>
 		<p>There is no related bug fixed in this package release</p>
 <?php } ?>
+             <h3>Bugs fixed in previous package release</h3>
+<?php if (count($pkg->a_previous)) { ?>
+                <?php foreach($pkg->a_previous as $pkg) { ?>
+		 <h4>Bugid fixed by <?php echo $pkg->link(); ?></h4>
+		 <?php if (count($pkg->a_bugids)) { ?>
+	          <ul>
+		  <?php foreach($pkg->a_bugids as $bug) { ?>
+                   <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+                  <?php } ?>
+                  </ul>
+                <?php } else { ?>
+                  <p>There is no bug fixed by this release for this package</p>
+                <?php } ?>
+           <?php } ?>
+<?php } else { ?>
+                <p>There is no previous release for this package</p>
+<?php } ?>
+
  	        <h3><a id="comments"></a>Comments</h3>
 		<?php if (!count($pkg->a_comments)) { ?>
 		  <p>There is no comments for this pkg yet. <a href="/add_comment/id_on/<?php echo $pkg->id; ?>/type/pkg">add one</a>.</p>
