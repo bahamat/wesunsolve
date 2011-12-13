@@ -29,6 +29,10 @@ class File extends mysqlObj
   /* Lists */
   public $a_patches = array();
 
+  public function __toString() {
+    return $this->name;
+  }
+
  /**
   * Constructor
   */

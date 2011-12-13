@@ -53,7 +53,7 @@ class IPSToken
     $file->name = '/'.$path;
     if ($file->fetchFromField("name")) {
       $file->insert();
-      echo "   |---> Added file $v to DB\n";
+      echo "   |---> Added file $file to DB\n";
     }
     if (strcmp($file->sha1, $hash)) {
       $file->sha1 = $hash;
@@ -67,11 +67,11 @@ class IPSToken
     if ($pkg->id && $pkg->id != -1) {
       if (!$pkg->isFile($file)) {
         $pkg->addFile($file);
-        echo "  |---> linked $v to $pkg\n";
+        echo "  |---> linked $file to $pkg\n";
       }
     }
     if ($size && $size != 0) {
-      $file->size = $v;
+      $file->size = $size;
       $up = true;
     }
     if ($elfarch && !empty($elfarch)) {
@@ -149,6 +149,7 @@ class IPSToken
  	  $b = new Bugid($v);
 	  if ($b->fetchFromId()) {
  	    echo "  > New bugid found $b\n";
+	    $b->insert();
 	    $b->flag_update();
 	  }
 	  if (!$pkg->isBugid($b)) {
