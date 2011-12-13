@@ -12,24 +12,33 @@
  $h = HTTP::getInstance();
  $h->parseUrl();
 
- if (!isset($_GET['id'])) {
+ if (!isset($_GET['id']) && !isset($_GET['pid'])) {
    die("Cannot be called as-is");
  }
+ if (isset($_GET['id'])) {
+   $id = mysql_escape_string($_GET['id']);
+   if (!preg_match("/[0-9]{6}-[0-9]{2}/", $id)) {
+     die("Malformed patch ID");
+   }
+   $p = explode("-", $id);
+   $patch = new Patch($p[0], $p[1]);
+   if ($patch->fetchFromId()) {
+     die("Patch not found in our database");
+   }
+   $patch->fetchFiles();
+   $p = $patch;
 
- $id = mysql_escape_string($_GET['id']);
- if (!preg_match("/[0-9]{6}-[0-9]{2}/", $id)) {
-   die("Malformed patch ID");
+ } else if (isset($_GET['pid'])) {
+   $id = mysql_escape_string($_GET['pid']);
+   if (!preg_match("/[0-9]{1,11}/", $id)) {
+     die("Malformed package ID");
+   }
+   $p = new Pkg($id);
+   $p->fetchFiles();
  }
- 
- $p = explode("-", $id);
- $patch = new Patch($p[0], $p[1]);
- if ($patch->fetchFromId()) {
-   die("Patch not found in our database");
- }
- $patch->fetchFiles();
 
  header("Content-type: text/plain");
- foreach($patch->a_files as $f) {
+ foreach($p->a_files as $f) {
    echo $f->name."\n";
  }
 

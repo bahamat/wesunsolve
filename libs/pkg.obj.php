@@ -49,12 +49,36 @@ class IPSToken
     $path = IPSToken::getVar($vars, 'path');
     $size = IPSToken::getVar($vars, 'pkg.size');
     $elfarch = IPSToken::getVar($vars, 'elfarch');
+    $variantarch = IPSToken::getVar($vars, 'variant.arch');
+    $elfbits = IPSToken::getVar($vars, 'elfbits');
     $file = new File();
     $file->name = '/'.$path;
+
     if ($file->fetchFromField("name")) {
       $file->insert();
       echo "   |---> Added file $file to DB\n";
     }
+
+    if ($elfarch && !empty($elfarch)) {
+      $file->arch = $elfarch;
+    }
+    if (empty($file->arch) && !empty($variantarch)) {
+      $file->arch = $variantarch;
+    }
+    if ($elfbits && !empty($elfbits)) {
+      $file->bits = $elfbits;
+    }
+
+    if ($pkg->id && $pkg->id != -1) {
+      if (!($fo = $pkg->isFile($file))) {
+        $pkg->addFile($file);
+        echo "  |---> linked $file to $pkg\n";
+        $up = true;
+      } else {
+        $file = $fo;
+      }
+    }
+
     if (strcmp($file->sha1, $hash)) {
       $file->sha1 = $hash;
       $up = true;
@@ -62,20 +86,11 @@ class IPSToken
     if (empty($file->md5) || $file->md5 == -1) {
       $file->md5 = $pkg->o_ips->md5Sum($file);
       $up = true;
-      echo "   |---> Updated md5 sum to be ".$file->md5."\n";
-    }
-    if ($pkg->id && $pkg->id != -1) {
-      if (!$pkg->isFile($file)) {
-        $pkg->addFile($file);
-        echo "  |---> linked $file to $pkg\n";
-      }
+      echo "  |---> Updated md5 sum of $file to be ".$file->md5."\n";
     }
     if ($size && $size != 0) {
       $file->size = $size;
       $up = true;
-    }
-    if ($elfarch && !empty($elfarch)) {
-      $file->arch = $elfarch;
     }
     if ($up) $pkg->setFileAttr($file);
     return $vars;
@@ -141,7 +156,7 @@ class IPSToken
 	}
 	$po = new Pkg();
 	$po->fromString($lastFMRI);
-	if ($pkg->fetchFromFields(array("name", "path", "fmri"))) {
+	if ($po->fetchFromFields(array("name", "path", "fmri"))) {
           echo "  > Inserted ".$po."\n";
           $po->insert();
         }
@@ -155,7 +170,7 @@ class IPSToken
 	  if (!$pkg->isBugid($b)) {
 	    $pkg->addBugid($b, $po); // link bug fixed with this package
 				   // second argument mention the affected package
-            echo "  > Linked $b fixed by $pkg\n";
+            echo "  > Linked $b fixed by $pkg (affect $po)\n";
           }
 	}
 	break;
@@ -458,7 +473,7 @@ class Pkg extends mysqlObj
 
     $this->a_files = array();
     $table = "`jt_pkg_files` jt, `files` f";
-    $index = "`name`, `arch`, `fileid`, `size`, `md5`, `sha1`";
+    $index = "`name`, `arch`, `bits`, `fileid`, `size`, `md5`, `sha1`";
     $where = "WHERE `id_pkg`='".$this->id."' AND f.id=jt.fileid";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
@@ -468,6 +483,7 @@ class Pkg extends mysqlObj
         $k->name = $t['name'];
         $k->size = $t['size'];
         $k->arch = $t['arch'];
+        $k->bits = $t['bits'];
         $k->md5 = $t['md5'];
         $k->sha1 = $t['sha1'];
         array_push($this->a_files, $k);
@@ -495,7 +511,7 @@ class Pkg extends mysqlObj
       return -1;
 
     $table = "jt_pkg_files";
-    $set = "`arch`='".$file->arch."', `size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $set = "`arch`='".$file->arch."', `bits`='".$file->bits."', `size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
     $where = " WHERE `fileid`='".$file->id."' AND `id_pkg`='".$this->id."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
@@ -522,9 +538,11 @@ class Pkg extends mysqlObj
   }
 
   public function isFile($k) {
-    foreach($this->a_files as $ko)
-      if (!strcasecmp($ko->name, $k->name) && !strcmp($ko->arch, $k->arch))
-        return TRUE;
+    foreach($this->a_files as $ko) {
+      if (!strcasecmp($ko->name, $k->name) && !strcmp($ko->arch, $k->arch) && $ko->bits == $k->bits) {
+        return $ko;
+      }
+    }
     return FALSE;
   }
 
@@ -573,11 +591,11 @@ class Pkg extends mysqlObj
     return 0;
   }
 
-  function addBugid($k) {
+  function addBugid($k, $po) {
 
     $table = "`jt_pkg_bugids`";
     $names = "`bugid`, `id_pkg`, `id_affect`";
-    $values = "'$k->id', '".$this->id."', '".$k->id_affect."'";
+    $values = "'$k->id', '".$this->id."', '".$po->id."'";
 
     if (mysqlCM::getInstance()->insert($names, $values, $table)) {
       return -1;
