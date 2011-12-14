@@ -86,6 +86,8 @@
   }
 
  $head_add = '';
+ $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest Bug Fixed" href="http://wesunsolve.net/rss/lbugfix" />';
+
 
  $title = 'Latest Solaris 11 Bugs fixed - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
 

@@ -94,9 +94,7 @@
   }
 
  $head_add = '';
- if (!$bad) {
-   $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest Patches" href="http://wesunsolve.net/rss/patches" />';
- }
+ $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest Patches" href="http://wesunsolve.net/rss/patches" />';
 
  $title = 'Latest Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  if ($bad) {

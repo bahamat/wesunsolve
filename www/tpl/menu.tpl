@@ -54,6 +54,7 @@
       <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest bundles</a></li> 
       <li class="m_element"><a href="/rss/patches"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest patches</a></li> 
       <li class="m_element"><a href="/rss/s11pkg"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest packages</a></li> 
+      <li class="m_element"><a href="/rss/lbugfix"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest bugs fixed</a></li> 
       <li class="m_element"><a href="/rss/news"><img src="/img/rss.png" alt="RSS Feed"/> RSS Site news</a></li> 
      </ul> 
      <ul> 
