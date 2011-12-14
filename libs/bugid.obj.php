@@ -42,6 +42,8 @@ class Bugid extends mysqlObj
   public $views = 0;
 
   public $id_affect = -1;
+  public $id_fixed = -1;
+  public $o_fixed = null;
   public $o_affect = null;
 
   /* Fulltext */

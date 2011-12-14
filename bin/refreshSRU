@@ -1,0 +1,28 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add news Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $ips = new IPS();
+  $ips->root = $config['ipspath'].'/publisher/solaris';
+  $ips->refreshSRU();
+
+
+?>
