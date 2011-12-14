@@ -16,7 +16,7 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "p::d::h";
+  $shortopts = "p::d::hf";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -44,6 +44,7 @@
   $ips = new IPS();
 //  $ips->root = $opts['d'];
   $ips->root = $config['ipspath'].'/publisher/solaris';
+  if (isset($opts['f'])) { $ips->f_nofiles = true; }
   $ips->browse($pkg);
 
 

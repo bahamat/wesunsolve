@@ -33,6 +33,8 @@ class IPSToken
 
   public function t_file(&$pkg, $line) {
 
+    if ($pkg && $pkg->o_ips && $pkg->o_ips->f_nofiles) return array();
+
     //file 7a811afac8012ac87ef28aefe84dee0daa357d27 chash=9219214553f3cb56cae81c613268f76a7fa7be9c elfarch=i386 elfbits=64 elfhash=8fccdb24422f18fc87192d3313b52cd521bc10ea group=bin mode=0555 owner=root path=usr/bin/xmag_multivis pkg.csize=16564 pkg.size=46560 variant.arch=i386
     if (!$pkg || !$pkg->id || $pkg->id == -1) {
       return -1;
@@ -208,6 +210,8 @@ class IPSToken
     foreach($words as $word) {
       if ($f_state == 0) { // set Key (finish with =)
 
+        if (empty($word)) continue;
+
         /* First check if we haven't already something inide $v and $k,
 	 * if yes, add it to the result array
 	 */
@@ -237,6 +241,7 @@ class IPSToken
       } else if ($f_state == 1) { // set Value (finish with space or with ")
 
         if (!$v_quoted) {
+          if (empty($word)) continue;
           if ($word[0] == '"') {
 
             $v_quoted = true;
@@ -251,6 +256,10 @@ class IPSToken
           $v = $word;
 	} else { /* $v_quoted == true */
 
+          if (empty($word)) {
+            $v .= ' ';
+	    continue;
+	  }
           if ($word[strlen($word)-1] == '"') { // the end of the value
 	    $word = substr($word, 0, strlen($word) - 1);
 	    $f_state--;
@@ -299,6 +308,10 @@ class Pkg extends mysqlObj
   /* Obj */
   public $o_ips = null;
   public $o_latest = null;
+
+  public function fetchFromFMRI() {
+    return $this->fetchFromFields(array("name", "path", "fmri"));
+  }
 
   public function fetchLatest() {
     $index = "`id`";
@@ -495,8 +508,8 @@ class Pkg extends mysqlObj
   public function addFile($k) {
 
     $table = "`jt_pkg_files`";
-    $names = "`fileid`, `id_pkg`";
-    $values = "'$k->id', '".$this->id."'";
+    $names = "`fileid`, `id_pkg`, `arch`, `bits`";
+    $values = "'$k->id', '".$this->id."', '".$k->arch."', '".$k->bits."'";
 
     if (mysqlCM::getInstance()->insert($names, $values, $table)) {
       return -1;
@@ -511,7 +524,7 @@ class Pkg extends mysqlObj
       return -1;
 
     $table = "jt_pkg_files";
-    $set = "`arch`='".$file->arch."', `bits`='".$file->bits."', `size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
+    $set = "`size`='".$file->size."', `md5`='".$file->md5."', `sha1`='".$file->sha1."'";
     $where = " WHERE `fileid`='".$file->id."' AND `id_pkg`='".$this->id."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
@@ -524,7 +537,7 @@ class Pkg extends mysqlObj
   public function delFile($k) {
 
     $table = "`jt_pkg_files`";
-    $where = " WHERE `fileid`='".$k->id."' AND `id_pkg`='".$this->id."' AND `arch`='".$this->arch."'";
+    $where = " WHERE `fileid`='".$k->id."' AND `id_pkg`='".$this->id."' AND `arch`='".$this->arch."' AND `bits`='".$this->bits."'";
 
     if (mysqlCM::getInstance()->delete($table, $where)) {
       return -1;

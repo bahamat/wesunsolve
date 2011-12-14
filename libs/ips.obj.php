@@ -21,6 +21,8 @@ class IPS extends mysqlObj
 
   public $a_pkgs = array();
 
+  public $f_nofiles = false;
+
   public function __toString() {
   }
 
@@ -34,6 +36,55 @@ class IPS extends mysqlObj
     $cmd = "/bin/gzip -dc $fp | /usr/bin/sha1sum - | /usr/bin/cut -f 1 -d' '";
     $ret = `$cmd`;
     return trim($ret);
+  }
+
+  public function findNew($pkg = "") {
+    global $config;
+    
+    if (!is_dir($this->root))
+      return -1;  
+
+    $d_pkg = $this->root.'/pkg';
+
+    /* Browse packages and update db info on them */
+    if (!is_dir($d_pkg)) {
+      echo " > pkg/ subdir not found inside IPS repo\n";
+      return -1;
+    }
+    $filter = "";
+    if (!empty($pkg)) {
+      $filter = $d_pkg.'/*'.$pkg.'*';
+    } else {
+      $filter = $d_pkg.'/*';
+    }
+
+    foreach (glob($filter, GLOB_ONLYDIR) as $pkg) {
+      foreach(glob($pkg.'/*') as $pstamp) {
+        $pkgname = explode('/', $pkg);
+	$pkgname = $pkgname[count($pkgname)-1];
+	$pkgfmri = explode('/', $pstamp);
+	$pkgfmri = $pkgfmri[count($pkgfmri)-1];
+        $pkgname = preg_replace('/%2F/', '/', $pkgname);
+        $pkgname = preg_replace('/%2C/', ',', $pkgname);
+        $pkgname = preg_replace('/%3A/', ':', $pkgname);
+        $pkgfmri = preg_replace('/%2F/', '/', $pkgfmri);
+        $pkgfmri = preg_replace('/%2C/', ',', $pkgfmri);
+        $pkgfmri = preg_replace('/%3A/', ':', $pkgfmri);
+	$po = new Pkg();
+	$po->fromString($pkgname.'@'.$pkgfmri);
+	if ($po->fetchFromFMRI()) {
+  	  echo "NEW: $po\n";
+	} else {
+	  echo "OLD: $po\n";
+	}
+//        $content = file_get_contents($pstamp);
+ //       $po = new Pkg();
+  //      $po->o_ips = $this;
+//	$po->parseIPS($content);
+ //       echo "[-] Found package $po\n";
+      }
+    }
+
   }
 
   public function browse($pkg = "") {
