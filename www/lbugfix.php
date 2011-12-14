@@ -77,9 +77,6 @@
   {
     foreach($idx as $t) {
       $g = new Bugid($t['bugid']);
-      $g->id_fixed = $t['id'];
-      $g->o_fixed = new Pkg($g->id_fixed);
-      $g->o_fixed->fetchFromId();
       $g->fetchFromId();
       array_push($bf, $g);
     }
