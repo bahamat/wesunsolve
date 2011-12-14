@@ -1,0 +1,51 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add news Job
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "p::d::hf";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h'])) {
+    echo $argv[0]."\n";
+    echo "\t [-d=<dir>]\n";
+    exit();
+  }
+
+  $pkg = "";
+  if (isset($opts['p'])) {
+   $pkg = $opts['p'];
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+/*
+  if (!is_dir($opts['d'])) {
+    die($argv[0]." Directory not found\n");
+  }
+*/
+
+  $ips = new IPS();
+//  $ips->root = $opts['d'];
+  $ips->root = $config['ipspath'].'/publisher/solaris';
+  if (isset($opts['f'])) $ips->f_nofiles = true;
+  $ips->findNew($pkg);
+
+
+?>
