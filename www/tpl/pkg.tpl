@@ -37,6 +37,7 @@
 		 <li>Branch version: <?php echo $pkg->branchver; ?></li>
 		 <li>Full FMRI: <?php echo $pkg->fmri; ?></li>
 		 <li>Release date: <?php if($pkg->pstamp) echo date(HTTP::getDateFormat(), $pkg->pstamp); ?></li>
+		 <li>Files: <a href="/files/pid/<?php echo $pkg->id; ?>">click here</a></li>
 	       </ul>
              <h3>Bugs affecting this package release</h3>
 <?php if (count($pkg->a_affect)) { ?>

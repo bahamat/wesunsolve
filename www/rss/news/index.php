@@ -31,14 +31,14 @@
   <channel>
     <title>We sun solve - Site News</title>
     <link>http://wesunsolve.net</link>
-    <description>Last site news</description>
+    <description>Latest site news</description>
     <language>en-us</language>
     <pubDate><?php echo $now; ?></pubDate>
     <lastBuildDate><?php echo $now; ?></lastBuildDate>
     <docs>http://wesunsolve.net/rss/news</docs>
     <generator>We Sun Solve</generator>
-    <managingEditor>tgo@ians.be</managingEditor>
-    <webMaster>tgo@ians.be</webMaster>
+    <managingEditor><?php echo $config['mailFrom']; ?></managingEditor>
+    <webMaster><?php echo $config['mailFrom']; ?></webMaster>
 <?php foreach ($news as $n) { ?>
     <item>
      <title><?php echo $n->synopsis; ?></title>

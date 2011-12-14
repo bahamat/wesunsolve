@@ -474,7 +474,7 @@ class Pkg extends mysqlObj
     $this->a_files = array();
     $table = "`jt_pkg_files` jt, `files` f";
     $index = "`name`, `arch`, `bits`, `fileid`, `size`, `md5`, `sha1`";
-    $where = "WHERE `id_pkg`='".$this->id."' AND f.id=jt.fileid";
+    $where = "WHERE `id_pkg`='".$this->id."' AND f.id=jt.fileid ORDER BY `name` ASC";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {

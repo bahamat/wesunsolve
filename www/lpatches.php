@@ -95,15 +95,15 @@
 
  $head_add = '';
  if (!$bad) {
-   $head_add = '<link rel="alternate" type="application/rss+xml" title="Last Patches" href="http://wesunsolve.net/rss/patches" />';
+   $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest Patches" href="http://wesunsolve.net/rss/patches" />';
  }
 
- $title = 'Last released Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+ $title = 'Latest Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  if ($bad) {
-   $title = 'Last obsoleted/bad Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+   $title = 'Latest obsoleted/bad Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  }
  if ($sec) {
-   $title = 'Last released Solaris security patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+   $title = 'Latest Solaris security patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  }
 
   $index = new Template("./tpl/index.tpl");

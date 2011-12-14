@@ -23,7 +23,7 @@
      </ul> 
      <ul>
       <li class="m_header">Solaris 11</li>
-      <li class="m_element"><a href="/lpkg">Last Packages</a></li>
+      <li class="m_element"><a href="/lpkg">Latest packages</a></li>
      </ul>
      <ul>
       <li class="m_header">Fingerprint Database</li>
@@ -50,8 +50,9 @@
       <li class="m_element"><a href="/stats">Figures and numbers</a></li> 
       <li class="m_element"><a href="/changelog">Change log</a></li> 
       <li class="m_element"><a href="/docs">Documentation</a></li> 
-      <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last bundles</a></li> 
-      <li class="m_element"><a href="/rss/patches"><img src="/img/rss.png" alt="RSS Feed"/> RSS Last patches</a></li> 
+      <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest bundles</a></li> 
+      <li class="m_element"><a href="/rss/patches"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest patches</a></li> 
+      <li class="m_element"><a href="/rss/s11pkg"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest packages</a></li> 
       <li class="m_element"><a href="/rss/news"><img src="/img/rss.png" alt="RSS Feed"/> RSS Site news</a></li> 
      </ul> 
      <ul> 
