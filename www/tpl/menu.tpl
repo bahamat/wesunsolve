@@ -24,6 +24,7 @@
      <ul>
       <li class="m_header">Solaris 11</li>
       <li class="m_element"><a href="/lpkg">Latest packages</a></li>
+      <li class="m_element"><a href="/lbugfix">Latest fixed bugs</a></li>
      </ul>
      <ul>
       <li class="m_header">Fingerprint Database</li>

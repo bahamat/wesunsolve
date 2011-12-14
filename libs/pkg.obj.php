@@ -422,7 +422,11 @@ class Pkg extends mysqlObj
       $this->branchver = $fmri[2];
     }
   }
- 
+  
+  public function shortLink() {
+    return '<a href="/pkg/id/'.$this->id.'">'.$this->shortName().'</a>';
+  }
+
   public function link() {
     return '<a href="/pkg/id/'.$this->id.'">'.$this->name().'</a>';
   }

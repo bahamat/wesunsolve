@@ -86,6 +86,64 @@ class IPS extends mysqlObj
 
   }
 
+  public function refreshSRU() {
+   global $config;
+
+   $url = "https://support.oracle.com/CSP/main/article?cmd=show&type=NOT&doctype=REFERENCE&id=1372094.1";
+   $out = $config['tmppath'].'/srulist.html';
+   
+   $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" ";
+   $cmd .= " --load-cookies /srv/sunsolve/tmp/cookies.txt ";
+   $cmd .= "--save-cookies /srv/sunsolve/tmp/cookies.txt --keep-session-cookies ";
+   $cmd .= " -O \"".$out."\" \"".$url."\"";
+   passthru($cmd);
+
+   if (file_exists($out)) {
+     $lines = file($out);
+     foreach ($lines as $line) {
+       if (!preg_match('/>Readme<\/a>/', $line))
+	 continue;
+       $f = explode('"', $line);
+       $f = $f[5];
+       $url = "https://support.oracle.com".$f;
+     }
+     unlink($out);
+     $out = $config['tmppath'].'/lastsru.html';
+     $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" ";
+     $cmd .= " --load-cookies /srv/sunsolve/tmp/cookies.txt ";
+     $cmd .= "--save-cookies /srv/sunsolve/tmp/cookies.txt --keep-session-cookies ";
+     $cmd .= " -O \"".$out."\" \"".$url."\"";
+     passthru($cmd);
+ 
+     if (file_exists($out)) {
+       $lines = file($out);
+        foreach($lines as $line) {
+	  if (!preg_match('/[0-9]{6,10}&nbsp;/', $line))
+	    continue;
+	  $line = preg_replace('/&nbsp;/', ' ', $line);
+	  $line = preg_replace('/<br><br>/', '', $line);
+	  $line = trim($line);
+	  $p = strpos($line, ' ');
+	  $id = substr($line, 0, $p);
+	  $line = substr($line, $p+1);
+	  $bo = new Bugid($id);
+	  if ($bo->fetchFromId()) {
+	    echo "[-] New bug id inserted: $bo\n";
+	    $bo->insert();
+	  }
+	  if (empty($bo->synopsis) || strlen($bo->synopsis) < 10) {
+	    if (strlen($line)) {
+	      $bo->synopsis = $line;
+	      $bo->update();
+	      echo "[>] Updated bug synopsis $bo\n";
+	    }
+	  }
+	}
+     }
+   }
+   return -1;
+  }
+
   public function browse($pkg = "") {
     global $config;
 
