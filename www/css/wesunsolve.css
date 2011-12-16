@@ -343,6 +343,14 @@ select {
 
 /* Colors */
 
+p.headwarn {
+  /* border: solid 1px; */
+  font-weight:bold;
+/*  color: red; */
+  text-align: center;
+}
+
+
 p.warning {
   border: solid 1px;
   color: red;
