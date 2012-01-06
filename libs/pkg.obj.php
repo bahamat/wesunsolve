@@ -313,6 +313,51 @@ class Pkg extends mysqlObj
     return $this->fetchFromFields(array("name", "path", "fmri"));
   }
 
+  public static function countPkgPath($path) {
+    $index = "count(`id`) as c";
+    $table = "`pkg`";
+    $where = "WHERE `path`='".$path."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (!count($idx)) {
+        return null;
+      }
+      return $idx[0]['c'];
+    }
+    return 0;
+  }
+
+  private static function addDirToTree(&$tree, $path) {
+    $path = explode('/', $path);
+    $curr = &$tree['/'];
+    foreach($path as $dir) {
+      if (empty($dir))
+	continue;
+      if (!isset($curr[$dir])) {
+        $curr[$dir] = array();
+      }
+      $curr = &$curr[$dir];
+    }
+  }
+
+  public static function mkTree() {
+
+    $tree = array('/' => array());
+    $table = "`pkg`";
+    $index = "distinct `path` as p";
+    $where = "order by `path`";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        Pkg::addDirToTree(&$tree, $t['p']);
+      }
+    }
+
+    return $tree;
+  }
+
   public function fetchLatest() {
     $index = "`id`";
     $table = "`pkg`";

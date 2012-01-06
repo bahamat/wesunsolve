@@ -13,7 +13,7 @@
 
 @require_once($config['rootpath']."/libs/functions.lib.php");
 
-class Patch extends mysqlObj
+class Patch extends mysqlObj implements JSONizable
 {
   /* Data Var */
   public $patch = -1;
@@ -58,6 +58,21 @@ class Patch extends mysqlObj
   public $a_bundles = array();
   public $a_freadmes = array();
   public $a_readmes = array();
+
+  public function toJSONArray() {
+    return array('name' => $this->name(),
+                             'synopsis' => $this->synopsis,
+                             'md5sum' => $this->md5sum,
+                             'sha512sum' => $this->sha512sum,
+                             'recommended' => $this->pca_rec,
+                             'security' => $this->pca_sec,
+                             'bad' => $this->pca_bad,
+                             'filesize' => $this->filesize);
+  }
+
+  public function toJSON() {
+    return json_encode($this->toJSONArray());
+  }
 
   public function link() {
     return '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';

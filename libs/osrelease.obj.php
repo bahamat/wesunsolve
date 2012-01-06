@@ -13,7 +13,7 @@
 
 @require_once($config['rootpath']."/libs/functions.lib.php");
 
-class OSRelease extends mysqlObj
+class OSRelease extends mysqlObj implements JSONizable
 {
   /* Data Var */
   public $id = -1;
@@ -26,6 +26,16 @@ class OSRelease extends mysqlObj
   public $a_files = array();
 
   public $o_mfile = null;
+  public function toJSON() {
+    return json_encode($this->toJSONArray());
+  }
+
+  public function toJSONArray() {
+    return array('release' => $this->__toString(),
+                             'major' => $this->major,
+                             'arch' => $this->arch,
+                             'update' => $this->update);
+  }
 
   public function __toString() {
     return 'Solaris '.$this->major.' (Update '.$this->update.') '.$this->dstring.' ('.$this->arch.')';

@@ -12,7 +12,7 @@
  */
 
 
-class File extends mysqlObj
+class File extends mysqlObj implements JSONizable
 {
   /* Data Var */
   public $id = -1;
@@ -32,6 +32,33 @@ class File extends mysqlObj
 
   public function __toString() {
     return $this->name;
+  }
+
+  public function toJSONArray($osrs=null, $patches=null) {
+    $ret = array();
+    $ret['path'] = $this->name;
+    $ret['size'] = $this->size;
+    $ret['md5'] = $this->md5;
+    $ret['sha1'] = $this->sha1;
+    $ret['pkg'] = $this->pkg;
+    $ret['bits'] = $this->bits;
+    if ($osrs && count($osrs)) {
+      $ret['osrls'] = array();
+      foreach($osrs as $osr) {
+	$ret['osrls'][] = $osr->toJSONArray();
+      }
+    }
+    if ($patches && count($patches)) {
+      $ret['patches'] = array();
+      foreach($patches as $patch) {
+	$ret['patches'][] = $patch->toJSONArray();
+      }
+    }
+    return $ret;
+  }
+
+  public function toJSON($osrs=null, $patches=null) {
+    return json_encode($this->toJSONArray($osrs, $patches));
   }
 
  /**

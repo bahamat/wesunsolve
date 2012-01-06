@@ -52,6 +52,34 @@ Header unset ETag
 FileETag none
 
 RewriteEngine on
+
+##
+# Deny wget
+##
+#RewriteCond %{HTTP_USER_AGENT} wget [NC]
+#RewriteCond %{REQUEST_FILENAME} !denied.php$ [NC]
+#RewriteRule ^(.*)$ denied.php [F,L]
+
+##
+# Ban list
+##
+RewriteEngine On
+RewriteCond %{REMOTE_ADDR} ^83\.217\.169\.27 [OR]
+RewriteCond %{REMOTE_ADDR} ^2001:da8:2000:2192:
+RewriteCond %{REQUEST_FILENAME} !denied.php$ [NC]
+RewriteCond %{REQUEST_FILENAME} !/css/ [NC]
+RewriteCond %{REQUEST_FILENAME} !/contact [NC]
+RewriteCond %{REQUEST_FILENAME} !/docs [NC]
+RewriteCond %{REQUEST_FILENAME} !/ajax/ [NC]
+RewriteCond %{REQUEST_FILENAME} !/js/ [NC]
+RewriteCond %{REQUEST_FILENAME} !/img/ [NC]
+RewriteCond %{REQUEST_FILENAME} !/static/ [NC]
+RewriteCond %{REQUEST_FILENAME} !/downloads/ [NC]
+RewriteRule ^(.*)$ http://wesunsolve.net/denied.php [R=301,L,S=42]
+
+##
+# Redirect all domains to wesunsolve.net
+##
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,NC]
 RewriteCond %{HTTP_HOST} ^wesunsolve.be$ [OR]
@@ -61,6 +89,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.+\.php)$(.+)$ $1/$2 [L,QSA]
 
-
+##
+# If it ever happen... I'm ready...
+##
 #RewriteCond %{HTTP_REFERER} ^.*slashdot.*$
 #RewriteRule ^$ http://wesunsolve.net/static/main.html [R=301,L]
