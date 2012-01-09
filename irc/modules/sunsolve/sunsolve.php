@@ -16,6 +16,7 @@ class sunsolve extends module {
 
         public function init() {
 		$this->timerClass->addTimer("sunsolve_do_np", $this, "do_np", "", 60, false);
+		$this->timerClass->addTimer("sunsolve_do_npkg", $this, "do_npkg", "", 60, false);
 		$this->timerClass->addTimer("sunsolve_do_msg", $this, "do_msg", "", 10, false);
 	}
 
@@ -96,19 +97,18 @@ class sunsolve extends module {
 		$np = Pkg::fetchToAnnounce();
 		$np_i = array();
 		foreach($np as $pkg) {
-   		      if (!$pkg->f_irc) {
-    		        $pkg->f_irc = 1;
-		        array_push($np_i, $pkg);
-		      }
-  		      if (!$pkg->f_twitter) {
-   		        $rc = Announce::getInstance()->tweet(Announce::getInstance()->formatPkg($pkg));
-  		        if ($rc == 200) {
-		          $pkg->f_twitter = 1;
- 		        }
-		      }
-		      $pkg->update();
-		    }
+   		  if (!$pkg->f_irc) {
+    		    $pkg->f_irc = 1;
+		    array_push($np_i, $pkg);
 		  }
+  		  if (!$pkg->f_twitter) {
+   		    $rc = Announce::getInstance()->tweet(Announce::getInstance()->formatPkg($pkg));
+  		    if ($rc == 200) {
+		      $pkg->f_twitter = 1;
+ 		    }
+		  }
+		  $pkg->update();
+		}
 		foreach($np_i as $p) {
 			foreach($this->channels as $channel) {
 				$this->ircClass->privMsg($channel, $this->announce_pkg($p, 1));
@@ -165,12 +165,14 @@ class sunsolve extends module {
         private function announce_pkg($p, $new=0) {
           $msg = "";
           if ($new) $msg = "[NEW]";
-	  $msg .= "[".$p->name()."] ";
-          if ($p->releasedate) {
-            $msg .= " ".date('d/m/Y', $p->releasedate);
+	  $msg .= "[".$p."]";
+          if ($p->pstamp) {
+            $msg .= " ".date('d/m/Y', $p->pstamp);
           }
-          if (!empty($p->synopsis)) {
-            $msg .= " - ".$p->synopsis;
+	  $desc = $p->desc;
+	  if (empty($desc)) $desc = $p->summary;
+          if (!empty($desc)) {
+            $msg .= " - ".$desc;
           }
           return $msg;
 	}

@@ -313,7 +313,7 @@ class Pkg extends mysqlObj
 
   public static function fetchToAnnounce() {
     $ret = array();
-    $table = $this->_table;
+    $table = "`pkg`";
     $index = "`id`";
     $where = "WHERE `f_irc`='0' OR `f_twitter`='0' LIMIT 0,5";
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
@@ -370,7 +370,7 @@ class Pkg extends mysqlObj
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
       foreach($idx as $t) {
-        Pkg::addDirToTree(&$tree, $t['p']);
+        Pkg::addDirToTree($tree, $t['p']);
       }
     }
 
