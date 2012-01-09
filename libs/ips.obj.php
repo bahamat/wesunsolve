@@ -65,6 +65,7 @@ class IPS extends mysqlObj
 	$pkgfmri = explode('/', $pstamp);
 	$pkgfmri = $pkgfmri[count($pkgfmri)-1];
         $pkgname = preg_replace('/%2F/', '/', $pkgname);
+        $pkgname = preg_replace('/%2B/', '+', $pkgname);
         $pkgname = preg_replace('/%2C/', ',', $pkgname);
         $pkgname = preg_replace('/%3A/', ':', $pkgname);
         $pkgfmri = preg_replace('/%2F/', '/', $pkgfmri);

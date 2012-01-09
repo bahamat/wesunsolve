@@ -122,17 +122,19 @@ var_dump($connection->response);
     $len = 140;
     $len -= strlen($msg);
     $len -= strlen($surl);
+    $len -= strlen($tags);
     $len -= 4;
     
-    $synopsis = $p->synopsis;
-    if (!empty($synopsis)) {
-      if (strlen($synopsis) > $len) {
+    $desc = $p->desc;
+    if (empty($desc)) $desc = $p->summary;
+    if (!empty($desc)) {
+      if (strlen($desc) > $len) {
          // Strip synopsis
-         $synopsis = substr($synopsis, 0, $len);
+         $desc = substr($desc, 0, $len);
       }
     } else return false;
 
-    $msg = "$msg $synopsis $surl $tags";
+    $msg = "$msg $desc $surl $tags";
 
     return $msg;
   }
