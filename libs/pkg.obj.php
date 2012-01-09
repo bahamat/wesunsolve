@@ -295,6 +295,8 @@ class Pkg extends mysqlObj
   public $updated = 0;
   public $added = 0;
   public $views = 0;
+  public $f_irc = 1;
+  public $f_twitter = 1;
 
   /* Lists */
   public $a_patches = array();
@@ -308,6 +310,23 @@ class Pkg extends mysqlObj
   /* Obj */
   public $o_ips = null;
   public $o_latest = null;
+
+  public static function fetchToAnnounce() {
+    $ret = array();
+    $table = $this->_table;
+    $index = "`id`";
+    $where = "WHERE `f_irc`='0' OR `f_twitter`='0' LIMIT 0,5";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    { 
+      foreach($idx as $t) {
+	$po = new Pkg($t['id']);
+        $po->fetchFromId();
+	$ret[] = $po;
+      }
+    }
+
+    return $ret;
+  }
 
   public function fetchFromFMRI() {
     return $this->fetchFromFields(array("name", "path", "fmri"));
@@ -727,6 +746,9 @@ class Pkg extends mysqlObj
                         "desc" => SQL_PROPE,
                         "summary" => SQL_PROPE,
                         "arch" => SQL_PROPE,
+                        "views" => SQL_PROPE,
+                        "f_irc" => SQL_PROPE,
+                        "f_twitter" => SQL_PROPE,
                         "added" => SQL_PROPE,
                         "updated" => SQL_PROPE
                  );
@@ -744,6 +766,9 @@ class Pkg extends mysqlObj
                         "summary" => "summary",
                         "arch" => "arch",
                         "added" => "added",
+                        "views" => "views",
+                        "f_irc" => "f_irc",
+                        "f_twitter" => "f_twitter",
                         "updated" => "updated"
                  );
 

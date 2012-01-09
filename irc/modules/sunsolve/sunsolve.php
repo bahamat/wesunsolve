@@ -88,6 +88,36 @@ class sunsolve extends module {
 		return true;
 	}
 
+	public function do_npkg() {
+		$m = mysqlCM::getInstance();
+		if ($m->connect()) {
+			return true;
+		}
+		$np = Pkg::fetchToAnnounce();
+		$np_i = array();
+		foreach($np as $pkg) {
+   		      if (!$pkg->f_irc) {
+    		        $pkg->f_irc = 1;
+		        array_push($np_i, $pkg);
+		      }
+  		      if (!$pkg->f_twitter) {
+   		        $rc = Announce::getInstance()->tweet(Announce::getInstance()->formatPkg($pkg));
+  		        if ($rc == 200) {
+		          $pkg->f_twitter = 1;
+ 		        }
+		      }
+		      $pkg->update();
+		    }
+		  }
+		foreach($np_i as $p) {
+			foreach($this->channels as $channel) {
+				$this->ircClass->privMsg($channel, $this->announce_pkg($p, 1));
+			}
+		}
+	        $m->disconnect();
+		return true;
+	}
+
 	public function do_np() {
 		if (!$this->first) { $this->first++; return true; }
 		$m = mysqlCM::getInstance();
@@ -130,6 +160,19 @@ class sunsolve extends module {
 		}
 	        $m->disconnect();
 		return true;
+	}
+
+        private function announce_pkg($p, $new=0) {
+          $msg = "";
+          if ($new) $msg = "[NEW]";
+	  $msg .= "[".$p->name()."] ";
+          if ($p->releasedate) {
+            $msg .= " ".date('d/m/Y', $p->releasedate);
+          }
+          if (!empty($p->synopsis)) {
+            $msg .= " - ".$p->synopsis;
+          }
+          return $msg;
 	}
 
         private function announce_patch($p, $new=0) {

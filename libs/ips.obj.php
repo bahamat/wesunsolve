@@ -74,10 +74,13 @@ class IPS extends mysqlObj
 	$po->fromString($pkgname.'@'.$pkgfmri);
 	if ($po->fetchFromFMRI()) {
           $content = file_get_contents($pstamp);
-          $po = new Pkg();
           $po->o_ips = $this;
+	  $po->insert();
   	  $po->parseIPS($content);
           echo "[-] Found NEW package $po\n";
+	  $po->f_irc = 0;
+	  $po->f_twitter = 0;
+	  $po->update();
 	} else {
 	  echo "OLD: $po\n";
 	}

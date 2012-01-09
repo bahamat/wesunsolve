@@ -105,6 +105,39 @@ var_dump($connection->response);
     return $msg;
   }
 
+  public function formatPkg($p) {
+    $msg = '['.$p->name().']';
+
+    $url = 'http://wesunsolve.net/pkg/id/'.$p->id;
+    $surl = $this->getShortUrl($url);
+    if ($surl === FALSE) {
+      $surl = $this->getGoogleShortUrl($url);
+    }
+    if ($surl === FALSE) {
+      $surl = $url;
+    }
+    
+    $tags = "#solaris #oracle";
+
+    $len = 140;
+    $len -= strlen($msg);
+    $len -= strlen($surl);
+    $len -= 4;
+    
+    $synopsis = $p->synopsis;
+    if (!empty($synopsis)) {
+      if (strlen($synopsis) > $len) {
+         // Strip synopsis
+         $synopsis = substr($synopsis, 0, $len);
+      }
+    } else return false;
+
+    $msg = "$msg $synopsis $surl $tags";
+
+    return $msg;
+  }
+
+
   public function format($p) {
     $msg = '['.$p->name().']';
 
