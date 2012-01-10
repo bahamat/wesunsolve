@@ -11,6 +11,7 @@
  * @filesource
  */
 
+@require_once($config['rootpath']."/libs/functions.lib.php");
 
 class IrcMsg extends mysqlObj
 {
@@ -21,6 +22,8 @@ class IrcMsg extends mysqlObj
   public $done = 0;
 
   public static function add($m) {
+    /* First find any email address inside the login and scramble it if necessary */
+    $m = mailScramble($m);
     $msg = new IrcMsg();
     $msg->msg = $m;
     $msg->done = 0;

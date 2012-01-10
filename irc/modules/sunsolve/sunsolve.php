@@ -10,7 +10,7 @@ class sunsolve extends module {
 	public $author = "wildcat";
 	public $version = "0.1";
 
-	public $channels = array("#sunsolve", "#opensolaris-fr");
+	public $channels = array("#sunsolve"); //, "#opensolaris-fr");
         public $admchan = "#sunsolve";
         public $first = 0;
 

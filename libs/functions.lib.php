@@ -10,6 +10,10 @@
  * @filesource
  */
 
+function mailScramble($addr) {
+  return preg_replace("/@[a-zA-Z0-9.]*\.[a-zA-Z]*(\s|\n|\$)/", "@******.***", $addr);
+}
+
 function cli_diff($old, $new) {
   if (!file_exists($old)) return false;
   if (!file_exists($new)) return false;
