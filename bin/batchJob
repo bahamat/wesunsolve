@@ -236,7 +236,7 @@
       $bug->fetchFulltext();
       echo "done\n";
       echo "    > Trying to parse data from raw stuff..\n";
-      $bug->parseRaw();
+      $bug->parseRaw(1);
       unset($bug);
     }
     return;

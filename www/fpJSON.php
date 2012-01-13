@@ -52,7 +52,7 @@
          $g->o_mfile = clone $mfile;
          $g->o_mfile->pkg = $t['pkg'];
        }
-       array_push($patches, $g);
+       $patches[$g->name()] = $g;
      }
    }
 
@@ -80,7 +80,7 @@
          $g->o_mfile = clone $mfile;
          $g->o_mfile->pkg = $t['pkg'];
        }
-       array_push($osrs, $g);
+       $osrs[$g->__toString()] = $g;
      }
    }
 

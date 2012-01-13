@@ -72,15 +72,15 @@
 ?>
 <h4>Description</h4>
 <pre>
-<?php echo htmlentities($bug->ft("description")); ?>
+<?php echo $bug->ft("description"); ?>
 </pre>
 <h4>Workaround</h4>
 <pre>
-<?php echo htmlentities($bug->ft("workaround")); ?>
+<?php echo $bug->ft("workaround"); ?>
 </pre>
 <h4>Comments</h4>
 <pre>
-<?php echo htmlentities($bug->ft("comments")); ?>
+<?php echo $bug->ft("comments"); ?>
 </pre>
 <?php } else { 
   echo $bug->ft("raw");

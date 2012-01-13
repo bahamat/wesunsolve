@@ -95,6 +95,7 @@
 
  $head_add = '';
  $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest Patches" href="http://wesunsolve.net/rss/patches" />';
+// $head_add .= '<script src="./js/jquery-1.7.1.min.js"></script>';
 
  $title = 'Latest Solaris patches - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
  if ($bad) {

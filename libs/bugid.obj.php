@@ -168,7 +168,7 @@ class Bugid extends mysqlObj
     return $this->update();
   }
  
-  public function parseRaw() {
+  public function parseRaw($force = 0) {
     if ($this->_ft) {
       if ($this->is_raw) {
 	// remove images
@@ -221,8 +221,11 @@ class Bugid extends mysqlObj
 	    $lineDesc = preg_replace('/<table class="sbugFRAttrTABLE">.*$/i', '', $lineDesc);
    	    if (!empty($lineDesc)) {
 	      $curdesc = $this->ft("description");
-	      if (empty($curdesc) || strcmp($lineDesc, $curdesc)) {
+	      if (empty($curdesc) || strcmp($lineDesc, $curdesc) || $force) {
 	        echo $lineDesc;
+	        $lineDesc = str_replace('<br/>', "\r\n", $lineDesc);
+	        $lineDesc = str_replace('<br>', "\r\n", $lineDesc);
+	        $lineDesc = str_replace('&lt;br/&gt;&lt;br/&gt;', "\r\n", $lineDesc);
 	        $this->setft("description", str_replace('<br/>', "\r\n", $lineDesc));
 	        $this->update();
 	        echo "\t> Updated description\n";
