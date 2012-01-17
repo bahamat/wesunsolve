@@ -14,6 +14,11 @@ Frontend:
 - Build a tree of patch revision timeline...
 - Refurbish patch details page with instant loading...
 
+API:
+
+- Add ability to search for a path and list down every md5sum associated and where they belongs
+  (fpJSON.php, submitted by Dagobert)
+
 Processing:
 
 - better Architecture parsing and sorting
