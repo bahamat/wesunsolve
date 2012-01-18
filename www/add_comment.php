@@ -49,6 +49,7 @@
    $s->insert();
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Thanks for adding this comment...");
+   IrcMsg::add("[WWW] ".$l->username." added comment on ".$s->type." id ".$s->id_on);
  } else {
    $content = new Template("./tpl/add_comment.tpl");
    if (isset($_POST['id_on'])) {
