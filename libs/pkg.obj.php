@@ -33,6 +33,7 @@ class IPSToken
 
   public function t_file(&$pkg, $line) {
 
+    $up = false;
     if ($pkg && $pkg->o_ips && $pkg->o_ips->f_nofiles) return array();
 
     //file 7a811afac8012ac87ef28aefe84dee0daa357d27 chash=9219214553f3cb56cae81c613268f76a7fa7be9c elfarch=i386 elfbits=64 elfhash=8fccdb24422f18fc87192d3313b52cd521bc10ea group=bin mode=0555 owner=root path=usr/bin/xmag_multivis pkg.csize=16564 pkg.size=46560 variant.arch=i386
