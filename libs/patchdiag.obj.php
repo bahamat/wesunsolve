@@ -85,6 +85,17 @@ class Patchdiag extends mysqlObj
     return false;
   }
 
+  public static function genFromPatches($patches) {
+   $ret = "";
+   foreach($patches as $p) {
+     $p->fetchFromId();
+     $p->fetchRequired(0);
+     $ret .= $p->printPdiag()."\n";
+     $ret .= Patchdiag::genFromPatches($p->a_depend);
+   }
+   return $ret;
+  }
+
  /**
   * ctor
   */

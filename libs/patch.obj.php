@@ -28,6 +28,11 @@ class Patch extends mysqlObj implements JSONizable
   public $pca_rec = 0;
   public $pca_sec = 0;
   public $pca_bad = 0;
+  public $pca_obs = 0;
+  public $pca_y2k = 0;
+  public $dia_version = "";
+  public $dia_arch = "";
+  public $dia_pkgs = "";
   public $to_update = 0;
   public $views = 0;
   public $updated = 0;
@@ -422,7 +427,7 @@ class Patch extends mysqlObj implements JSONizable
     }
   }
 
-  public static function parsePatchdiag($file=NULL) {
+  public static function parsePatchdiag($file=NULL, $force=false) {
     global $config, $stats;
 
     $oldone = true;
@@ -430,6 +435,7 @@ class Patch extends mysqlObj implements JSONizable
       $oldone = false;
       $file = $config['tmppath']."/patchdiag.xref";
     }
+    if ($force) $oldone = false;
     if (!file_exists($file)) {
       return -1;
     }
@@ -452,14 +458,35 @@ class Patch extends mysqlObj implements JSONizable
       $pca_rec = 0;
       $pca_sec = 0;
       $pca_bad = 0;
+      $pca_obs = 0;
+      $pca_y2k = 0;
+      $dia_version = "";
+      $dia_arch = "";
+      $dia_pkgs = "";
       if (isset($fields[4]) && $fields[4] == "S") {
         $pca_sec = 1;
       }
       if (isset($fields[3]) && $fields[3] == "R") {
         $pca_rec = 1;
       }
-      if (isset($fields[5]) && (!strcmp(trim($fields[5]), "B") || !strcmp(trim($fields[5]), "YB"))) {
-        $pca_bad = 1;
+      if (isset($fields[5]) && $fields[5] == "O") {
+        $pca_obs = 1;
+      }
+      if (strlen($fields[5]) == 2) {
+        if ($fields[5][1] == 'B') $pca_bad = 1;
+        if ($fields[5][0] == 'Y') $pca_y2k = 1;
+      } else if (strlen($fields[6]) == 2) {
+        if ($fields[6][1] == 'B') $pca_bad = 1;
+        if ($fields[6][0] == 'Y') $pca_y2k = 1;
+      }
+      if (isset($fields[7]) && strlen($fields[7])) {
+        $dia_version = $fields[7];
+      }
+      if (isset($fields[8]) && strlen($fields[8])) {
+        $dia_arch = $fields[8];
+      }
+      if (isset($fields[9]) && strlen($fields[9])) {
+        $dia_pkgs = $fields[9];
       }
       if (isset($fields[2])) { 
         $r_date = $fields[2];
@@ -479,10 +506,13 @@ class Patch extends mysqlObj implements JSONizable
         $nb++;
         if (!$oldone) Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
       }
-      if (!$oldone && ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad)) {
+      if (!$oldone && ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad ||
+		       $patch->pca_obs != $pca_obs || strcmp($patch->dia_version, $dia_version) ||
+		       strcmp($patch->dia_arch, $dia_arch) || strcmp($patch->dia_pkgs, $dia_pkgs))) {
         $patch->pca_rec = $pca_rec;
         $patch->pca_sec = $pca_sec;
         $patch->pca_bad = $pca_bad;
+        $patch->pca_obs = $pca_obs;
         if($pca_bad) {
           $patch->status = "WITHDRAWN";
 	} else {
@@ -490,6 +520,18 @@ class Patch extends mysqlObj implements JSONizable
             $patch->status = "RELEASED";
 	  }
         }
+        if (strcmp($patch->dia_version, $dia_version)) {
+          $patch->dia_version = $dia_version;
+          echo "   > Updated version: $dia_version\n";
+	}
+        if (strcmp($patch->dia_pkgs, $dia_pkgs)) {
+          $patch->dia_pkgs = $dia_pkgs;
+          echo "   > Updated pkgs: $dia_pkgs\n";
+	}
+        if (strcmp($patch->dia_arch, $dia_arch)) {
+          $patch->dia_arch = $dia_arch;
+          echo "   > Updated arch: $dia_arch\n";
+	}
         if (!$new) $patch->to_update = 1;
 	$patch->update();
         $mod++;
@@ -2043,6 +2085,25 @@ class Patch extends mysqlObj implements JSONizable
     return -1;
   }
 
+  public function printPdiag() {
+    $ret = $this->patch.'|';
+    $ret .= sprintf("%02d", $this->revision).'|';
+    $ret .= date("M/d/y", $this->releasedate).'|';
+    if ($this->pca_rec) { $ret .= "R"; } else { $ret .= " "; }
+    $ret .= '|';
+    if ($this->pca_sec) { $ret .= "S"; } else { $ret .= " "; }
+    $ret .= '|';
+    if ($this->pca_obs) { $ret .= "O"; } else { $ret .= " "; }
+    $ret .= '|';
+    if ($this->pca_bad) { $ret .= " B"; } else { $ret .= "  "; }
+    $ret .= '|';
+    $ret .= $this->dia_version.'|';
+    $ret .= $this->dia_arch.'|';
+    $ret .= $this->dia_pkgs.'|';
+    $ret .= $this->synopsis;
+    return $ret;
+  }
+
 
  /**
   * Constructor
@@ -2066,6 +2127,11 @@ class Patch extends mysqlObj implements JSONizable
                         "pca_rec" => SQL_PROPE,
                         "pca_sec" => SQL_PROPE,
                         "pca_bad" => SQL_PROPE,
+                        "pca_obs" => SQL_PROPE,
+                        "pca_y2k" => SQL_PROPE,
+                        "dia_version" => SQL_PROPE,
+                        "dia_pkgs" => SQL_PROPE,
+                        "dia_arch" => SQL_PROPE,
                         "to_update" => SQL_PROPE,
                         "views" => SQL_PROPE,
                         "updated" => SQL_PROPE,
@@ -2085,6 +2151,11 @@ class Patch extends mysqlObj implements JSONizable
                         "pca_rec" => "pca_rec",
                         "pca_sec" => "pca_sec",
                         "pca_bad" => "pca_bad",
+                        "pca_obs" => "pca_obs",
+                        "pca_y2k" => "pca_y2k",
+                        "dia_version" => "dia_version",
+                        "dia_pkgs" => "dia_pkgs",
+                        "dia_arch" => "dia_arch",
                         "to_update" => "to_update",
                         "views" => "views",
                         "updated" => "updated",

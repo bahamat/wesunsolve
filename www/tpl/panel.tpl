@@ -49,6 +49,7 @@
       <th># of Patchs</th>
       <th></th>
       <th></th>
+      <th></th>
      </tr>
 <?php foreach($uclists as $l) { ?>
      <tr>
@@ -56,6 +57,7 @@
       <td style="text-align: center;"><?php echo count($l->a_patches); ?></td>
       <td style="text-align: center;"><a href="/uclist/i/<?php echo $l->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/del_uclist/i/<?php echo $l->id; ?>">Del</a></td>
+      <td style="text-align: center;"><a href="/ucl_pdiag/i/<?php echo $l->id; ?>">Generate patchdiag.xref</a></td>
      </tr>
 <?php } ?>
     </table>

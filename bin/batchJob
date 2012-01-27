@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::j::hxpdrntfcbuselkvgmow";
+  $shortopts = "a::i::j::hxpdrntfcbuselkvgmowq";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -42,6 +42,7 @@
     echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
     echo "\t -k\tChecksum every file of a patch\n";
+    echo "\t -q\tGenerate the ws2_patchdiag.xref of today...\n";
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
     echo "\t -o\tInsert readmes of patches inside database...\n";
@@ -53,6 +54,30 @@
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  if (isset($opts['q'])) {
+
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $cindex = "COUNT(`patch`)";
+    $where = "";
+    if (isset($opts['i'])) {
+      $p = explode("-", $opts['i']);
+      if (count($p) != 2) { die("Malformed patch id\n"); }
+      $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
+    }
+    $where .= " ORDER BY `releasedate` DESC";
+
+    $it = new mIterator("Patch", $index, $table, $where, $cindex);
+    $fields = array("patch", "revision", "when");
+    while(($p = $it->next())) {
+      $p->fetchFromId();
+      echo "[-] Checking readmes for ".$p->name()."\n";
+      $p->updateDBReadmes();
+    }
+    return 0;
+
   }
 
   if (isset($opts['o'])) {
@@ -335,7 +360,7 @@
   if (!isset($opts['p']) && !isset($opts['t'])) {
     echo "[-] Parsing patchdiag.xref for new patches...\n";
     if (isset($opts['j']) && !empty($opts['j'])) {
-      Patch::parsePatchdiag($opts['j']);
+      Patch::parsePatchdiag($opts['j'], true);
       return 0; // exit after parsing if file is specified
     } else {
       Patch::parsePatchdiag();
