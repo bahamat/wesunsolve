@@ -370,11 +370,12 @@ class Patch extends mysqlObj implements JSONizable
   public static function pUpperThan($pid, $revmin=0) {
     $index = "`patch`, `revision`";
     $table = "`patches`";
-    $where = "WHERE `patch`='".$pid."' and `revision`>$revmin ORDER BY `revision` ASC LIMIT 0,1";
+    $where = "WHERE `patch`='".$pid."' and `revision`>$revmin AND releasedate!=0 ORDER BY `revision` ASC LIMIT 0,1";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
       if (!count($idx)) {
+        /* @TODO: If nothing found, find any superseeding other patch id if present... */
         return null;
       }
       return new Patch($idx[0]['patch'], $idx[0]['revision']);
@@ -808,12 +809,16 @@ class Patch extends mysqlObj implements JSONizable
     return sprintf("%d-%02d", $this->patch, $this->revision);
   }
 
-  public function fetchObsby() {
+  public function fetchObsby($minrev=null) {
     /* TODO: Fetch the obsoleted by patch */
     $this->o_obsby = null;
     $table = "`jt_patches_obsolated`";
     $index = "`patchid`, `revision`";
-    $where = "WHERE `obsoid`='".$this->patch."' AND `obsorev`='".$this->revision."'";
+    if (!$minrev) {
+      $where = "WHERE `obsoid`='".$this->patch."' AND `obsorev`='".$this->revision."'";
+    } else {
+      $where = "WHERE `obsoid`='".$this->patch."' AND `revision`>=$minrev";
+    }
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {

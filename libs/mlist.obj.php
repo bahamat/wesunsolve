@@ -116,6 +116,15 @@ class MList extends mysqlObj
     return true;
   }
 
+  public function example() {
+    if (!method_exists('Mlist', $this->fct)) {
+      return false;
+    }
+    $fct = $this->fct;
+    $mlc = Mlist::$fct();
+    return $mlc;
+  }
+
  /**
   * Implementation of mailling list text generation for recurrents ones
   *

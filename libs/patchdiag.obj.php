@@ -92,11 +92,32 @@ class Patchdiag extends mysqlObj
     }
     return $ret;
   }
+ 
+  public static function cleanObsolated(&$patches) {
+    foreach($patches as $p) {
+     $p->fetchObsolated(0);
+     foreach($p->a_obso as $o) {
+       if (isset($patches[$o->patch])) {
+         if ($o->revision >= $patches[$o->patch]->revision) {
+	   /* Remove $o->patch from patchdiag */
+	   unset($patches[$o->patch]);
+	 }
+       }
+     }
+    }
+    return true;
+  }
 
   public static function genFromPatches($patches, &$ret = array()) {
    foreach($patches as $p) {
      if ($p->fetchFromId()) {
        /* If patch is not found, try to find any release upper than this one... */
+       $p = Patch::pUpperThan($p->patch, $p->revision);
+       if ($p->fetchFromId()) {
+	 continue; // skip this one @TODO raise a warning
+       }
+     }
+     if (!$p->releasedate) { /* no releasedate means unresolved */
        $p = Patch::pUpperThan($p->patch, $p->revision);
        if ($p->fetchFromId()) {
 	 continue; // skip this one @TODO raise a warning
