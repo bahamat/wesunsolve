@@ -21,6 +21,7 @@
 Here, we want to give a backlink to every people, blogger or website that has talked about WeSunSolve...
     </p></br>
     <ul class="listlink">
+      <li><a href="http://www.filibeto.org/~aduritz/#friends">Stoyan Angelov</a> is linking to us! <img src="./img/us.png" alt="English"/> </li>
       <li><a href="http://linuxfr.org/news/we-sun-solve-un-nouvel-outil-pour-les-administrateurs-syst%C3%A8mes-solaris">LinuxFR.org</a> published an article on WeSunSolve. <img src="./img/fr.png" alt="French"/> </li>
       <li><a href="http://www.par.univie.ac.at/solaris/pca/">Patch Check Advanced</a> Made a link to us and also integrated WeSunSolve into PCA. <img src="./img/us.png" alt="English"/> </li>
       <li><a href="http://www.opencsw.org/2011/08/wesunsolve-net-a-useful-solaris-community-resource/">OpenCSW</a> is mentionning WeSunSolve as an useful resource... <img src="./img/us.png" alt="English"/> </li>

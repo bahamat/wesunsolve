@@ -20,6 +20,7 @@ class MList extends mysqlObj
   public $sdesc = "";
   public $example = "";
   public $frequency = "";
+  public $fct = "";
 
   public $a_logins = array();
 
@@ -90,20 +91,68 @@ class MList extends mysqlObj
     return FALSE;
   }
 
+  function sendToAll() {
+    if (!method_exists('Mlist', $this->fct)) {
+      return false;
+    }
+    $fct = $this->fct;
+    $mlc = Mlist::$fct();
+    foreach($this->a_logins as $l) {
+      $this->sendTo($l, $mlc);
+      echo "[-] Sending mail to ".$l->email."\n";
+    }
+  }
+
+  public function sendTo($login, $content) {
+    global $config;
+    $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
+    $headers = "";
+    $headers = "From: $from\r\n";
+    $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
+    $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+
+    mail($login->email, "[SUNSOLVE] ".$this->name, $content, $headers);
+
+    return true;
+  }
+
  /**
   * Implementation of mailling list text generation for recurrents ones
   *
   */
   static public function patchesWeekly() {
     global $config;
-    $txt = $config['mlist']['header'];
+    $txt = $config['mlist']['header']."\n";
+    $lwpatches = array();
 
     $p_stop = time();
-    $p_start = $p_stop - (3600*24*7);
+    $p_start = $p_stop - (60*60*24*7);
     $d_stop = date(HTTP::getDateFormat(), $p_stop);
     $d_start = date(HTTP::getDateFormat(), $p_start);
-    
 
+    $txt .= "<h2>Patches released from $d_start and $d_stop</h2>\n";
+    
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $where = "WHERE `releasedate` > $p_start AND `releasedate` < $p_stop";
+    $where .= " ORDER BY `releasedate` ASC";
+
+    $txt .= "<ul>";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    { 
+      foreach($idx as $t) {
+        $k = new Patch($t['patch'], $t['revision']);
+        $k->fetchFromId();
+        $k->fetchBugids();
+        $txt .= "<li>".$k->link(true)." released on ".date(HTTP::getDateFormat(), $k->releasedate)." - ".$k->synopsis."\n\n";
+        $txt .= "<ul style=\"list-style-type: square\">";
+        foreach($k->a_bugids as $b) {
+	  $txt .= "\t<li>".$b->link()." ".$b->synopsis."</li>\n";
+	}
+        $txt .= "</ul></li>";
+      }
+    }
+    $txt .= "</ul>";
 
     $txt .= "\n".$config['mlist']['footer'];
     return $txt;
@@ -122,6 +171,7 @@ class MList extends mysqlObj
                         "name" => SQL_PROPE,
                         "sdesc" => SQL_PROPE,
                         "example" => SQL_PROPE,
+                        "fct" => SQL_PROPE,
                         "frequency" => SQL_PROPE
                  );
 
@@ -130,6 +180,7 @@ class MList extends mysqlObj
                         "name" => "name",
                         "sdesc" => "sdesc",
                         "example" => "example",
+                        "fct" => "fct",
                         "frequency" => "frequency"
                  );
   }

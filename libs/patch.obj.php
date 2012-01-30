@@ -79,8 +79,14 @@ class Patch extends mysqlObj implements JSONizable
     return json_encode($this->toJSONArray());
   }
 
-  public function link() {
-    return '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
+  public function link($full=0) {
+    $link = "";
+    if ($full) {
+      $link = '<a href="http://wesunsolve.net/patch/id/'.$this->name().'">'.$this->name().'</a>';
+    } else {
+      $link = '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
+    }
+    return $link;
   }
 
   public static function linkize($str) {
@@ -359,6 +365,22 @@ class Patch extends mysqlObj implements JSONizable
     );
     $month = $m[$month];
     return mktime(0,0,0,$month, $day, $year);
+  }
+
+  public static function pUpperThan($pid, $revmin=0) {
+    $index = "`patch`, `revision`";
+    $table = "`patches`";
+    $where = "WHERE `patch`='".$pid."' and `revision`>$revmin ORDER BY `revision` ASC LIMIT 0,1";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (!count($idx)) {
+        return null;
+      }
+      return new Patch($idx[0]['patch'], $idx[0]['revision']);
+    }
+    return 0;
+
   }
 
   public static function pLatest($pid) {
@@ -776,6 +798,10 @@ class Patch extends mysqlObj implements JSONizable
     if (file_exists($path."/".$this->name()."/README.".$this->name())) unlink($path."/".$this->name()."/README.".$this->name());
     if (is_dir($path."/".$this->name())) rmdir($path."/".$this->name());
     return 0;
+  }
+
+  public function __toString() {
+    return $this->name();
   }
 
   public function name() {
@@ -1390,6 +1416,8 @@ class Patch extends mysqlObj implements JSONizable
 	//unset($patch); // will be fetched next time
       } else if (preg_match("/^OBSOLETE Patch-ID# ".$this->name()."$/", $line)) {
         $this->status = "OBSOLETE";
+      } else if (preg_match("/^WITHDRAWN Patch-ID# ".$this->name()."$/", $line)) {
+        $this->status = "WITHDRAWN";
       } else if (count($f) > 1) {
 	$u++;
         switch ($f[0]) {

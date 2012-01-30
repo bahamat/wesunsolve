@@ -85,13 +85,39 @@ class Patchdiag extends mysqlObj
     return false;
   }
 
-  public static function genFromPatches($patches) {
-   $ret = "";
-   foreach($patches as $p) {
-     $p->fetchFromId();
-     $p->fetchRequired(0);
+  public static function genFromArray($patches) {
+    $ret = "";
+    foreach($patches as $p) {
      $ret .= $p->printPdiag()."\n";
-     $ret .= Patchdiag::genFromPatches($p->a_depend);
+    }
+    return $ret;
+  }
+
+  public static function genFromPatches($patches, &$ret = array()) {
+   foreach($patches as $p) {
+     if ($p->fetchFromId()) {
+       /* If patch is not found, try to find any release upper than this one... */
+       $p = Patch::pUpperThan($p->patch, $p->revision);
+       if ($p->fetchFromId()) {
+	 continue; // skip this one @TODO raise a warning
+       }
+     }
+     if ($p->pca_bad) { /* this is a bad patch */
+       /* If patch is bad, try to find any release upper than this one... */
+       $p = Patch::pUpperThan($p->patch, $p->revision);
+       if ($p->fetchFromId()) {
+	 continue; // skip this one @TODO raise a warning
+       }
+     }
+     $p->fetchRequired(0);
+     if (isset($ret[$p->patch])) {
+       if ($ret[$p->patch]->revision < $p->revision) {
+	 $ret[$p->patch] = $p;
+       }
+     } else {
+       $ret[$p->patch] = $p;
+     }
+     Patchdiag::genFromPatches($p->a_depend, &$ret);
    }
    return $ret;
   }

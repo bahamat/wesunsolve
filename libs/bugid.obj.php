@@ -52,6 +52,15 @@ class Bugid extends mysqlObj
 
   public $a_comments = array();
 
+  public function link($full=0) {
+    $link = "";
+    if ($full) {
+      $link = '<a href="http://wesunsolve.net/bugid/id/'.$this->id.'">'.$this->id.'</a>';
+    } else {
+      $link = '<a href="/bugid/id/'.$this->id.'">'.$this->id.'</a>';
+    }
+    return $link;
+  }
 
   public function __toString() {
     return $this->id;

@@ -65,6 +65,7 @@
       <li class="m_element"><a href="http://www.par.univie.ac.at/solaris/pca/">Patch check advanced</a></li> 
       <li class="m_element"><a href="http://www.solarisinternals.com">Solaris Internals</a></li> 
       <li class="m_element"><a href="http://www.sunfreeware.com">Sun Freeware</a></li> 
+      <li class="m_element"><a href="http://filibeto.org">Filibeto</a></li> 
       <li class="m_element"><a href="http://www.opencsw.org">OpenCSW</a></li> 
       <li class="m_element"><a href="http://wildness.espix.org">wildcat's blog</a></li> 
       <li class="m_element"><a href="http://www.espix.org">Espix Network</a></li> 
