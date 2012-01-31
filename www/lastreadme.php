@@ -75,7 +75,7 @@
         $k = new Patch($t['patch'], $t['revision']);
         $k->fetchFromId();
         $k->lmod = $t['when'];
-        array_push($ru, $k);
+        $ru[$k->lmod] = $k;
       }
   }
 

@@ -25,6 +25,7 @@ Processing:
 - Add checksum check when downloading patches
 - History for bundles (in/out and updated patches)
 - Timeline for patches (obsoletion, new release, new note, etc..)
+- READMEs: cleanup the output of diff
 
 LOOK AT:
 

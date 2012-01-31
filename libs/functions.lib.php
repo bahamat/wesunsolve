@@ -10,6 +10,16 @@
  * @filesource
  */
 
+function arrayCount($a, $i=0) {
+  $i += count($a);
+  foreach($a as $v) {
+    if (is_array($v)) {
+      $i += arrayCount($v);
+    }
+  }
+  return $i;
+}
+
 function mailScramble($addr) {
   return preg_replace("/@[a-zA-Z0-9.]*\.[a-zA-Z]*(\s|\n|\$)/", "@******.***", $addr);
 }

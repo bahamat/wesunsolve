@@ -70,7 +70,7 @@
 // https://support.oracle.com/CSP/main/article?cmd=show&type=NOT&doctype=REFERENCE&id=1019527.1
  echo $pd_head;
  $a_p = Patchdiag::genFromPatches($s->a_patches);
- Patchdiag::cleanObsolated(&$a_p);
+// Patchdiag::cleanObsolated(&$a_p);
  echo Patchdiag::genFromArray($a_p);
  die();
 

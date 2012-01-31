@@ -79,12 +79,14 @@ class Patch extends mysqlObj implements JSONizable
     return json_encode($this->toJSONArray());
   }
 
-  public function link($full=0) {
+  public function link($full=0, $color=false) {
     $link = "";
+    $cl = "";
+    if ($color) $cl = $this->color();
     if ($full) {
-      $link = '<a href="http://wesunsolve.net/patch/id/'.$this->name().'">'.$this->name().'</a>';
+      $link = '<a '.$cl.' href="http://wesunsolve.net/patch/id/'.$this->name().'">'.$this->name().'</a>';
     } else {
-      $link = '<a href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
+      $link = '<a '.$cl.' href="/patch/id/'.$this->name().'">'.$this->name().'</a>';
     }
     return $link;
   }
@@ -1745,10 +1747,26 @@ class Patch extends mysqlObj implements JSONizable
   public function flags() {
     $f = "";
     if ($this->pca_bad) $f .= 'B';
-    if (!strcmp($this->status, 'OBSOLETE')) $f .= 'O';
+    if ($this->pca_obs) $f .= 'O';
+    if ($this->pca_y2k) $f .= 'Y';
     if ($this->pca_sec) $f .= 'S';
     if ($this->pca_rec) $f .= 'R';
     return $f;
+  }
+
+  public function colora() {
+    if ($this->pca_bad) {
+      return "class=\"red\"";
+    }
+    if (!strcmp($this->status, 'OBSOLETE')) {
+      return "class=\"violet\"";
+    }
+    if ($this->pca_sec) {
+      return "class=\"orange\"";
+    }
+    if ($this->pca_rec) {
+      return "class=\"green\"";
+    }
   }
 
   public function color() {

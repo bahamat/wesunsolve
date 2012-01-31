@@ -128,6 +128,7 @@ class MList extends mysqlObj
  /**
   * Implementation of mailling list text generation for recurrents ones
   *
+  * @TODO: * Add colors and patches flags
   */
   static public function patchesWeekly() {
     global $config;
@@ -139,29 +140,155 @@ class MList extends mysqlObj
     $d_stop = date(HTTP::getDateFormat(), $p_stop);
     $d_start = date(HTTP::getDateFormat(), $p_start);
 
-    $txt .= "<h2>Patches released from $d_start and $d_stop</h2>\n";
+    /* Gather everything we need */
+
+    /**Readme*/
+    $readmes = array();
+    $table = "`p_readmes`";
+    $index = "`patch`, `revision`, `when`";
+    $where = "where `when`<=$p_stop and `when`>=$p_start order by `when` desc";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Readme($t['patch'], $t['revision'], 0);
+        $k->fetchFromId();
+        $lines = explode(PHP_EOL, $k->diff);
+	if (count($lines) == 13) continue;
+        $k->fetchPatch();
+        $k->o_patch->fetchData();
+        $arch = $k->o_patch->data("arch");
+        if (empty($arch)) {
+           $arch = "all";
+        } else {
+          $arch = explode(' ', $arch);
+          $arch = $arch[0];
+          $arch = explode('.', $arch);
+          $arch = $arch[0];
+        }
+	$d = date(HTTP::getDateFormat(), $t['when']);
+	if (!isset($readmes[$d])) {
+	  $readmes[$d] = array();
+	}
+        if (!isset($readmes[$d][$arch])) {
+          $readmes[$d][$arch] = array();
+        }
+
+	$readmes[$d][$arch][] = $k;
+      }
+    }
     
+    $patches = array();
     $table = "`patches`";
     $index = "`patch`, `revision`";
     $where = "WHERE `releasedate` > $p_start AND `releasedate` < $p_stop";
     $where .= " ORDER BY `releasedate` ASC";
 
-    $txt .= "<ul>";
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     { 
       foreach($idx as $t) {
         $k = new Patch($t['patch'], $t['revision']);
         $k->fetchFromId();
         $k->fetchBugids();
-        $txt .= "<li>".$k->link(true)." released on ".date(HTTP::getDateFormat(), $k->releasedate)." - ".$k->synopsis."\n\n";
-        $txt .= "<ul style=\"list-style-type: square\">";
-        foreach($k->a_bugids as $b) {
-	  $txt .= "\t<li>".$b->link()." ".$b->synopsis."</li>\n";
+	$d = date(HTTP::getDateFormat(), $k->releasedate);
+        $k->fetchData();
+	$arch = $k->data("arch");
+	if (empty($arch)) {
+	   $arch = "all";
+	} else {
+	  $arch = explode(' ', $arch);
+	  $arch = $arch[0];
 	}
-        $txt .= "</ul></li>";
+        if (!isset($patches[$d])) {
+	  $patches[$d] = array();
+        }
+	if (!isset($patches[$d][$arch])) {
+	  $patches[$d][$arch] = array();
+	}
+	$patches[$d][$arch][] = $k;
       }
     }
-    $txt .= "</ul>";
+    $txt .= "<p>Notice: This mailling list is BETA and no information contained here could be trusted as-is. The WeSunSolve! <a href=\"http://wesunsolve.net/disclaimer\">disclaimer</a> apply.</p>\n"; 
+    $txt .= "<h2>Table of contents</h2>\n";
+    $txt .= "<ul>\n";
+     $txt .= "<li><a href=\"#patches\">Patches released</a><br/>\n";
+     $txt .= "    <ul style=\"list-style-type: square;\">\n";
+     foreach($patches as $date => $p) {
+       $cnt = arrayCount($p)-count($p);
+       $txt .= "     <li><a href=\"#patches_$date\">Released on $date</a> ($cnt patches)<br/>\n";
+       $txt .= "      <ul style=\"circle\">\n";
+       foreach($p as $arch => $ps) {
+         $cnt2 = count($ps);
+         $txt .= "     <li><a href=\"#patches_${date}_$arch\">$arch</a>: ";
+	 foreach($ps as $p) { $txt .= "<a ".$p->color()." href=\"#patch_".$p->name()."\">".$p->name()."</a> "; }
+         $txt .= "</li>\n";
+       }
+       $txt .= "    </ul><br/></li>\n";
+     }
+     $txt .= "    </ul></li>\n";
+     $txt .= "<li><a href=\"#readmes\">Readmes changes</a><br/>\n";
+     $txt .= "    <ul style=\"list-style-type: square;\">\n";
+     foreach($readmes as $date => $p) {
+       $cnt = arrayCount($p)-count($p);
+       $txt .= "     <li><a href=\"#readmes_$date\">Released on $date</a> ($cnt changes)<br/>\n";
+       $txt .= "      <ul style=\"circle\">\n";
+       foreach($p as $arch => $ps) {
+         $cnt2 = count($ps);
+         $txt .= "     <li><a href=\"#readmes_${date}_$arch\">$arch</a>: ";
+	 foreach($ps as $p) { $txt .= "<a ".$p->o_patch->color()." href=\"#readme_".$p->o_patch->name()."\">".$p->o_patch->name()."</a> "; }
+         $txt .= "</li>\n";
+       }
+       $txt .= "    </ul><br/></li>\n";
+
+     }
+     $txt .= "    </ul><br/></li>\n";
+
+    $txt .= "</ul>\n";
+
+    $txt .= <<< EOF
+    <table id="legend" class="ctable"><tr>
+                                <td class="greentd">RECOMMENDED</td>
+                                <td class="orangetd">SECURITY</td>
+                                <td class="redtd">WITHDRAWN</td>
+                                <td class="violettd">OBSOLETE</td>
+                        </tr></table>
+EOF;
+
+
+    $txt .= "<a id=\"patches\"></a><h2>Patches released from $d_start and $d_stop</h2>\n";
+
+    foreach($patches as $date => $patchs) {
+      $txt .= "<a id=\"patches_$date\"></a><h3>Released on $date</h3>\n";
+      foreach($patchs as $arch => $patchss) {
+        $txt .= "<a id=\"patches_${date}_$arch\"></a><h4>$arch</h4>\n";
+        $txt .= "<ul>\n";
+	foreach($patchss as $p) {
+          $txt .= "<a id=\"patch_".$p->name()."\"></a><li>".$p->link(1, true)." [".$p->flags()."] - ".$p->synopsis."<br/>\n";
+	  $txt .= "  <ul style=\"list-style-type: square;\">\n";
+          foreach($p->a_bugids as $bug) {
+            $txt .= "<li>".$bug->link(1)." - ".$bug->synopsis."</li>\n";
+	  }
+	  $txt .= "</ul><br/></li>\n";
+	}
+        $txt .= "</ul>\n";
+      }
+    }
+
+    $txt .= "<a id=\"readmes\"></a><h2>Readme changes from $d_start and $d_stop</h2>\n";
+
+    foreach($readmes as $date => $rmes) {
+      $txt .= "<a id=\"readmes_$date\"></a><h3>Changed on $date</h3>\n";
+      foreach($rmes as $arch => $rms2) {
+        $txt .= "<a id=\"readmes_${date}_$arch\"></a><h4>$arch</h4>\n";
+        $txt .= "<ul>\n";
+        foreach($rms2 as $readme) {
+          $txt .= "<a id=\"readme_".$readme->o_patch->name()."\"></a><h4>Changed readme for patch ".$readme->o_patch->link(1, true)." [".$p->flags()."] - ".$readme->o_patch->synopsis."</h4>\n";
+  	  $txt .= "<pre>".htmlspecialchars($readme->diff)."</pre>";
+        }
+	$txt .= "</ul><br/></li>\n";
+      }
+      $txt .= "</ul>\n";
+    }
 
     $txt .= "\n".$config['mlist']['footer'];
     return $txt;

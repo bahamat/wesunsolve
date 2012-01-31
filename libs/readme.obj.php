@@ -20,6 +20,13 @@ class Readme extends mysqlObj
   public $when = -1;
   public $txt = "";
   public $diff = "";
+
+  public $o_patch = null;
+
+  public function fetchPatch() {
+    $this->o_patch = new Patch($this->patch, $this->revision);
+    return $this->o_patch->fetchFromId();
+  }
   
 
   public static function fetchLast10() {
@@ -44,9 +51,11 @@ class Readme extends mysqlObj
  /**
   * Constructor
   */
-  public function __construct($id=-1)
+  public function __construct($patch=-1,$revision=0,$when=0)
   {
-    $this->id = $id;
+    $this->patch = $patch;
+    $this->revision = $revision;
+    $this->when = $when;
     $this->_table = "p_readmes";
     $this->_nfotable = "";
     $this->_my = array(
