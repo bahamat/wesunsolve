@@ -88,7 +88,28 @@ class Patchdiag extends mysqlObj
   public static function genFromArray($patches) {
     $ret = "";
     foreach($patches as $p) {
-     $ret .= $p->printPdiag()."\n";
+     if ($p->pca_obs) { /* Obsoleted */
+       /* Should check if the patch that obsolete this one
+	  is also present.. If not, remove obsoletion mention
+          and if it is, don't touch anything...
+	*/
+       if (preg_match("/^Obsoleted by: /", $p->synopsis)) {
+         $pp = explode(' ', $p->synopsis);
+	 if (preg_match("/[0-9]{6}-[0-9]{2}/", $pp[2])) {
+           $pp = explode('-', $pp[2]);
+           $patch = new Patch();
+           $patch->patch = $pp[0];
+           $patch->revision = $pp[1];
+	   if (isset($patches[$patch->patch])) {
+             if ($patches[$patch->patch]->revision >= $patch->revision) {
+	       $ret .= $p->printPdiag(false)."\n"; /* Let this obsoletion mention */
+	       continue;
+	     }
+	   }
+	 }
+       }
+     }
+     $ret .= $p->printPdiag(true)."\n"; /* Remove the obsoletion mention as we don't have included the superseeding patch */
     }
     return $ret;
   }
@@ -113,13 +134,13 @@ class Patchdiag extends mysqlObj
      if ($p->fetchFromId()) {
        /* If patch is not found, try to find any release upper than this one... */
        $p = Patch::pUpperThan($p->patch, $p->revision);
-       if ($p->fetchFromId()) {
+       if (!$p || $p->fetchFromId()) {
 	 continue; // skip this one @TODO raise a warning
        }
      }
      if (!$p->releasedate) { /* no releasedate means unresolved */
        $p = Patch::pUpperThan($p->patch, $p->revision);
-       if ($p->fetchFromId()) {
+       if (!$p || $p->fetchFromId()) {
 	 continue; // skip this one @TODO raise a warning
        }
      }

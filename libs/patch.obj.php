@@ -2136,7 +2136,17 @@ class Patch extends mysqlObj implements JSONizable
     return -1;
   }
 
-  public function printPdiag() {
+  public function printPdiag($remObs = false) {
+ 
+    $obs = $this->pca_obs;
+    $synopsis = $this->synopsis;
+    if ($remObs) {
+      if ($obs) {
+	$obs = 0;
+      }
+      $synopsis = preg_replace("/^Obsoleted by: [0-9]{6}-[0-9]{2} /", '', $synopsis);
+    }
+
     $ret = $this->patch.'|';
     $ret .= sprintf("%02d", $this->revision).'|';
     $ret .= date("M/d/y", $this->releasedate).'|';
@@ -2144,14 +2154,14 @@ class Patch extends mysqlObj implements JSONizable
     $ret .= '|';
     if ($this->pca_sec) { $ret .= "S"; } else { $ret .= " "; }
     $ret .= '|';
-    if ($this->pca_obs) { $ret .= "O"; } else { $ret .= " "; }
+    if ($obs) { $ret .= "O"; } else { $ret .= " "; }
     $ret .= '|';
     if ($this->pca_bad) { $ret .= " B"; } else { $ret .= "  "; }
     $ret .= '|';
     $ret .= $this->dia_version.'|';
     $ret .= $this->dia_arch.'|';
     $ret .= $this->dia_pkgs.'|';
-    $ret .= $this->synopsis;
+    $ret .= $synopsis;
     return $ret;
   }
 

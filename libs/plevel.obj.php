@@ -33,6 +33,11 @@ class PLevel extends mysqlObj
     return 0;
   }
 
+  function fetchServer() {
+    $this->o_server = new Server($this->id_server);
+    return $this->o_server->fetchFromId();
+  }
+
   function fetchPatches($all=1) {
     $this->a_patches = array();
     $table = "`jt_patches_plevel`";
@@ -45,8 +50,10 @@ class PLevel extends mysqlObj
         $k = new Patch($t['patch'], $t['rev']);
         if ($all) { 
           $k->fetchFromId();
-	  $k->o_latest = Patch::pLatest($k->patch);
-          if ($k->o_latest && $k->o_latest->patch == $k->patch && $k->o_latest->revision == $k->revision) $k->o_latest = false;
+	  if($all!=2) {
+            $k->o_latest = Patch::pLatest($k->patch);
+            if ($k->o_latest && $k->o_latest->patch == $k->patch && $k->o_latest->revision == $k->revision) $k->o_latest = false;
+	  }
         }
         
         array_push($this->a_patches, $k);
