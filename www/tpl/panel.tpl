@@ -82,6 +82,10 @@
      </tr>
 <?php } ?>
     </table>
+    <h4>Other tools</h4>
+    <ul>
+      <li><a href="/srvUpgrade">Server upgrade</a> through patchdiag.xref generation</li>
+    </ul>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->
  </div><!-- d_content -->
