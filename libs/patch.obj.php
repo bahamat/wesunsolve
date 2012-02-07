@@ -1759,7 +1759,7 @@ class Patch extends mysqlObj implements JSONizable
       return "class=\"red\"";
     }
     if (!strcmp($this->status, 'OBSOLETE')) {
-      return "class=\"violet\"";
+      return "class=\"brown\"";
     }
     if ($this->pca_sec) {
       return "class=\"orange\"";
@@ -1774,7 +1774,7 @@ class Patch extends mysqlObj implements JSONizable
       return "class=\"redtd\"";
     }
     if (!strcmp($this->status, 'OBSOLETE')) {
-      return "class=\"violettd\"";
+      return "class=\"browntd\"";
     }
     if ($this->pca_sec) {
       return "class=\"orangetd\"";

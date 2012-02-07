@@ -128,15 +128,14 @@ class MList extends mysqlObj
  /**
   * Implementation of mailling list text generation for recurrents ones
   *
-  * @TODO: * Add colors and patches flags
   */
-  static public function patchesWeekly() {
+  static public function patchesReport($delay) {
     global $config;
     $txt = $config['mlist']['header']."\n";
     $lwpatches = array();
 
     $p_stop = time();
-    $p_start = $p_stop - (60*60*24*7);
+    $p_start = $p_stop - ($delay);
     $d_stop = date(HTTP::getDateFormat(), $p_stop);
     $d_start = date(HTTP::getDateFormat(), $p_start);
 
@@ -146,7 +145,7 @@ class MList extends mysqlObj
     $readmes = array();
     $table = "`p_readmes`";
     $index = "`patch`, `revision`, `when`";
-    $where = "where `when`<=$p_stop and `when`>=$p_start order by `when` desc";
+    $where = "where `when`<=$p_stop and `when`>=$p_start order by `when` asc";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
@@ -208,49 +207,42 @@ class MList extends mysqlObj
 	$patches[$d][$arch][] = $k;
       }
     }
+    $nb_p = arrayCount($patches) - count($patches);
+    $nb_r = arrayCount($readmes) - count($readmes);
     $txt .= "<p>Notice: This mailling list is BETA and no information contained here could be trusted as-is. The WeSunSolve! <a href=\"http://wesunsolve.net/disclaimer\">disclaimer</a> apply.</p>\n"; 
     $txt .= "<h2>Table of contents</h2>\n";
-    $txt .= "<ul>\n";
-     $txt .= "<li><a href=\"#patches\">Patches released</a><br/>\n";
-     $txt .= "    <ul style=\"list-style-type: square;\">\n";
+     $txt .= "<h3><a href=\"#patches\">Patches released</a> (".$nb_p.")</h3>\n";
      foreach($patches as $date => $p) {
        $cnt = arrayCount($p)-count($p);
-       $txt .= "     <li><a href=\"#patches_$date\">Released on $date</a> ($cnt patches)<br/>\n";
-       $txt .= "      <ul style=\"circle\">\n";
+       $txt .= "     <h4><a href=\"#patches_$date\">Released on $date</a> ($cnt)</h4>\n";
        foreach($p as $arch => $ps) {
          $cnt2 = count($ps);
-         $txt .= "     <li><a href=\"#patches_${date}_$arch\">$arch</a>: ";
-	 foreach($ps as $p) { $txt .= "<a ".$p->color()." href=\"#patch_".$p->name()."\">".$p->name()."</a> "; }
-         $txt .= "</li>\n";
+         $txt .= "     <h5><a href=\"#patches_${date}_$arch\">$arch</a></h5>";
+         $txt .= "      <ul class=\"toclist\">\n";
+	 foreach($ps as $p) { $txt .= "<li class=\"toclist\"><a ".$p->color()." href=\"#patch_".$p->name()."\">".$p->name()."</a> ".$p->synopsis."</li>"; }
+         $txt .= "    </ul>\n";
        }
-       $txt .= "    </ul><br/></li>\n";
      }
-     $txt .= "    </ul></li>\n";
-     $txt .= "<li><a href=\"#readmes\">Readmes changes</a><br/>\n";
-     $txt .= "    <ul style=\"list-style-type: square;\">\n";
+     $txt .= "<h3><a href=\"#readmes\">Readmes changes</a> (".$nb_r.")</h3>\n";
      foreach($readmes as $date => $p) {
        $cnt = arrayCount($p)-count($p);
-       $txt .= "     <li><a href=\"#readmes_$date\">Released on $date</a> ($cnt changes)<br/>\n";
-       $txt .= "      <ul style=\"circle\">\n";
+       $txt .= "     <h4><a href=\"#readmes_$date\">Released on $date</a> ($cnt changes)</h4>\n";
        foreach($p as $arch => $ps) {
          $cnt2 = count($ps);
-         $txt .= "     <li><a href=\"#readmes_${date}_$arch\">$arch</a>: ";
-	 foreach($ps as $p) { $txt .= "<a ".$p->o_patch->color()." href=\"#readme_".$p->o_patch->name()."\">".$p->o_patch->name()."</a> "; }
-         $txt .= "</li>\n";
+         $txt .= "     <h5><a href=\"#readmes_${date}_$arch\">$arch</a></h5>";
+         $txt .= "      <ul class=\"toclist\">\n";
+	 foreach($ps as $p) { $txt .= "<li class=\"toclist\"><a ".$p->o_patch->color()." href=\"#readme_".$p->o_patch->name()."\">".$p->o_patch->name()."</a> ".$p->o_patch->synopsis."</li>"; }
+         $txt .= "    </ul>\n";
        }
-       $txt .= "    </ul><br/></li>\n";
 
      }
-     $txt .= "    </ul><br/></li>\n";
-
-    $txt .= "</ul>\n";
 
     $txt .= <<< EOF
     <table id="legend" class="ctable"><tr>
                                 <td class="greentd">RECOMMENDED</td>
                                 <td class="orangetd">SECURITY</td>
                                 <td class="redtd">WITHDRAWN</td>
-                                <td class="violettd">OBSOLETE</td>
+                                <td class="browntd">OBSOLETE</td>
                         </tr></table>
 EOF;
 
@@ -261,16 +253,14 @@ EOF;
       $txt .= "<a id=\"patches_$date\"></a><h3>Released on $date</h3>\n";
       foreach($patchs as $arch => $patchss) {
         $txt .= "<a id=\"patches_${date}_$arch\"></a><h4>$arch</h4>\n";
-        $txt .= "<ul>\n";
 	foreach($patchss as $p) {
-          $txt .= "<a id=\"patch_".$p->name()."\"></a><li>".$p->link(1, true)." [".$p->flags()."] - ".$p->synopsis."<br/>\n";
-	  $txt .= "  <ul style=\"list-style-type: square;\">\n";
+          $txt .= "<a id=\"patch_".$p->name()."\"></a><h4>".$p->link(1, true)." [".$p->flags()."] - ".$p->synopsis."</h4>\n";
+	  $txt .= "  <ul class=\"buglist\">\n";
           foreach($p->a_bugids as $bug) {
             $txt .= "<li>".$bug->link(1)." - ".$bug->synopsis."</li>\n";
 	  }
 	  $txt .= "</ul><br/></li>\n";
 	}
-        $txt .= "</ul>\n";
       }
     }
 
@@ -280,19 +270,30 @@ EOF;
       $txt .= "<a id=\"readmes_$date\"></a><h3>Changed on $date</h3>\n";
       foreach($rmes as $arch => $rms2) {
         $txt .= "<a id=\"readmes_${date}_$arch\"></a><h4>$arch</h4>\n";
-        $txt .= "<ul>\n";
         foreach($rms2 as $readme) {
           $txt .= "<a id=\"readme_".$readme->o_patch->name()."\"></a><h4>Changed readme for patch ".$readme->o_patch->link(1, true)." [".$p->flags()."] - ".$readme->o_patch->synopsis."</h4>\n";
   	  $txt .= "<pre>".htmlspecialchars($readme->diff)."</pre>";
         }
-	$txt .= "</ul><br/></li>\n";
       }
-      $txt .= "</ul>\n";
     }
 
     $txt .= "\n".$config['mlist']['footer'];
     return $txt;
   }
+
+
+ /**
+  * Implementation of mailling list text generation for recurrents ones
+  *
+  */
+
+  static public function patchesWeekly() {
+    return MList::patchesReport(60*60*24*7);
+  }
+  static public function patchesMonthly() {
+    return MList::patchesReport(60*60*24*31);
+  }
+
 
  /**
   * Constructor

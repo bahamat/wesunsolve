@@ -31,7 +31,7 @@
 				<td class="greentd">RECOMMENDED</td>
 				<td class="orangetd">SECURITY</td>
 				<td class="redtd">WITHDRAWN</td>
-				<td class="violettd">OBSOLETE</td>
+				<td class="browntd">OBSOLETE</td>
 			</tr></table>
  <?php if (isset($l)) { ?>
   <div id="add_uclist_form">
