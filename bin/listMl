@@ -1,0 +1,41 @@
+#!/usr/bin/php
+<?php
+/**
+ * Send weekly updates mailling list
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011-2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "l::h";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h']) || !isset($opts['l'])) {
+    echo $argv[0]." [-h] [-l=<listid>]\n";
+    echo "\t -h\tHelp\n";
+    echo "\t -l=<id>\tList ID\n";
+    exit();
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $ml = new Mlist($opts['l']);
+  $ml->fetchFromId();
+  $ml->fetchLogins();
+  foreach($ml->a_logins as $l) {
+    echo $l->fullname."\t".$l->email."\t".$l->username."\n";
+  }
+
+?>
