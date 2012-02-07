@@ -1,0 +1,30 @@
+#!/usr/bin/php
+<?php
+/**
+ * Send monthly updates mailling list
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011-2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $ml = new Mlist(2);
+  $ml->fetchFromId();
+  $ml->fetchLogins();
+  $ml->sendToAll();
+
+?>

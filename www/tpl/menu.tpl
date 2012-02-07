@@ -39,6 +39,7 @@
       <li class="m_element"><a href="/register">Register</a></li>
 <?php } else { ?>
       <li class="m_element"><a href="/panel">Panel</a></li>
+      <li class="m_element"><a href="/mlist">Mail reports</a></li>
       <li class="m_element"><a href="/add_clist">Add custom list</a></li>
       <li class="m_element"><a href="/register_srv">Add server</a></li>
       <li class="m_element"><a href="/password">Change password</a></li>

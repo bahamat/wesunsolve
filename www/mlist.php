@@ -12,12 +12,12 @@
  $h = HTTP::getInstance();
  $h->parseUrl();
 
- $lo = $lm->o_login;
- $lo->fetchMList();
  if (!$lm->isLogged) {
    $content = new Template("./tpl/denied.tpl");
    goto screen;
  }
+ $lo = $lm->o_login;
+ $lo->fetchMList();
  $lo->fetchData();
  $mlist = array();
  $table = "`mlist`";

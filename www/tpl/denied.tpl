@@ -19,6 +19,7 @@
        <div class="clear clearfix"></div>
        <h3>Might be because of one of following reason:</h3>
        <ul class="listinfo">
+	<li>You're requesting a page which require to <a href="/login">login</a> and you are not.</li>
 	<li>You're using wget</li>
 	<li>You mass-downloaded the website.</li>
 	<li>You're automatically grabbing content. <a href="/docs#API">Check our API for that.</a></li>
