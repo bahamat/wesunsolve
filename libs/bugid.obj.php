@@ -52,6 +52,13 @@ class Bugid extends mysqlObj
 
   public $a_comments = array();
 
+  public static function linkize($str) {
+    $ret = $str;
+    // match 7 digit as bugids
+    $ret = preg_replace('/(^|\s| )([0-9]{7})/', '${1}<a href="/bugid/id/${2}">${2}</a>', $ret);
+    return $ret;
+  }
+
   public function link($full=0) {
     $link = "";
     if ($full) {

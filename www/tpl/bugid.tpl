@@ -58,7 +58,7 @@
 <?php if (!empty($bug->first_reported_bug_id)) { ?><b>First reported bug ID</b>: <?php echo $bug->first_reported_bug_id; ?><br/><?php } ?>
 <?php if (!empty($bug->fixed_in)) { ?><b>Fixed in</b>: <?php echo $bug->fixed_in; ?><br/><?php } ?>
 <?php if (!empty($bug->introduced_in)) { ?><b>Introduced in</b>: <?php echo $bug->introduced_in; ?><br/><?php } ?>
-<?php if (!empty($bug->related_bugs)) { ?><b>Related bugs</b>: <?php echo $bug->related_bugs; ?><br/><?php } ?>
+<?php if (!empty($bug->related_bugs)) { ?><b>Related bugs</b>: <?php echo Bugid::linkize($bug->related_bugs); ?><br/><?php } ?>
 <?php if (!empty($bug->reported_against)) { ?><b>Reported against</b>: <?php echo $bug->reported_against; ?><br/><?php } ?>
 <b>Keywords</b>: <?php echo $bug->ft("keywords"); ?><br/>
 <b>Responsible engineer</b>: <?php echo $bug->ft("responsible_engineer"); ?><br/>
@@ -72,18 +72,18 @@
 ?>
 <h4>Description</h4>
 <pre>
-<?php echo $bug->ft("description"); ?>
+<?php echo $desc ?>
 </pre>
 <h4>Workaround</h4>
 <pre>
-<?php echo $bug->ft("workaround"); ?>
+<?php echo $wa; ?>
 </pre>
 <h4>Comments</h4>
 <pre>
-<?php echo $bug->ft("comments"); ?>
+<?php echo $co; ?>
 </pre>
 <?php } else { 
-  echo $bug->ft("raw");
+  echo $raw;
 } ?>
 	     </div>
                 <p><br/><a href="#top"><img src="/img/arrow_up.png">back to top</a></p>

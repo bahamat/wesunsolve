@@ -62,7 +62,7 @@
 		 <li>SunOS Release: <?php echo $patch->data("sunos_release"); ?></li>
 		 <li>Unbundled Product: <?php echo $patch->data("unbundled_product"); ?></li>
 		 <li>Unbundled Release: <?php echo $patch->data("unbundled_release"); ?></li>
-		 <li>Xref: <?php echo $patch->data("xref"); ?></li>
+		 <li>Xref: <?php echo Patch::linkize($patch->data("xref")); ?></li>
 		 <li>Files: <a href="/files/id/<?php echo $patch->name(); ?>">click here</a></li>
                  <li><a href="/readme/id/<?php echo $patch->name(); ?>">View README</a></li>
  		 <?php if ($mreadme) { ?>
