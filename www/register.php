@@ -19,6 +19,20 @@
     $content->set("error", $error);
     goto screen;
   }
+  
+ $mlist = array();
+ $table = "`mlist`";
+ $index = "`id`";
+ $where = "";
+
+ if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+ { 
+   foreach($idx as $t) {
+     $g = new MList($t['id']);
+     $g->fetchFromId();
+     array_push($mlist, $g);
+   }
+ }
 
   if (!isset($_POST['save'])) {
     $content = new Template("./tpl/register.tpl");
@@ -75,6 +89,23 @@
     $msg = "New user has been added: ".$l->username." / ".$l->fullname." / ".$l->email;
     Mail::sendAdmin("New user has registered", $msg);
     $content = new Template("./tpl/welcome.tpl");
+
+    if (isset($_POST['ml'])) {
+     foreach ($mlist as $ml) {
+       if (isset($_POST['ml'][$ml->id]) && $_POST['ml'][$ml->id]) {
+         if (!$l->isMList($ml)) {
+           $l->addMList($ml);
+           $msg .= "Subscribed to ".$ml->name."<br/>\n";
+         }
+       } else {
+         if ($l->isMList($ml)) {
+           $l->delMList($ml);
+           $msg .= "Unsubscribed to ".$ml->name."<br/>\n";
+         }
+       }
+     }
+   }
+
   }
 
 
@@ -89,6 +120,8 @@ screen:
   if (isset($_POST["username"])) $content->set("username", $_POST["username"]);
   if (isset($_POST["password"])) $content->set("password", $_POST["password"]);
   if (isset($_POST["password2"])) $content->set("password2", $_POST["password2"]);
+
+  $content->set("mlists", $mlist);
 
   $page->set("head", $head);
   $page->set("menu", $menu);

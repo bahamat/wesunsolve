@@ -29,8 +29,27 @@
       <tr><td>Login</td><td><input type="text" value="<?php if (isset($username)) echo $username; ?>" name="username"></td></tr>
       <tr><td>Password</td><td><input type="password" value="<?php if (isset($password)) echo $password; ?>" name="password"></td></tr>
       <tr><td>Confirmation</td><td><input type="password" value="<?php if (isset($password2)) echo $password2; ?>" name="password2"></td></tr>
-      <tr><td></td><td><input type="submit" value="Register" name="save"></td></tr>
-    </table>
+    </table> <p>Mailling report subscriptions:</p>
+      <table class="ctable">
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Frequency</th>
+          <th></th>
+          <th>Subscribe?</th>
+        </tr>
+<?php foreach ($mlists as $mlist) { ?>
+        <tr>
+          <td><?php echo $mlist->name; ?></td>
+          <td><?php echo $mlist->sdesc; ?></td>
+          <td><?php echo $mlist->frequency; ?></td>
+          <td><a href="/mlist_ex/id/<?php echo $mlist->id; ?>">Example</a></td>
+          <td><input type="checkbox" name="ml[<?php echo $mlist->id; ?>]" value="1" checked /></td>
+        </tr>
+<?php } ?>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td colspan="2" style="text-align: right;"><input type="submit" value="Register" name="save"></td></tr>
+      </table>
     </form>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->

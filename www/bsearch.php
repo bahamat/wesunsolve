@@ -47,9 +47,9 @@
  }
 
  if (isset($_POST['bid']) && !empty($_POST['bid'])) {
-   $bid = $_POST['bid'];
+   $bid = trim($_POST['bid']);
  } else if (isset($_GET['bid']) && !empty($_GET['bid'])) {
-   $bid = $_GET['bid'];
+   $bid = trim($_GET['bid']);
  }
 
  if (isset($_POST['page']) && !empty($_POST['page'])) {

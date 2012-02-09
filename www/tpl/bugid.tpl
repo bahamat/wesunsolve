@@ -94,7 +94,7 @@
                 <?php } else { ?>
                   <ul>
                 <?php foreach ($bug->a_comments as $c) { $c->fetchLogin(); ?>
-                        <li>on <i><?php echo date(HTTP::getDateFormat(), $c->added);  ?></i>, <b><?php echo $c->o_login->username; ?></b> said:  <?php echo $c->comment; ?>
+                        <li>on <i><?php echo date(HTTP::getDateFormat(), $c->added);  ?></i>, <b><?php echo $c->o_login->username; ?></b> said:  <?php echo $c->show(); ?>
                         <?php if (isset($l) && ($l->id == $c->id_login)) { ?>
                           (<a href="/del_comment/id/<?php echo $c->id; ?>">delete</a>)
                         <?php } ?>
