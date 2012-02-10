@@ -49,6 +49,8 @@
    $s->insert();
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Thanks for adding the server, please check now your main panel...");
+   IrcMsg::add("[WWW] User added server: ".$s->name." to his account (".$lm->o_login->username.")", MSG_ADM);
+
  } else {
    $content = new Template("./tpl/register_srv.tpl");
  }

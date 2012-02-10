@@ -43,11 +43,12 @@ class Mail
     $msg .= "\nEither you or someone else has requested a reset password code for email: ".$l->email.".\n\n";
     $msg .= "In order to reset your password, please follow the link below:\n\n";
     $msg .= " http://wesunsolve.net/resetpass/c/".$code."\n\n";
+    $msg .= "Please note that your associated login is: ".$l->username."\n\n";
     $msg .= "Thanks in advance,\n";
     $msg .= "\n\nWe Sun Solve!\n";
 
     $headers = "From: $from\n";
-    $headers .= "Reply-to: info@wesunsolve.net";
+    $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
     mail($l->email, "[SUNSOLVE] Reset your password", $msg, $headers);
@@ -66,7 +67,7 @@ class Mail
     $msg .= "\n\nWe Sun Solve!\n";
 
     $headers = "From: $from\n";
-    $headers .= "Reply-to: info@wesunsolve.net";
+    $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
     mail($l->email, "[SUNSOLVE] Confirm your account", $msg, $headers);
@@ -83,7 +84,7 @@ class Mail
     $msg .= "\n\nWe Sun Solve!\n";
 
     $headers = "From: $from\n";
-    $headers .= "Reply-to: info@wesunsolve.net";
+    $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
     mail($l->email, "[SUNSOLVE] Confirm your account", $msg, $headers);

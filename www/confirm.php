@@ -33,7 +33,7 @@
     if ($l->checkConfirm()) {
       $content = new Template("./tpl/message.tpl");
       $content->set("msg", "Your account has been succesfully activated. Please log-in...");
-      IrcMsg::add("[WWW] User confirmed his account: ".$l->username);
+      IrcMsg::add("[WWW] User confirmed his account: ".$l->username, MSG_ADM);
       goto screen;
     } else {
       $content = new Template("./tpl/error.tpl");

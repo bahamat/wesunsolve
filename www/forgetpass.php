@@ -49,7 +49,7 @@
       goto screen;
     }
     $l->sendResetcode();
-    IrcMsg::add("[WWW] Reset code request: ".$l->username);
+    IrcMsg::add("[WWW] Reset code request: ".$l->username, MSG_ADM);
     $content = new Template("./tpl/message.tpl");
     $content->set("msg", "Reset code has been sent to your email address, please check it!");
   }

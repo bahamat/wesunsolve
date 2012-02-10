@@ -40,11 +40,13 @@
        if (isset($_POST['ml'][$m->id]) && $_POST['ml'][$m->id]) {
          if (!$lo->isMList($m)) {
            $lo->addMList($m);
+	   IrcMsg::add("[WWW] ".$l->username." subscribed to mail report ".$m->name, MSG_ADM);
 	   $msg .= "Subscribed to ".$m->name."<br/>\n";
  	 }
        } else {
 	 if ($lo->isMList($m)) {
 	   $lo->delMList($m);
+	   IrcMsg::add("[WWW] ".$l->username." unsubscribed to mail report ".$m->name, MSG_ADM);
 	   $msg .= "Unsubscribed to ".$m->name."<br/>\n";
  	 }
        }

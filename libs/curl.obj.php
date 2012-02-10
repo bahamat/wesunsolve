@@ -51,7 +51,7 @@ class Curl
   public function addHeader($s) { array_push($this->_headers, $s); }
   public function setCookieFile($s) { $this->_cookiefile = $s; }
   public function addData($s) { array_push($this->_data, $s); }
-  public function setUrl($url, $method, $exp) { $this->_url = $url; $this->_method = $method; $this->_expect = $exp; }
+//  public function setUrl($url, $method, $exp) { $this->_url = $url; $this->_method = $method; $this->_expect = $exp; }
 
   public function __construct() {
 

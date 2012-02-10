@@ -36,6 +36,7 @@
     $lm->o_login->update();
     $content = new Template ("./tpl/message.tpl");
     $content->set("msg", "Your new password has been succesfully saved!");
+    IrcMsg::add("[WWW] User changed his password: ".$lm->o_login->username, MSG_ADM);
     goto screen;
   }
  $content = new Template("./tpl/password.tpl");

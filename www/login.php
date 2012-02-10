@@ -39,6 +39,7 @@
       $f->agent = $_SERVER['HTTP_USER_AGENT'];
       $f->ip = $_SERVER['REMOTE_ADDR'];
       $f->insert();
+      IrcMsg::add("[WWW] Login failed: ".$f->login."/".$f->ip, MSG_ADM);
       goto screen;
     } else if ($rc == -2) {
       $content = new Template("./tpl/error.tpl");
@@ -46,6 +47,7 @@
       goto screen;
     }
   }
+  IrcMsg::add("[WWW] Login succeed: ".$lm->o_login->username."/".$_SERVER['REMOTE_ADDR'], MSG_ADM);
 
   header("Location: /panel"); 
   exit();

@@ -73,7 +73,7 @@
     $l->password = md5($_POST["password"]);
     $l->update();
     $l->resetPasswordcode($co);
-    IrcMsg::add("[WWW] User used reset code: ".$l->username);
+    IrcMsg::add("[WWW] User used reset code: ".$l->username, MSG_ADM);
     $content = new Template("./tpl/message.tpl");
     $content->set("msg", "Your password has been successfully reset, you can now login.");
   }

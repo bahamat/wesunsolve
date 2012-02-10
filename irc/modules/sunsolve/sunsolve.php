@@ -11,7 +11,8 @@ class sunsolve extends module {
 	public $version = "0.1";
 
 	public $channels = array("#sunsolve"); //, "#opensolaris-fr");
-        public $admchan = "#sunsolve";
+        public $admchan = "#ws2adm";
+        public $usrchan = "#sunsolve";
         public $first = 0;
 
         public function init() {
@@ -50,7 +51,15 @@ class sunsolve extends module {
 		    }
 		  }
 		foreach($msgs as $msg) {
-			$this->ircClass->privMsg($this->admchan, $msg->msg);
+			switch($msg->level) {
+				case 2:
+	  				$this->ircClass->privMsg($this->admchan, $msg->msg);
+				break;
+				case 1:
+				default:
+	  				$this->ircClass->privMsg($this->usrchan, $msg->msg);
+				break;
+			}
 		}
 
 		/* Do site news */
@@ -74,7 +83,7 @@ class sunsolve extends module {
    		    if (!empty($n->link)) {
 			$msg .= " (".$n->link.")";
 		    }
-		    $this->ircClass->privMsg($this->admchan, $msg);
+		    $this->ircClass->privMsg($this->usrchan, $msg);
                   }
                   if ($n->is_twitter == 1) {
                     $rc = Announce::getInstance()->tweet(Announce::getInstance()->news($n));

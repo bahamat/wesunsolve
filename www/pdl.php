@@ -58,6 +58,8 @@
    $fn = $bundle->filename;
  }
 
+ IrcMsg::add("[WWW] User ".$lm->o_login->username." requested download of ".$fn, MSG_ADM);
+
  $size = filesize($archive);
  $fileinfo = pathinfo($archive);
  $file_extension = strtolower($fileinfo['extension']);

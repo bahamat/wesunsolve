@@ -14,6 +14,9 @@
 
   $lm = loginCM::getInstance();
   $lm->startSession();
+
+  IrcMsg::add("[WWW] Logout: ".$lm->o_login->username."/".$_SERVER['REMOTE_ADDR'], MSG_ADM);
+
   $lm->logout();
 
   $center = new Template("./tpl/logout.tpl");

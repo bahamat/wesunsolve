@@ -85,7 +85,7 @@
     $l->is_enabled = 0;
     $l->insert();
     $l->sendConfirm();
-    IrcMsg::add("[WWW] New user registered: ".$l->username);
+    IrcMsg::add("[WWW] New user registered: ".$l->username, MSG_ADM);
     $msg = "New user has been added: ".$l->username." / ".$l->fullname." / ".$l->email;
     Mail::sendAdmin("New user has registered", $msg);
     $content = new Template("./tpl/welcome.tpl");
