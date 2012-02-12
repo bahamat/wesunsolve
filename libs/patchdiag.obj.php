@@ -21,7 +21,168 @@ class Patchdiag extends mysqlObj
   public $csum = -1;
   public $nb_patch = -1;
   public $added = -1;
-  
+
+  public static function parsePatchdiag($file=NULL, $force=false) {
+    global $config, $stats;
+
+    $oldone = true;
+    if (!$file) {
+      $oldone = false;
+      $file = $config['tmppath']."/patchdiag.xref";
+    }
+    if ($force) $oldone = false;
+    if (!file_exists($file)) {
+      return -1;
+    }
+    $lines = file($file);
+    $nb=0;
+    $mod=0;
+    foreach ($lines as $line) {
+      $np = false;
+      if (empty($line)) {
+        continue;
+      }
+      if ($line[0] == "#") {
+        continue;
+      }
+      $fields = explode("|", $line);
+      if (count($fields) < 3) // invalid line...
+        continue;
+      $pid = $fields[0];
+      $rev = $fields[1];
+      $pca_rec = 0;
+      $pca_sec = 0;
+      $pca_bad = 0;
+      $pca_obs = 0;
+      $pca_y2k = 0;
+      $dia_version = "";
+      $dia_arch = "";
+      $dia_pkgs = "";
+      if (isset($fields[4]) && $fields[4] == "S") {
+        $pca_sec = 1;
+      }
+      if (isset($fields[3]) && $fields[3] == "R") {
+        $pca_rec = 1;
+      }
+      if (isset($fields[5]) && $fields[5] == "O") {
+        $pca_obs = 1;
+      }
+      if (strlen($fields[5]) == 2) {
+        if ($fields[5][1] == 'B') $pca_bad = 1;
+        if ($fields[5][0] == 'Y') $pca_y2k = 1;
+      } else if (strlen($fields[6]) == 2) {
+        if ($fields[6][1] == 'B') $pca_bad = 1;
+        if ($fields[6][0] == 'Y') $pca_y2k = 1;
+      }
+      if (isset($fields[7]) && strlen($fields[7])) {
+        $dia_version = $fields[7];
+      }
+      if (isset($fields[8]) && strlen($fields[8])) {
+        $dia_arch = $fields[8];
+      }
+      if (isset($fields[9]) && strlen($fields[9])) {
+        $dia_pkgs = trim($fields[9]);
+      }
+      if (isset($fields[2])) {
+        $r_date = $fields[2];
+      }
+      $synopsis = $fields[count($fields) - 1];
+      $patch = new Patch($pid, $rev);
+      $new = false;
+      if ($patch->fetchFromId()) {
+        $np = true;
+        echo "   > New patch: ".$patch->name()."\n";
+        $ip = new Ircnp();
+        $ip->p = $patch->patch;
+        $ip->r = $patch->revision;
+        $new = true;
+        if (!$oldone) Announce::getInstance()->nPatch($ip);
+        $patch->insert();
+        $nb++;
+        if (!$oldone) Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
+      }
+      if (!$oldone && ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad ||
+                       $patch->pca_obs != $pca_obs || strcmp($patch->dia_version, $dia_version) ||
+                       strcmp($patch->dia_arch, $dia_arch) || strcmp($patch->dia_pkgs, $dia_pkgs))) {
+        $patch->pca_rec = $pca_rec;
+        $patch->pca_sec = $pca_sec;
+        $patch->pca_bad = $pca_bad;
+        $patch->pca_obs = $pca_obs;
+        if($pca_bad) {
+          $patch->status = "WITHDRAWN";
+        } else {
+          if (strcmp($patch->status, 'OBSOLETE')) {
+            $patch->status = "RELEASED";
+          }
+        }
+        if (strcmp($patch->dia_version, $dia_version)) {
+          $patch->dia_version = $dia_version;
+          echo "   > Updated version: $dia_version\n";
+        }
+        if (strcmp($patch->dia_pkgs, $dia_pkgs)) {
+          $patch->dia_pkgs = $dia_pkgs;
+          echo "   > Updated pkgs: $dia_pkgs\n";
+        }
+        if (strcmp($patch->dia_arch, $dia_arch)) {
+          $patch->dia_arch = $dia_arch;
+          echo "   > Updated arch: $dia_arch\n";
+        }
+        if (!$new) $patch->to_update = 1;
+        $patch->update();
+        $mod++;
+        echo "   > Updated PCA flags for ".$patch->name()."\n";
+      }
+      if (strlen($patch->synopsis) < 10 && strcmp($patch->synopsis, $synopsis)) {
+        $patch->synopsis = $synopsis;
+        if (!$new) $patch->to_update = 1;
+        $patch->update();
+        $mod++;
+        echo "   > Updated synopsis for ".$patch->name()."\n";
+      }
+      $r_date = $patch->parseDate($r_date);
+      if (!$patch->releasedate && $r_date) {
+        $patch->releasedate = $r_date;
+        if (!$new) $patch->to_update = 1;
+        $patch->update();
+        $mod++;
+        echo "   > Updated release date for ".$patch->name()."\n";
+      }
+    }
+    echo "[-] Done parsing patchdiag.xref, $nb new patches\n";
+
+    if (isset($stats) && isset($stats['new']) && isset($stats['mod'])) {
+      $stats['new'] += $nb;
+      $stats['mod'] += $mod;
+    }
+
+    return 0;
+  }
+
+
+  /* Patch file management */
+  public static function updatePatchdiag() {
+    global $config;
+
+    $out = $config['tmppath']."/patchdiag.xref";
+    if (file_exists($out)) {
+      unlink($out);
+    }
+
+    $cmd = "/usr/bin/wget -q -O \"$out\" --no-check-certificate ".$config['patchdiag'];
+    $ret = `$cmd`;
+
+    if (file_exists($out) && filesize($out)) {
+      $fn = $config['pdiagpath']."/patchdiag.xref-".(date("dmY"));
+      if (file_exists($fn))
+	unlink($fn);
+      copy($out, $fn);
+      Announce::getInstance()->msg(0, "[BATCH] Updated patchdiag.xref (size: ".filesize($out).")");
+      return 0;
+    } else {
+      return -1;
+    }
+  }
+
   public function insert() {
     $this->added = time();
     parent::insert();

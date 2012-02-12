@@ -32,7 +32,7 @@ class Job extends mysqlObj
   public $d_stop = -1;
   public $pid = -1;
   public $id_log = -1;
-  public $arg = "";
+  public $arg = null;
   public $added = -1;
   public $state = S_NONE;
 

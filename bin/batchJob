@@ -19,7 +19,7 @@
   $stats['new'] = 0;
   $stats['mod'] = 0;
 
-  $shortopts = "a::i::j::hxpdrntfcbuselkvgmowq";
+  $shortopts = "a::i::j::hxpdrntfcbuselkvgmowqy";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -46,6 +46,8 @@
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
     echo "\t -o\tInsert readmes of patches inside database...\n";
+    echo "\t -o\tInsert readmes of patches inside database...\n";
+    echo "\t -y\tInsert readmes of patches inside database...\n";
     echo "\t -w\tThreat the -a= directory as new solaris release to checksum..\n";
     echo "\t -i=<id>\tOnly treat this ID\n";
     exit();
@@ -77,7 +79,27 @@
       $p->updateDBReadmes();
     }
     return 0;
+  }
 
+  if (isset($opts['y'])) {
+
+    $table = "`bundles`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "";
+    if (isset($opts['i'])) {
+      $where .= "WHERE `id`='".$opts['i']."'";
+    }
+    $where .= " ORDER BY `lastmod` DESC";
+
+    $it = new mIterator("Bundle", $index, $table, $where, $cindex);
+    $fields = array("id", "when");
+    while(($p = $it->next())) {
+      $p->fetchFromId();
+      echo "[-] Checking readmes for ".$p->filename."\n";
+      $p->updateDBReadmes();
+    }
+    return 0;
   }
 
   if (isset($opts['o'])) {
@@ -271,6 +293,7 @@
   if (isset($opts['b'])) {
     Bundle::detectBundles();
     Bundle::downloadMissing();
+//    Bundle::checkUpdates();
     return;
   }
   if (isset($opts['s'])) { /* cleanup old bundles' files */
@@ -349,7 +372,7 @@
 
   if (!isset($opts['x']) && !isset($opts['d']) && !isset($opts['t'])) {
     echo "[-] Updating the patchdiag.xref file...";
-    if (Patch::updatePatchdiag()) {
+    if (Patchdiag::updatePatchdiag()) {
       echo "failed\n";
       exit;
     } else {
@@ -360,10 +383,10 @@
   if (!isset($opts['p']) && !isset($opts['t'])) {
     echo "[-] Parsing patchdiag.xref for new patches...\n";
     if (isset($opts['j']) && !empty($opts['j'])) {
-      Patch::parsePatchdiag($opts['j'], true);
+      Patchdiag::parsePatchdiag($opts['j'], true);
       return 0; // exit after parsing if file is specified
     } else {
-      Patch::parsePatchdiag();
+      Patchdiag::parsePatchdiag();
     }
   }
   

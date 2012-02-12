@@ -21,6 +21,7 @@ class Checksum extends mysqlObj
   public $sysv = "";
   public $sum = "";
   public $added = -1;
+  public $cs_async = 0;
 
  public static function downloadFile() {
     global $config;
@@ -117,7 +118,7 @@ class Checksum extends mysqlObj
           }
 	  switch($f[0]) {
 	    case "MD5":
-              if (strcmp($csum->md5, $f[1])) {
+              if (strcmp($csum->md5, $f[1]) && !$csum->cs_async) {
 	        $csum->md5 = $f[1];
 		$csum->update();
  		if ($p) { $p->to_update = 1; $p->update(); }
@@ -126,7 +127,7 @@ class Checksum extends mysqlObj
 	      }
 	    break;
 	    case "SysV Sum":
-              if (strcmp($csum->sysv, $f[1])) {
+              if (strcmp($csum->sysv, $f[1]) && !$csum->cs_async) {
 	        $csum->sysv = $f[1];
 	        echo "  > Updated SysV checksum entry for ".$csum->name." to ".$f[1]."\n";
 		$csum->update();
@@ -134,7 +135,7 @@ class Checksum extends mysqlObj
 	      }
 	    break;
 	    case "Sum":
-              if (strcmp($csum->sum, $f[1])) {
+              if (strcmp($csum->sum, $f[1]) && !$csum->cs_async) {
 	        $csum->sum = $f[1];
  		if ($p) { $p->to_update = 1; $p->update(); }
 	        echo "  > Updated SUM checksum entry for ".$csum->name." to ".$f[1]."\n";
@@ -169,6 +170,7 @@ class Checksum extends mysqlObj
                         "md5" => SQL_PROPE,
                         "sysv" => SQL_PROPE,
                         "sum" => SQL_PROPE,
+                        "cs_async" => SQL_PROPE,
 			"added" => SQL_PROPE
                  );
 
@@ -177,6 +179,7 @@ class Checksum extends mysqlObj
                         "md5" => "md5",
                         "sum" => "sum",
                         "sysv" => "sysv",
+                        "cs_async" => "cs_async",
                         "added" => "added",
                         "name" => "name"
                  );

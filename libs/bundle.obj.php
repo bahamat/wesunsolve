@@ -28,6 +28,9 @@ class Bundle extends mysqlObj
   public $a_patches = array();
   public $a_comments = array();
 
+  public $a_freadmes = array();
+  public $a_readmes = array();
+
   public function fetchAll($all=2) {
     $this->fetchData();
     $this->fetchPatches($all);
@@ -70,29 +73,37 @@ class Bundle extends mysqlObj
     return FALSE;
   }
 
-  public function parseDate($str) {
-    $d = explode("/", $str);
-    if (count($d) != 3) return 0;
-    // Oct/13/2000
-    $day = $d[1];
-    $year = $d[2];
-    $month = $d[0];
-    $m = array(
-      "Jan" => 1,
-      "Feb" => 2,
-      "Mar" => 3,
-      "Apr" => 4,
-      "May" => 5,
-      "Jun" => 6,
-      "Jul" => 7,
-      "Aug" => 8,
-      "Sep" => 9,
-      "Oct" => 10,
-      "Nov" => 11,
-      "Dec" => 12
-    );
-    $month = $m[$month];
-    return mktime(0,0,0,$month, $day, $year);
+  public static function parseDate($str) {
+    if (preg_match("/[0-9]{4}.[0-9]{2}.[0-9]{2}/", $str)) { // 2011.06.13
+
+      $r_date = explode(".", $str);
+      return mktime(0,0,0,$r_date[1], $r_date[2], $r_date[0]);
+
+    } else if (preg_match("@[A-Z][a-z]{2}/[0-9]{2}/[0-9]{2}@", $str)) { // Apr/06/09
+
+      $d = explode("/", $str);
+      if (count($d) != 3) return 0;
+      // Oct/13/2000
+      $day = $d[1];
+      $year = $d[2];
+      $month = $d[0];
+      $m = array(
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mar" => 3,
+        "Apr" => 4,
+        "May" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Oct" => 10,
+        "Nov" => 11,
+        "Dec" => 12
+      );
+      $month = $m[$month];
+      return mktime(0,0,0,$month, $day, $year);
+    }
   }
 
   function fetchPatches($all=1) {
@@ -191,14 +202,9 @@ class Bundle extends mysqlObj
 2011.06.13
 Apr/06/09
 	      */
-	      if (preg_match("/[0-9]{4}.[0-9]{2}.[0-9]{2}/", $r_date)) { // 2011.06.13
+	      if (preg_match("@[A-Z][a-z]{2}/[0-9]{2}/[0-9]{2}@", $r_date) || preg_match("/[0-9]{4}.[0-9]{2}.[0-9]{2}/", $r_date)) { // Apr/06/09
 
-	        $r_date = explode(".", $r_date);
-		$r_date = mktime(0,0,0,$r_date[1], $r_date[2], $r_date[0]);
-
-	      } else if (preg_match("@[A-Z][a-z]{2}/[0-9]{2}/[0-9]{2}@", $r_date)) { // Apr/06/09
-
-		$r_date = $this->parseDate($r_date);
+		$r_date = Bundle::parseDate(trim($r_date));
 
 	      } else { // unknown date format
 		break;
@@ -417,12 +423,119 @@ Apr/06/09
     return $config['bndlpath']."/".$this->filename."-".$this->md5;
   }
 
- public function download() {
+  public static function checkUpdates() {
     global $config;
 
-    $out = $this->getFileName();
-    if (!$out) 
-      return false;
+    $bundles = array();
+    $table = "`bundles`";
+    $index = "`id`";
+    $where = "";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $g = new Bundle($t['id']);
+        $g->fetchFromId();
+        array_push($bundles, $g);
+      }
+    }
+
+    echo "[-] Checking if there are bundles which need an update ...\n";
+    foreach($bundles as $bundle) {
+      echo "[-] Checking for ".$bundle->filename." ...";
+      if (($d = $bundle->checkReadmeUpdate()) >= 0) {
+        echo "Updated! ($d vs ".$bundle->lastmod.")\n";
+        echo "[>] Trying to download ".$bundle->filename."..";
+        $r = rand(1,60000);
+        $out =  $config['bndlpath']."/".$bundle->filename.'-'.$r;
+        $bundle->download($r);
+        if (file_exists($out)) {
+	  echo "success\n";
+          $md5_new = md5_file($out);
+	  if (!strcmp($md5_new, $bundle->md5)) {
+	    /* update checksum update... */
+	    $cs = new Checksum();
+	    $cs->name = $bundle->filename;
+	    if ($cs->fetchFromField("name")) {
+	      $cs->md5 = $md5_new;
+	      $cs->sysv = "";
+	      $cs->sum = "";
+	      $cs->cs_async = 1; // async from the CHECKSUMS file
+	      $cs->update();
+	    }
+	    echo "[-] Updated checksum: $md5_new\n";
+	    $bundle->md5 = $md5_new;
+	    $bundle->size = filesize($out);
+	    rename($out, $bundle->getFileName());
+	    $bundle->fetchData();
+	    $bundle->setData("readme_done", 0);
+            $bundle->checkReadme();
+            $bundle->parseReadme();
+	    $bundle->update();
+	    echo "[-] Updated and renamed bundle to ".$bundle->getFileName()."\n";
+	  } else {
+	    /* It was a fucking mistake, rm everything... */
+	    unlink($out);
+	    echo "[!] MD5 sum is the same... we're fucked...\n";
+	    continue;
+	  }
+	} else {
+	  echo "failed\n";
+	}
+      } else { 
+	echo "Up to date ($d vs ".$bundle->lastmod.")\n"; 
+      }
+    }
+
+  }
+
+
+ public function checkReadmeUpdate() {
+   global $config;
+
+   $r = rand(1, 60000);
+
+   $rfn = explode(".", $this->filename);
+   $rfn = $rfn[0];
+
+   $out = $config['tmppath'].'/'.$r.'.'.$rfn;
+
+   $url = $config['readmeurl'].'/'.$rfn;
+   $cmd = "/usr/bin/wget -q -O \"$out\"  --user=\"".$config['MOSuser']."\" --password=\"".$config['MOSpass']."\" --no-check-certificate \"$url\"";
+   $ret = `$cmd`;
+
+   if (!file_exists($out))
+     return -2;
+
+   $f = file($out, FILE_IGNORE_NEW_LINES);
+   unlink($out);
+
+   foreach($f as $line) {
+     if (empty($line)) continue;
+     if (preg_match('/^DATE: /', $line)) {
+       $d = explode(' ', $line);
+       $last = Bundle::parseDate(trim($d[1]));
+
+       if ($last > $this->lastmod) {
+         $this->lastmod = $last;
+	 return $last;
+       }
+       break;
+     }
+   }
+   return -1;
+ }
+
+ public function download($str = null) {
+    global $config;
+
+    if (!$str) {
+      $out = $this->getFileName();
+      if (!$out) 
+        return false;
+    } else {
+      $out =  $config['bndlpath']."/".$this->filename.'-'.$str;
+    }
 
     if (file_exists($out)) {
       unlink($out);
@@ -467,6 +580,113 @@ Apr/06/09
     return 0;
   }
 
+  public function getAllReadme() {
+    global $config;
+    $this->a_freadmes = array();
+    foreach(glob($config['bndlpath']."/README.".$this->filename."-*") as $r) {
+      $dd = explode('-', $r);
+      if (strlen($dd[1]) < 20)
+        $this->a_freadmes[] = $r;
+    }
+  }
+
+  /* Readmes */
+  function fetchReadmes($all=1) {
+
+    $this->a_readmes = array();
+    $table = "`b_readmes`";
+    $index = "`when`";
+    $where = "WHERE `id`='".$this->id."' ORDER BY `when` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new BReadme();
+        $k->id = $this->id;
+        $k->when = $t['when'];
+        if ($all) $k->fetchFromId();
+        array_push($this->a_readmes, $k);
+      }
+    }
+    if (count($this->a_readmes) > 1) {
+      array_push($this->a_readmes, array_shift($this->a_readmes));
+    }
+    return 0;
+  }
+
+
+/*
+ * @TODO: Should be adapted as current name scheme of bundle is
+ * filename-md5 and patches were patchid-rev-tstamp
+ */
+ public function updateDBReadmes() {
+    global $config;
+
+    $fields = array("id", "when");
+    $this->getAllReadme();
+    $orig = $this->readmePath();
+    if (file_exists($orig)) {
+      $ro = new BReadme();
+      $ro->id = $this->id;
+      $ro->when = 0; // orig readme == 0
+      if ($ro->fetchFromFields($fields)) {
+        $ro->txt = file_get_contents($orig);
+        $ro->insert();
+        echo "\t> latest readme added\n";
+      } else {
+        $c = file_get_contents($orig);
+        if (strcmp(md5($ro->txt), md5($c))) {
+          $ro->txt = $c;
+          $ro->update();
+          echo "\t> latest readme updated\n";
+        }
+      }
+    }
+    foreach($this->a_freadmes as $rfile) {
+      $d = explode("-", $rfile);
+      $d = $d[1];
+      $c = file_get_contents($rfile);
+      $ro = new BReadme();
+      $ro->id = $this->id;
+      $ro->when = $d;
+      if ($ro->fetchFromFields($fields)) {
+        $ro->txt = $c;
+        $ro->insert();
+        echo "\t> $d readme added\n";
+      } else {
+        if (strcmp(md5($ro->txt), md5($c))) {
+          $ro->txt = $c;
+          $ro->update();
+          echo "\t> $d readme updated\n";
+        }
+      }
+    }
+    /* Make the diff ! */
+    $this->fetchReadmes(0);
+    if (count($this->a_readmes) > 1) { // only make the diff if more than one readme...
+      $i = 0;
+      $old = null;
+      foreach($this->a_readmes as $ro) {
+        $ro->fetchFromId();
+        if (!$i) { /* first one */
+          $i++;
+          $ro->diff = 'Initial release';
+          $old = $ro;
+          continue;
+        }
+        $new = $ro;
+        echo "\t> diffing \n";
+        if ($new->when == 0) { // diffing the last readme
+          $di = cli_diff($config['bndlpath']."/README.".$this->filename."-".$old->when, $this->readmePath());
+        } else {
+          $di = cli_diff($config['bndlpath']."/README.".$this->filename."-".$old->when, $config['bndlpath']."/README.".$this->filename."-".$new->when);
+        }
+        $ro->diff = $di;
+        $ro->update();
+        $old = $new;
+      }
+    }
+  }
 
   public function update() {
     $this->updated = time();

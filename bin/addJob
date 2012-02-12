@@ -1,0 +1,56 @@
+#!/usr/bin/php
+<?php
+/**
+ * Add job tool
+ *
+ * @author Gouverneur Thomas <tgo@ians.be>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "c::f::a::h";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h'])) {
+    echo $argv[0]." [-h] [-a=<arg>] [-f=<fct>] [-c=<class>]\n";
+    echo "\t -h\tHelp\n";
+    exit();
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  if (!isset($opts['c']) || empty($opts['c']) || 
+      !isset($opts['f']) || empty($opts['f'])) {
+
+    die("Missing arg, check -h\n");
+  }
+
+  $class = $opts['c'];
+  $fct = $opts['f'];
+  if (isset($opts['a']))
+    $arg = $opts['a'];
+  else
+    $arg = "";
+
+  $j = new Job();
+  $j->class = $class;
+  $j->fct = $fct;
+  $j->arg = $fct;
+  $j->id_owner = 0;
+  $j->state = S_NEW;
+  $j->insert();
+  echo "[-] Job added\n";
+
+  $m->disconnect();
+?>

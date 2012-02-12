@@ -24,11 +24,11 @@
     $this->log("Previous run: ".$this->_lrun);
     $this->log("New run: ".$this->_crun);
     
-    /* fetching devices */
+    /* fetching jobs */
     $jlist = array();
     $index = "`id`";
     $table = "jobs";
-    $where = "WHERE state='".S_NEW."'";
+    $where = "WHERE state='".S_NEW."' LIMIT 0,1";
     $m = mysqlCM::getInstance();
     if (($idx = $m->fetchIndex($index, $table, $where)))
     {

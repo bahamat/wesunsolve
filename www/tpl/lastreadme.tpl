@@ -45,7 +45,7 @@
    <tr>
     <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } ?><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
     <td><?php echo date(HTTP::getDateFormat(), $p->releasedate); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $p->lmod); ?></td>
+    <td><a href="/diffr/type/patch/id/<?php echo $p->name(); ?>"><?php echo date(HTTP::getDateFormat(), $p->lmod); ?></a></td>
     <td style="text-align: left"><?php echo HTTP::linkize(substr($p->synopsis,0, $h->css->s_strip - 15)); ?></td>
    </tr>
 <?php $i++; } ?>
