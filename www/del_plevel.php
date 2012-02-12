@@ -73,6 +73,7 @@
    foreach($pl->a_patches as $p) {
      $pl->delPatch($p);
    }
+   IrcMsg::add("[WWW] User removed Patch level: ".$pl->name." to his account (".$lm->o_login->username.")", MSG_ADM);
    $pl->delete();
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Patch level has been removed.");

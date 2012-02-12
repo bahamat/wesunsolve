@@ -102,6 +102,7 @@
      $pl->is_current = 1;
    }
    $pl->insert();
+   IrcMsg::add("[WWW] User added Patch level: ".$pl->name." to his account (".$lm->o_login->username.")", MSG_ADM);
    foreach($plist as $p) {
      $pl->addPatch($p);
    }

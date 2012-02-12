@@ -50,6 +50,7 @@
    $content->set("error", $error);
    goto screen;
  }
+ IrcMsg::add("[WWW] ".$lm->o_login->username." removed comment on ".$s->type." id ".$s->id_on);
  $s->delete();
  $content = new Template("./tpl/message.tpl");
  $content->set("msg", "Comment has been removed.");

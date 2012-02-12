@@ -52,6 +52,7 @@
    $s->id_login = $lm->o_login->id;
    $s->name = $_POST['name'];
    $s->insert();
+   IrcMsg::add("[WWW] User added List: ".$s->name." to his account (".$lm->o_login->username.")", MSG_ADM);
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Thanks for adding the list, please check now your main panel...");
  } else {
