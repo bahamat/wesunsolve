@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /**
- * Add news Job
+ * Add news IPS Packages
  *
  * @author Gouverneur Thomas <tgo@ians.be>
  * @copyright Copyright (c) 2011, Gouverneur Thomas
@@ -16,18 +16,18 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "p::d::hf";
+  $shortopts = "p::r::hlfv";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
     echo $argv[0]."\n";
-    echo "\t [-d=<dir>]\n";
+    echo "\t [-r=<repo name>]\n";
+    echo "\t [-p=<pkg filter>]\n";
+    echo "\t [-l] list repo\n";
+    echo "\t [-v] view only\n";
+    echo "\t [-f] do not index files\n";
+    echo "\t [-a] do not announce new packages\n";
     exit();
-  }
-
-  $pkg = "";
-  if (isset($opts['p'])) {
-   $pkg = $opts['p'];
   }
 
   $m = mysqlCM::getInstance();
@@ -35,17 +35,69 @@
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
 
-/*
-  if (!is_dir($opts['d'])) {
-    die($argv[0]." Directory not found\n");
+  if (isset($opts['l'])) {
+    echo "[-] Listing configured repositories:\n";
+    foreach($config['ipslist'] as $key => $repo) {
+      echo "\t* $repo";
+      if (!strcmp($key, 'default')) {
+	echo " (default)";
+      }
+      $ips = new IPS();
+      $ips->name = $repo;
+      if ($ips->fetchFromField('name')) {
+        $ips->insert();
+      }
+      echo "\n";
+    }
+    exit(0);
   }
-*/
+
+  $pkg = "";
+  if (isset($opts['p'])) {
+   $pkg = $opts['p'];
+  }
 
   $ips = new IPS();
-//  $ips->root = $opts['d'];
-  $ips->root = $config['ipspath'].'/publisher/solaris';
+  $ips->name = $config['ipslist']['default'];
+  $ips->publisher = $config['ipslist']['default'];
+  $f = false;
+
+  if (isset($opts['r'])) {
+    $name = trim($opts['r']);
+    foreach($config['ipslist'] as $r) {
+      if (!strcmp($name, $r)) {
+        echo "[-] Correct repository provided\n";
+	$ips->name = $name;
+	$f = true;
+	break;
+      }
+    }
+    if (!$f) exit(-1);
+  }
+  if ($ips->fetchFromField('name')) {
+    echo "[-] This is a new repository, inserting...\n";
+    $ips->insert();
+  }
+  if ($ips->id <= 0) {
+    echo "[!] Incorrect IPS id.. cannot link any package\n";
+    exit(-2);
+  }
+
+  if (isset($opts['a'])) {
+    $adv = false;
+  } else {
+    $adv = true;
+  }
+
+  $ips->root = $config['ipspath'].'/'.$ips->name.'/publisher/'.$ips->publisher;
+  echo "[-] Using $ips repository located at ".$ips->root."\n";
+  if (isset($opts['v'])) {
+    $ips->listAll();
+    exit(0);
+  }
   if (isset($opts['f'])) $ips->f_nofiles = true;
-  $ips->findNew($pkg);
+  $ips->fetchPkgs(0); // fetch packages ids
+  $ips->findNew($pkg, $adv);
 
 
 ?>

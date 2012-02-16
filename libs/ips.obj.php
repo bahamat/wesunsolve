@@ -18,13 +18,75 @@ class IPS extends mysqlObj
   /* Data Var */
   public $id = -1;
   public $root = "";
+  public $name = "";
+  public $publisher = "";
+  public $added = 0;
+  public $updated = 0;
 
   public $a_pkgs = array();
 
   public $f_nofiles = false;
 
   public function __toString() {
+    return $this->name;
   }
+
+  /* pkg list */
+  function fetchPkgs($all=1) {
+
+    $this->a_pkgs = array();
+    $table = "`jt_pkg_ips`";
+    $index = "`id_pkg`";
+    $where = "WHERE `id_ips`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Pkg($t['id_pkg']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_pkgs, $k);
+      }
+    }
+    return 0;
+  }
+
+  function addPkg($k) {
+
+    $table = "`jt_pkg_ips`";
+    $names = "`id_pkg`, `id_ips`";
+    $values = "'$k->id', '".$this->id."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_pkgs, $k);
+    return 0;
+  }
+
+  function delPkg($k) {
+
+    $table = "`jt_pkg_ips`";
+    $where = " WHERE `id_pkg`='".$k->id."' AND `id_ips`='".$this->id."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_pkgs as $ak => $v) {
+      if ($k->id == $v->id) {
+        unset($this->a_pkgs[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isPkg($k) {
+    foreach($this->a_pkgs as $ko)
+      if ($ko->id == $k->id)
+        return TRUE;
+    return FALSE;
+  }
+
+
 
   public function md5Sum($file) {
 
@@ -38,11 +100,57 @@ class IPS extends mysqlObj
     return trim($ret);
   }
 
-  public function findNew($pkg = "") {
+  public function listAll() {
     global $config;
     
-    if (!is_dir($this->root))
+    if (!is_dir($this->root)) {
+      echo " > ips root path not found\n";
       return -1;  
+    }
+
+    $d_pkg = $this->root.'/pkg';
+
+    /* Browse packages and update db info on them */
+    if (!is_dir($d_pkg)) {
+      echo " > pkg/ subdir not found inside IPS repo\n";
+      return -1;
+    }
+    $filter = "";
+    if (!empty($pkg)) {
+      $filter = $d_pkg.'/*'.$pkg.'*';
+    } else {
+      $filter = $d_pkg.'/*';
+    }
+
+    foreach (glob($filter, GLOB_ONLYDIR) as $pkg) {
+      foreach(glob($pkg.'/*') as $pstamp) {
+        $pkgname = explode('/', $pkg);
+	$pkgname = $pkgname[count($pkgname)-1];
+	$pkgfmri = explode('/', $pstamp);
+	$pkgfmri = $pkgfmri[count($pkgfmri)-1];
+        $pkgname = preg_replace('/%2F/', '/', $pkgname);
+        $pkgname = preg_replace('/%2B/', '+', $pkgname);
+        $pkgname = preg_replace('/%2C/', ',', $pkgname);
+        $pkgname = preg_replace('/%3A/', ':', $pkgname);
+        $pkgfmri = preg_replace('/%2F/', '/', $pkgfmri);
+        $pkgfmri = preg_replace('/%2C/', ',', $pkgfmri);
+        $pkgfmri = preg_replace('/%3A/', ':', $pkgfmri);
+	$po = new Pkg();
+	$po->fromString($pkgname.'@'.$pkgfmri);
+        echo "[-] Found package $po\n";
+      }
+    }
+
+    return;
+  }
+
+  public function findNew($pkg = "", $adv = true) {
+    global $config;
+    
+    if (!is_dir($this->root)) {
+      echo " > ips root path not found\n";
+      return -1;  
+    }
 
     $d_pkg = $this->root.'/pkg';
 
@@ -79,11 +187,20 @@ class IPS extends mysqlObj
 	  $po->insert();
   	  $po->parseIPS($content);
           echo "[-] Found NEW package $po\n";
-	  $po->f_irc = 0;
-	  $po->f_twitter = 0;
+          if ($adv) {
+	    $po->f_irc = 0;
+	    $po->f_twitter = 0;
+          } else {
+	    $po->f_irc = 1;
+	    $po->f_twitter = 1;
+          }
 	  $po->update();
 	} else {
-	  echo "OLD: $po\n";
+	  echo "[-] OLD: $po\n";
+	}
+	if (!$this->isPkg($po)) {
+          $this->addPkg($po);
+          echo "[-] Linked to repository $this\n";
 	}
       }
     }
@@ -179,6 +296,17 @@ class IPS extends mysqlObj
     }
   }
 
+  public function update() {
+    $this->updated = time();
+    parent::update();
+  }
+
+  public function insert() {
+    $this->added = time();
+    parent::insert();
+  }
+
+
  /**
   * Constructor
   */
@@ -189,13 +317,17 @@ class IPS extends mysqlObj
     $this->_nfotable = "";
     $this->_my = array(
                         "id" => SQL_INDEX,
-                        "root" => SQL_PROPE,
+                        "name" => SQL_PROPE,
+                        "publisher" => SQL_PROPE,
+                        "added" => SQL_PROPE,
                         "updated" => SQL_PROPE
                  );
 
     $this->_myc = array( /* mysql => class */
                         "id" => "id",
-                        "root" => "root",
+                        "name" => "name",
+                        "publisher" => "publisher",
+                        "added" => "added",
                         "updated" => "updated"
                  );
   }

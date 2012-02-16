@@ -14,8 +14,20 @@ isofile=$1
 
 TMPDIR=/tmp/ws2-${RANDOM}
 mkdir -p ${TMPDIR};
-sudo mount -o loop ${isofile} ${TMPDIR}
-rsync -va ${TMPDIR}/ .
-sudo umount -l ${TMPDIR}
-rm -rf ${TMPDIR};
+os=`/bin/uname`;
 
+
+if [ "${os}" = "SunOS" ]; then
+  sudo mount -F hsfs ${isofile} ${TMPDIR}
+elif [ "${os}" = "Linux" ]; then
+  sudo mount -o loop ${isofile} ${TMPDIR}
+else
+  echo "[!] Os unknown.. ${os}";
+  exit 42;
+fi
+sudo rsync -va ${TMPDIR}/ .
+
+
+sudo umount ${TMPDIR};
+rm -rf ${TMPDIR};
+exit 0;

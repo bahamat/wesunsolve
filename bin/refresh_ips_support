@@ -1,0 +1,55 @@
+#!/bin/bash
+
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 glassfish_support
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 ha-cluster
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 ha-cluster_support
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 sstudio
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 sstudio_support
+## drwxr-xr-x   2 wildcat  espix          2 Feb 13 15:28 support
+
+echo "[-] Doing oracle solaris support repository...";
+export PKG_SRC=https://pkg.oracle.com/solaris/support/
+export PKG_DEST=/tank/app/sunsolve/repository/ips/support
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Solaris_11_Support.certificate.pem --key /mgmt/certs/Oracle_Solaris_11_Support.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+echo "[-] Doing oracle glassfish support repository...";
+export PKG_SRC=https://pkg.oracle.com/glassfish/v3/support
+export PKG_DEST=/tank/app/sunsolve/repository/ips/glassfish_support
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_GlassFish_Server_3_Support.certificate.pem --key /mgmt/certs/Oracle_GlassFish_Server_3_Support.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+echo "[-] Doing oracle exadata support repository...";
+export PKG_SRC=https://pkg.oracle.com/solaris/exa-family
+export PKG_DEST=/tank/app/sunsolve/repository/ips/exadata
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Exadata_Database_Machine.certificate.pem --key /mgmt/certs/Oracle_Exadata_Database_Machine.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+echo "[-] Doing oracle solaris studio repository...";
+export PKG_SRC=https://pkg.oracle.com/solarisstudio/release
+export PKG_DEST=/tank/app/sunsolve/repository/ips/sstudio
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Solaris_Studio.certificate.pem --key /mgmt/certs/Oracle_Solaris_Studio.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+echo "[-] Doing oracle solaris studio support repository...";
+export PKG_SRC=https://pkg.oracle.com/solarisstudio/support
+export PKG_DEST=/tank/app/sunsolve/repository/ips/sstudio_support
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Solaris_Studio_Support.certificate.pem --key /mgmt/certs/Oracle_Solaris_Studio_Support.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+echo "[-] Doing oracle solaris cluster repository...";
+export PKG_SRC=https://pkg.oracle.com/ha-cluster/release
+export PKG_DEST=/tank/app/sunsolve/repository/ips/ha-cluster
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Solaris_Cluster_4.0.certificate.pem --key /mgmt/certs/Oracle_Solaris_Cluster_4.0.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+
+echo "[-] Doing oracle solaris cluster support repository...";
+export PKG_SRC=https://pkg.oracle.com/ha-cluster/support
+export PKG_DEST=/tank/app/sunsolve/repository/ips/ha-cluster_support
+sudo pkgrecv -m all-versions --cert /mgmt/certs/Oracle_Solaris_Cluster_4.0_Support.certificate.pem --key /mgmt/certs/Oracle_Solaris_Cluster_4.0_Support.key.pem  -s ${PKG_SRC} -d file://${PKG_DEST} '*'
+sudo pkgrepo -s ${PKG_DEST} refresh
+
+
+echo "[-] Restarting pkgserver ...";
+sudo svcadm restart pkg/server

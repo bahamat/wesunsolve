@@ -405,6 +405,8 @@ class Pkg extends mysqlObj
   public function fromString($str) {
     //last-fmri=system/file-system/zfs@0.5.11,5.11-0.175.0.0.0.2.1:20111019T072820Z
     $value = preg_replace('/pkg:\/\/solaris/', '', $str);
+    $value = preg_replace('/pkg:\/\//', '', $value);
+    $value = preg_replace('/pkg:\//', '', $value);
     $value = preg_replace('/pkg:/', '', $value);
     $value = explode('/', $value);
     $path = "";
