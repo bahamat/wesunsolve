@@ -16,7 +16,7 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "p::r::hlfv";
+  $shortopts = "p::r::hlfva";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -83,6 +83,7 @@
     exit(-2);
   }
 
+  $adv = true;
   if (isset($opts['a'])) {
     $adv = false;
   } else {

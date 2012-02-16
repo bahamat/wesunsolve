@@ -184,7 +184,9 @@ class IPS extends mysqlObj
 	if ($po->fetchFromFMRI()) {
           $content = file_get_contents($pstamp);
           $po->o_ips = $this;
-	  $po->insert();
+	  if ($po->insert()) {
+            echo "[!] FAILED to insert $po\n";
+	  }
   	  $po->parseIPS($content);
           echo "[-] Found NEW package $po\n";
           if ($adv) {
