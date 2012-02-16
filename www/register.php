@@ -96,6 +96,7 @@
          if (!$l->isMList($ml)) {
            $l->addMList($ml);
            $msg .= "Subscribed to ".$ml->name."<br/>\n";
+	   IrcMsg::add("[WWW] ".$l->username." subscribed to mail report ".$ml->name, MSG_ADM);
          }
        } else {
          if ($l->isMList($ml)) {
