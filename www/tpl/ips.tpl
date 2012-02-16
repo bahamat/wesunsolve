@@ -11,7 +11,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Last Solaris 11 Pkgs</h2>
+     <h2 class="grid_10 push_1 alpha omega">Latest <?php if ($ips) echo $ips->desc; ?> Packages</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -26,6 +26,17 @@
        </div>
        <div class="clear clearfix"></div>
   <p><?php echo $title; ?></p>
+  <?php if ($ips) { ?>
+  <h3>IPS Repository</h3>
+    <ul class="listinfo">
+      <li>Name: <?php echo $ips->name; ?></li>
+      <li>Description: <?php echo $ips->desc; ?></li>
+      <li>Publisher: <?php echo $ips->publisher; ?></li>
+      <li># of Packages: <?php echo count($ips->a_pkgs); ?></li>
+      <li>Monitored since: <?php echo date(HTTP::getDateFormat(), $ips->added); ?></li>
+      <li>Last updated: <?php echo date(HTTP::getDateFormat(), $ips->updated); ?></li>
+    </ul>
+  <?php } ?>
   <div class="ctable">
   <p class="paging"><?php echo $pagination; ?></p>
   <table id="tbl_pkgs" class="ctable">

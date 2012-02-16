@@ -32,6 +32,7 @@
 		 <li>Summary: <?php echo $pkg->summary; ?></li>
 		 <li>Description: <?php echo $pkg->desc; ?></li>
 		 <li>IPS Path: <?php echo $pkg->path; ?></li>
+		 <li>IPS Repositor(y|ies): <?php foreach($pkg->a_ips as $ips) echo $ips->link().', '; ?></li>
 		 <li>Product version: <?php echo $pkg->version; ?></li>
 		 <li>Build version: <?php echo $pkg->buildver; ?></li>
 		 <li>Branch version: <?php echo $pkg->branchver; ?></li>

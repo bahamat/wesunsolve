@@ -22,8 +22,9 @@
       <li class="m_element"><a href="/bsearch">Bug search</a></li> 
      </ul> 
      <ul>
-      <li class="m_header">Solaris 11</li>
-      <li class="m_element"><a href="/lpkg">Latest packages</a></li>
+      <li class="m_header">Next Gen</li>
+      <li class="m_element"><a href="/ips">Latest S11 packages</a></li>
+      <li class="m_element"><a href="/lips">List of repositories</a></li>
       <li class="m_element"><a href="/lbugfix">Latest fixed bugs</a></li>
       <li class="m_element"><a href="/pkgsearch">Search for packages</a></li>
      </ul>

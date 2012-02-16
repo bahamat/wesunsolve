@@ -20,6 +20,7 @@ class IPS extends mysqlObj
   public $root = "";
   public $name = "";
   public $publisher = "";
+  public $desc = "";
   public $added = 0;
   public $updated = 0;
 
@@ -48,6 +49,10 @@ class IPS extends mysqlObj
       }
     }
     return 0;
+  }
+
+  public function link() {
+    return '<a href="/ips/id/'.$this->id.'">'.$this->name.'</a>';
   }
 
   function addPkg($k) {
@@ -184,7 +189,9 @@ class IPS extends mysqlObj
 	if ($po->fetchFromFMRI()) {
           $content = file_get_contents($pstamp);
           $po->o_ips = $this;
-	  $po->insert();
+	  if ($po->insert()) {
+	    echo "[!] FAILED to insert $po\n";
+	  }
   	  $po->parseIPS($content);
           echo "[-] Found NEW package $po\n";
           if ($adv) {
@@ -319,6 +326,7 @@ class IPS extends mysqlObj
                         "id" => SQL_INDEX,
                         "name" => SQL_PROPE,
                         "publisher" => SQL_PROPE,
+                        "desc" => SQL_PROPE,
                         "added" => SQL_PROPE,
                         "updated" => SQL_PROPE
                  );
@@ -327,6 +335,7 @@ class IPS extends mysqlObj
                         "id" => "id",
                         "name" => "name",
                         "publisher" => "publisher",
+                        "desc" => "desc",
                         "added" => "added",
                         "updated" => "updated"
                  );

@@ -11,7 +11,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Last Solaris 11 Pkgs</h2>
+     <h2 class="grid_10 push_1 alpha omega">Monitored IPS Repositories</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -27,24 +27,24 @@
        <div class="clear clearfix"></div>
   <p><?php echo $title; ?></p>
   <div class="ctable">
-  <p class="paging"><?php echo $pagination; ?></p>
   <table id="tbl_pkgs" class="ctable">
    <tr>
     <th>Name</th>
-    <th>Pkg FMRI</th>
-    <th>Repository</th>
-    <th>Release date</th>
+    <th>Publisher</th>
+    <th># Pkgs</th>
+    <th>Since</th>
+    <th>Last Updated</th>
    </tr>
-<?php $i=0; foreach($pkgs as $p) { ?>
+<?php $i=0; foreach($ips as $i) { ?>
    <tr>
-    <td><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } ?><a href="/pkg/id/<?php echo $p->id; ?>"><?php echo $p->name; ?></a></td>
-    <td><?php echo $p->fmri; ?></td>
-    <td><?php foreach($p->a_ips as $ips) { echo $ips->link().', '; } ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $p->pstamp); ?></td>
+    <td><?php echo $i->link(); ?></td>
+    <td><?php echo $i->publisher; ?></td>
+    <td><?php echo count($i->a_pkgs); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $i->added); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $i->updated); ?></td>
    </tr>
 <?php $i++; } ?>
    </table>
-  <p class="paging"><?php echo $pagination; ?></p>
   </div>
    </div><!-- d_content_box -->
   </div><!-- grid_19 --> 

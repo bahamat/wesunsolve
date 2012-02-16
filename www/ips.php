@@ -15,7 +15,6 @@
  $rpp = $config['patchPerPage'];
  if ($lm->isLogged) {
    $lo = $lm->o_login;
-  // $lo->fetchUCLists();
    if ($lo) {
      $lo->fetchData();
      $val = $lo->data('patchPerPage');
@@ -31,16 +30,37 @@
    $page = 1;
  }
  $nb_page = 0;
+ 
+ $table = "`pkg`";
+ $where = "";
 
- $where = " ORDER BY `pkg`.`pstamp` DESC";
- $bad = 0;
- $sec = 0;
+ if (!strcmp($_GET['id'], 'any')) {
+   $ips = null;
+ } else if (isset($_GET['id']) && !empty($_GET['id'])) {
+   $ips = new IPS($_GET['id']);
+   if ($ips->fetchFromId()) {
+     $content = new Template('./tpl/error.tpl');
+     $content->set('error', 'Invalid IPS repository ID');
+     goto screen;
+   }
+   $table .= ", `jt_pkg_ips` jt";
+   $where .= " WHERE jt.id_pkg=pkg.id AND `jt`.`id_ips`='".$ips->id."'";
+ } else {
+   $ips = new IPS();
+   $ips->name = $config['ipslist']['default'];
+   if ($ips->fetchFromField('name')) {
+     $content = new Template('./tpl/error.tpl');
+     $content->set('error', 'Cannot find default IPS repository');
+     goto screen;
+   }
+   $table .= ", `jt_pkg_ips` jt";
+   $where .= " WHERE jt.id_pkg=pkg.id AND `jt`.`id_ips`='".$ips->id."'";
+ }
 
-
-  $pkgs = array();
-  $table = "`pkg`";
-  $index = "`id`";
-  $icount = "count(`id`) as c";
+ $pkgs = array();
+ $index = "`id`";
+ $icount = "count(`id`) as c";
+ $where .= " ORDER BY `pkg`.`pstamp` DESC";
 
   if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
   {
@@ -88,8 +108,26 @@
    $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest S11 Packages" href="http://wesunsolve.net/rss/s11pkg" />';
  }
 
- $title = 'Latest Solaris 11 Packages - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+ $str = "/ips/id/".$ips->id;
+ $content = new Template("./tpl/ips.tpl");
 
+ if ($ips) {
+   $ips->fetchPkgs(0);
+   $title = 'Latest '.$ips->desc.' Packages - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+   $content->set("ips", $ips);
+ } else {
+   $title = 'Latest Packages - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+ }
+ $content->set("pkgs", $pkgs);
+ $content->set("start", $start);
+ $content->set("nb", $nb);
+ $content->set("rpp", $rpp);
+ $content->set("title", $title);
+ $content->set("str", $str);
+ $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
+
+
+screen:
   $index = new Template("./tpl/index.tpl");
   $head = new Template("./tpl/head.tpl");
   $head->set("title", $title);
@@ -97,22 +135,6 @@
   $menu = new Template("./tpl/menu.tpl");
   $foot = new Template("./tpl/foot.tpl");
   $foot->set("start_time", $start_time);
-  $content = new Template("./tpl/lpkg.tpl");
-  $str = "/lpkg";
-  $content->set("pkgs", $pkgs);
-  $content->set("start", $start);
-  $content->set("nb", $nb);
-  $content->set("rpp", $rpp);
-  $content->set("title", $title);
-  $content->set("str", $str);
-  $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
-//  if (isset($lo) && $lo) {
- //   $content->set("l", $lo);
-  //  $head_add = "<script type=\"text/javascript\" src=\"/js/ax_main.js\"></script>";
-   // $head_add .= "<script type=\"text/javascript\" src=\"/js/ax_patch.js\"></script>";
-//    $head->set("head_add", $head_add);
- // }
-
   $index->set("head", $head);
   $index->set("menu", $menu);
   $index->set("foot", $foot);

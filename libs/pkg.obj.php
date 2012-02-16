@@ -307,6 +307,7 @@ class Pkg extends mysqlObj
   public $a_bugids = array();
   public $a_affect = array();
   public $a_previous = array();
+  public $a_ips = array();
 
   /* Obj */
   public $o_ips = null;
@@ -431,6 +432,7 @@ class Pkg extends mysqlObj
     $this->fetchBugids(); 
     $this->fetchAffect(); 
     $this->fetchLatest(); 
+    $this->fetchIPS(); 
     $this->fetchPrevious(); 
   }
 
@@ -551,6 +553,26 @@ class Pkg extends mysqlObj
     }
     return null;
   }
+
+  /* IPS */
+  public function fetchIPS($all=1) {
+
+    $this->a_ips = array();
+    $table = "`jt_pkg_ips`";
+    $index = "`id_ips`";
+    $where = "WHERE `id_pkg`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new IPS($t['id_ips']);
+        $k->fetchFromId();
+        array_push($this->a_ips, $k);
+      }
+    }
+    return 0;
+  }
+
 
   /* Files */
   public function fetchFiles($all=1) {

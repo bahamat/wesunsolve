@@ -8,9 +8,9 @@
 
  /* Fetch last pkg */
   $pkgs = array();
-  $table = "`pkg`";
+  $table = "`pkg`, `jt_pkg_ips` jt";
   $index = "`id`";
-  $where = " ORDER BY `pkg`.`pstamp` DESC LIMIT 0,20";
+  $where = " WHERE jt.id_pkg=pkg.id AND jt.id_ips=1 ORDER BY `pkg`.`pstamp` DESC LIMIT 0,20";
 
 
   if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
