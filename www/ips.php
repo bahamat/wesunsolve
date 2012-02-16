@@ -34,7 +34,7 @@
  $table = "`pkg`";
  $where = "";
 
- if (!strcmp($_GET['id'], 'any')) {
+ if (isset($_GET['id']) && !strcmp($_GET['id'], 'any')) {
    $ips = null;
  } else if (isset($_GET['id']) && !empty($_GET['id'])) {
    $ips = new IPS($_GET['id']);
@@ -104,9 +104,7 @@
   }
 
  $head_add = '';
- if (!$bad) {
-   $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest S11 Packages" href="http://wesunsolve.net/rss/s11pkg" />';
- }
+ $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest S11 Packages" href="http://wesunsolve.net/rss/s11pkg" />';
 
  $str = "/ips/id/".$ips->id;
  $content = new Template("./tpl/ips.tpl");
