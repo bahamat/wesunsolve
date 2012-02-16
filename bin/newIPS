@@ -99,6 +99,7 @@
   if (isset($opts['f'])) $ips->f_nofiles = true;
   $ips->fetchPkgs(0); // fetch packages ids
   $ips->findNew($pkg, $adv);
+  $ips->update();
 
 
 ?>

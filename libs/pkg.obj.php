@@ -64,13 +64,15 @@ class Pkg extends mysqlObj
   }
 
   public function fetchFromFMRI() {
-    $rc = $this->fetchFromFields(array("name", "path", "fmri"));
+    $rc = $this->fetchFromFields(array("name", "fmri"));
     
+/*
     if ($rc) {
       if ($this->path = "/") {
         return $this->fetchFromFields(array("name", "fmri"));
       }
     }
+*/
     return $rc;
   }
 
@@ -145,8 +147,11 @@ class Pkg extends mysqlObj
 
   public function fromString($str) {
     //last-fmri=system/file-system/zfs@0.5.11,5.11-0.175.0.0.0.2.1:20111019T072820Z
-    $value = preg_replace('/pkg:\/\/solaris/', '', $str);
-    $value = preg_replace('/pkg:\/\//', '', $value);
+    if ($this->o_ips) {
+      $v = '/pkg:\/\/'.$this->o_ips->publisher.'/';
+      $str = preg_replace($v, '', $str);
+    }
+    $value = preg_replace('/pkg:\/\//', '', $str);
     $value = preg_replace('/pkg:\//', '', $value);
     $value = preg_replace('/pkg:/', '', $value);
     $value = explode('/', $value);
