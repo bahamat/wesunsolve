@@ -12,6 +12,8 @@
 
  if (isset($_POST['id']) && !empty($_POST['id'])) {
    $id = $_POST['id'];
+ } else if (isset($_GET['id']) && !empty($_GET['id'])) {
+   $id = $_GET['id'];
  } else {
    $lm = loginCM::getInstance();
    $lm->startSession();

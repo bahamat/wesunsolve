@@ -79,7 +79,32 @@ class Patch extends mysqlObj implements JSONizable
     return json_encode($this->toJSONArray());
   }
 
+  public static function fromString($str) {
+    $f = explode('-', $str);
+    return new Patch($f[0], $f[1]);
+  }
+
+  public function shortLink($full=0, $color=false) {
+
+    if ($this->added <= 0) 
+      return '-'.sprintf("%02d", $this->revision);
+
+    $link = "";
+    $cl = "";
+    if ($color) $cl = $this->color();
+    if ($full) {
+      $link = '<a '.$cl.' href="http://wesunsolve.net/patch/id/'.$this->name().'">-'.sprintf("%02d", $this->revision).'</a>';
+    } else {
+      $link = '<a '.$cl.' href="/patch/id/'.$this->name().'">-'.sprintf("%02d", $this->revision).'</a>';
+    }
+    return $link;
+  }
+
   public function link($full=0, $color=false) {
+
+    if ($this->added <= 0)
+      return $this->name();
+
     $link = "";
     $cl = "";
     if ($color) $cl = $this->color();

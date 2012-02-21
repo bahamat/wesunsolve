@@ -399,7 +399,7 @@ class Pkg extends mysqlObj
 
   public function isNew() {
     $now = time();
-    if (($now - $this->pstamp) < 3600*24*7)
+    if (($now - $this->pstamp) < 3600*24*31)
       return true;
     return false;
   }

@@ -16,6 +16,8 @@ Frontend:
 
 - SSL LOGIN
 
+- Timeline for a certain patch (show revision, obsoletion and so on a timeline)
+
 API:
 
 - Add ability to search for a path and list down every md5sum associated and where they belongs

@@ -24,6 +24,7 @@ class mIterator {
      private $_cindex = "";
      private $_arr = array();
      private $_cc = "";
+     private $_cur = 0;
 
      private $_pos = -1;
      private $_num = -1;

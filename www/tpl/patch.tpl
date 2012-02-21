@@ -52,7 +52,7 @@
 <?php if ($patch->o_latest) { ?>
                  <li>Latest release of this patch: <a href="/patch/id/<?php echo $patch->o_latest->name(); ?>"><?php echo $patch->o_latest->name(); ?></a></li>
 <?php } ?>
-		 <li>Release date: <?php if($patch->releasedate) echo date(HTTP::getDateFormat(), $patch->releasedate); ?></li>
+		 <li>Release date: <?php if($patch->releasedate) echo date(HTTP::getDateFormat(), $patch->releasedate); ?> [<a href="/ptimeline/pid/<?php echo $patch->name(); ?>">View Timeline</a>] [<a href="/ptimeline/pid/<?php echo $patch->patch; ?>">View All Revision Timeline</a>]</li>
 		 <li>Detected status: <?php echo $patch->status; ?></li>
 		 <li>Synopsis: <?php echo $patch->synopsis; ?></li>
 		 <li>Archive size: <?php echo $patch->filesize; ?> bytes (<?php echo round($patch->filesize / 1024 / 1024, 2); ?> MBytes)</li>

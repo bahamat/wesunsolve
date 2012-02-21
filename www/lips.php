@@ -25,6 +25,7 @@
   $ips = array();
   $table = "`ips`";
   $index = "`id`";
+  $where = "";
 
   if ($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))
   {

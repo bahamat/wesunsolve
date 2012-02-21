@@ -1,19 +1,9 @@
-<?php 
-/*
-      if ($start != 0 && $start >= $rpp) {
-        $idprev = $start - $rpp;
-      }
-      if (($start + 50) >= $nb) {
-        $idnext = $nb - 1;
-      } else {
-        $idnext = $start + $rpp;
-      }
-*/
+<?php
   $h = HTTP::getInstance();
   if (!$h->css) $h->fetchCSS();
-?>
+?>  
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Monitored IPS Repositories</h2>
+     <h2 class="grid_10 push_1 alpha omega">Patches timeline</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -27,27 +17,29 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
-  <p><?php echo $title; ?></p>
   <div class="ctable">
-  <table id="tbl_pkgs" class="ctable">
+  <table class="ctable">
    <tr>
-    <th>Name</th>
-    <th>Publisher</th>
-    <th># Pkgs</th>
-    <th>Since</th>
-    <th>Last Updated</th>
+    <th>Patch</th>
+    <th>Details</th>
    </tr>
-<?php $i=0; foreach($ips as $i) { ?>
-   <tr>
-    <td><?php echo $i->link(); ?></td>
-    <td><?php echo $i->publisher; ?></td>
-    <td><?php echo count($i->a_pkgs); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $i->added); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $i->updated); ?></td>
-   </tr>
-<?php $i++; } ?>
+<?php
+   $current = null;
+   while(($pt = $pts->next())) {
+     $pt->fetchFromId();
+     $pt->fetchPatch();
+     if (!$current || $current->id != $pt->id_patchdiag) {
+       $current = new Patchdiag($pt->id_patchdiag);
+       $current->fetchFromId();
+       echo "<tr><td colspan=\"2\">Changes on ".date(HTTP::getDateFormat(), $pt->when)." inside <i><a href=\"/patchdiag/id/".$current->id."\">".$current->filename."</a> file</i><br/><br/></td></tr>\n";
+     }
+     ?>
+     <tr><td><?php echo $pt->o_patch->link(false, true); ?></td><td><?php echo $pt->tell(); ?></td></tr>
+     <?php
+   }
+?>
    </table>
   </div>
    </div><!-- d_content_box -->
-  </div><!-- grid_19 --> 
+  </div><!-- grid_19 -->
  </div><!-- d_content -->
