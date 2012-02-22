@@ -1638,6 +1638,22 @@ class Patch extends mysqlObj implements JSONizable
     }
   }
 
+  public function svgColor() {
+    if ($this->pca_bad) {
+      return "color=red";
+    }
+    if (!strcmp($this->status, 'OBSOLETE')) {
+      return "color=rowntd";
+    }
+    if ($this->pca_sec) {
+      return "color=orange";
+    }
+    if ($this->pca_rec) {
+      return "color=green";
+    }
+  }
+
+
   public function color() {
     if ($this->pca_bad) {
       return "class=\"redtd\"";

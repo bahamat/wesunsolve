@@ -37,7 +37,7 @@ add_comment/id_on/<?php echo $bundle->id; ?>/type/bundle">add</a></p>
                                 <td class="greentd">RECOMMENDED</td>
                                 <td class="orangetd">SECURITY</td>
                                 <td class="redtd">WITHDRAWN</td>
-                                <td class="violettd">OBSOLETE</td>
+                                <td class="browntd">OBSOLETE</td>
                         </tr></table>
 		<table id="tbl_patches" class="ctable">
 		<tr>

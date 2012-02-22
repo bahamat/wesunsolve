@@ -26,26 +26,27 @@
 
  $ddata = "digraph \"Patch tree for $p\" {\n";
  if ($p->o_obsby) {
-   $ddata .= '  "'.$p->o_obsby->name().'" -> "'.$p->name().'";'."\n";
+   $ddata .= '  "'.$p->o_obsby->name().'" -> "'.$p->name().'"'."\n";
  }
  foreach($p->a_depend as $pd) {
-   $ddata .= '  "'.$p->name().'" -> "'.$pd->name().'";'."\n";
+   $pd->fetchFromId();
+   $ddata .= '  "'.$p->name().'" -> "'.$pd->name().'"'."\n";
  }
  $ddata .= '  label = "Number of required patches: '.count($p->a_depend).'"'."\n";
  $ddata .= '  labelloc = t'."\n";
  $ddata .= '  labeljust = l'."\n";
 
  /* Add myself */
- $ddata .= '  "'.$p->name().'" [ URL="/patch/id/'.$p->name().'"; comment="'.$p->name().'"; label="'.$p->name().'"]'."\n";
+ $ddata .= '  "'.$p->name().'" [ '.$p->svgColor().' URL="/psvg/pid/'.$p->name().'" comment="'.$p->name().'" label="'.$p->name().'"]'."\n";
 
  if ($p->o_obsby) {
-   $ddata .= '  "'.$p->o_obsby->name().'" [ style=filled color=red URL="/patch/id/'.$p->o_obsby->name().'"; comment="'.$p->o_obsby->name().'"; label="'.$p->o_obsby->name().'"]'."\n";
+   $ddata .= '  "'.$p->o_obsby->name().'" [ '.$p->o_obsby->svgColor().' color=red URL="/psvg/pid/'.$p->o_obsby->name().'" comment="'.$p->o_obsby->name().'" label="'.$p->o_obsby->name().'"]'."\n";
  }
  foreach($p->a_depend as $pd) {
-   $ddata .= '  "'.$pd->name().'" [ URL="/patch/id/'.$pd->name().'"; comment="'.$pd->name().'"; label="'.$pd->name().'"]'."\n";
+   $ddata .= '  "'.$pd->name().'" [ '.$pd->svgColor().' URL="/psvg/pid/'.$pd->name().'" comment="'.$pd->name().'" label="'.$pd->name().'"]'."\n";
  }
- $ddata .= '  subgraph "cluster_depend" { label="Requirements";  URL=""; ';
- foreach($p->a_depend as $pd) { $ddata .= '"'.$pd->name().'"; '; }
+ $ddata .= '  subgraph "cluster_depend" { label="Requirements"  URL="" ';
+ foreach($p->a_depend as $pd) { $ddata .= '"'.$pd->name().'" '; }
  $ddata .= '}'."\n";
 
  $ddata .= '}'."\n";
