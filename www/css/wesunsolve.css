@@ -639,3 +639,55 @@ a:hover {
   margin-right: auto;
   text-align:center;
 }
+
+#p_timeline {
+  width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#p_timeline_dstart {
+  float: left;
+}
+
+#p_timeline_dstop {
+  float: right;
+  text-align: right;
+}
+
+.p_timeline_dany {
+  float: left;
+  text-align: center;
+}
+
+.p_timeline_el_wth {
+  background-color: red;
+  float: left;
+  height: 15px;
+}
+
+.p_timeline_el_obs {
+  background-color: brown;
+  float: left;
+  height: 15px;
+}
+
+.p_timeline_el_sec {
+  background-color: #ff9900;
+  float: left;
+  height: 15px;
+}
+
+.p_timeline_el_rec {
+  background-color: green;
+  float: left;
+  height: 15px;
+}
+
+#p_timeline_bar {
+  margin-left: 35px;
+  border: 1px solid;
+  height: 15px;
+  width: 870px;
+  text-align: left;
+}

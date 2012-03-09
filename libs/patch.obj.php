@@ -48,6 +48,8 @@ class Patch extends mysqlObj implements JSONizable
   public $o_current = null;
   public $o_csum = null;
   public $o_mfile = null;
+  public $o_tl_start = null;
+  public $o_tl_stop = null;
   
   /* Lists */
   public $a_files = array();
@@ -63,6 +65,7 @@ class Patch extends mysqlObj implements JSONizable
   public $a_bundles = array();
   public $a_freadmes = array();
   public $a_readmes = array();
+  public $a_tline = array();
 
   public function toJSONArray() {
     return array('name' => $this->name(),
@@ -73,6 +76,35 @@ class Patch extends mysqlObj implements JSONizable
                              'security' => $this->pca_sec,
                              'bad' => $this->pca_bad,
                              'filesize' => $this->filesize);
+  }
+
+  public function fetchTimeline() {
+
+    $this->a_tline = array();
+    $table = "`p_timeline`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "";
+    $where .= " WHERE `id_patch`='".$this->patch."' AND `id_revision`='".$this->revision."'";
+    $where .= " ORDER BY `when` ASC, `id_patch` ASC, `id_revision` ASC";
+    $it = new mIterator("pTimeline", $index, $table, $where, $cindex);
+    while(($e = $it->next())) {
+      $e->fetchFromId();
+      $this->a_tline[] = $e;
+      if (!$this->o_tl_stop) {
+        $this->o_tl_stop = $e;
+      } else {
+        if ($this->o_tl_stop->when < $e->when)
+          $this->o_tl_stop = $e;
+      }
+      if (!$this->o_tl_start) {
+        $this->o_tl_start = $e;
+      } else {
+        if ($this->o_tl_start->when > $e->when)
+          $this->o_tl_start = $e;
+      }
+    }
+    return 0;
   }
 
   public function toJSON() {

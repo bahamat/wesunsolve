@@ -48,6 +48,7 @@
     }
   }
   IrcMsg::add("[WWW] Login succeed: ".$lm->o_login->username."/".$_SERVER['REMOTE_ADDR'], MSG_ADM);
+  HTTP::piwikLogin($lm->o_login->username);
 
   header("Location: /panel"); 
   exit();

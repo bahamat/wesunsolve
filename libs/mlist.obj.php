@@ -110,6 +110,8 @@ class MList extends mysqlObj
     $headers = "From: $from\r\n";
     $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
     $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+    $headers .= "Content-Transfer-Encoding: 7bit\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
 
     mail($login->email, "[SUNSOLVE] ".$this->name, $content, $headers);
 
@@ -278,7 +280,7 @@ EOF;
       }
     }
 
-    $txt .= "\n".$config['mlist']['footer'];
+    $txt .= "\n".$config['mlist']['footer']."\n";
     return $txt;
   }
 

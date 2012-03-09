@@ -101,9 +101,9 @@ class HTTP
     include_once($config['rootpath'].'/libs/PiwikTracker.php');
     /* Log visit on piwik */
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setUrl( $_SERVER['REQUEST_URI'] );
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setTokenAuth( $config['piwikToken'] );
+    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setCustomVariable( 1, "LoggedIn", $uname, 'visit');
     $piwikTracker->doTrackPageView('Login');
     return true;
@@ -114,14 +114,16 @@ class HTTP
     include_once($config['rootpath'].'/libs/PiwikTracker.php');
      /* Log visit on piwik */
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setUrl( $_SERVER['REQUEST_URI'].'/'.$file );
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setTokenAuth( $config['piwikToken'] );
+    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
+    $url = $piwikTracker->pageUrl.'/'.$file;
+    $piwikTracker->setUrl( $url );
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $lm = loginCM::getInstance();
     if ($lm->o_login) {
       $piwikTracker->setCustomVariable( 1, "LoggedIn", $lm->o_login->username, 'visit');
     }
-    $piwikTracker->doTrackAction($_SERVER['REQUEST_URI'].'/'.$file, 'download');
+    $piwikTracker->doTrackAction($url, 'download');
     return true;
   }
 
@@ -130,9 +132,9 @@ class HTTP
      /* Log visit on piwik */
     include_once($config['rootpath'].'/libs/PiwikTracker.php');
     $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setUrl( $_SERVER['REQUEST_URI'] );
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->setTokenAuth( $config['piwikToken'] );
+    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
+    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
     $piwikTracker->doTrackPageView($title);
     return true;
   }
