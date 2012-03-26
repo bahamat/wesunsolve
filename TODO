@@ -13,6 +13,7 @@ Frontend:
 - Add a sort by function to the patch list mechanism.
 - Build a tree of patch revision timeline...
 - Refurbish patch details page with instant loading...
+- Add url link to comment added message
 
 - SSL LOGIN
 

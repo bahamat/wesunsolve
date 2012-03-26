@@ -197,6 +197,14 @@ class Bugid extends mysqlObj
 	if (!count($raw_lines)) {
 	  return false;
 	}
+/* @TODO ADD check for bugContent.XXX here */
+        if (preg_match("/bugsContent.Sun/", $raw)) {
+	   $vendor = "Sun";
+        } else if (preg_match("/bugsContent.Oracle/", $raw)) {
+           $vendor = "Oracle";
+        } else {
+           $vendor = "";
+        }
 	foreach($raw_lines as $line) {
 	  $line = trim($line);
 	  if(empty($line)) {
@@ -207,8 +215,8 @@ class Bugid extends mysqlObj
             $rb = preg_replace('/.*<b>.*<\/b>:(.+)<br/>/i', '$1', $line);
 	  }
 */
-	  if (preg_match("/^bugsContent.Sun/", $line)) {
-	    $bcraw = preg_split("/bugsContent.Sun = \"/", $line);
+	  if (preg_match("/^bugsContent.".$vendor."/", $line)) {
+	    $bcraw = preg_split("/bugsContent.".$vendor." = \"/", $line);
 	    $bcraw = $bcraw[1];
 	    $bcraw = substr($bcraw,0,strlen($bcraw)-2);
 	    //$bcraw = stripslashes(substr($bcraw,0,strlen($bcraw)-2));

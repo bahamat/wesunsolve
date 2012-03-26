@@ -150,10 +150,12 @@ class Patch extends mysqlObj implements JSONizable
 
   public static function linkize($str) {
     $ret = $str;
-    // match 6 digit as patchids
-    $ret = preg_replace('/(^|\s| )([0-9]{6})/', '${1}<a href="/psearch/pid/${2}">${2}</a>', $ret);
+    // match 0000000 as bugs
+    $ret = preg_replace('/(^|\s| )([0-9]{7})/', '${1}<a href="/bugid/id/${2}">${2}</a>', $ret);
     // match 000000-00 as patches
     $ret = preg_replace('/(^|\s| )([0-9]{6}-[0-9]{2})/', '${1}<a href="/patch/id/${2}">${2}</a>', $ret);
+    // match 6 digit as patchids
+    $ret = preg_replace('/(^|\s| )([0-9]{6})/', '${1}<a href="/psearch/pid/${2}">${2}</a>', $ret);
     return $ret;
   }
 

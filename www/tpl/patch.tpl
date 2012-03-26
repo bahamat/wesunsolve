@@ -54,7 +54,7 @@
 <?php } ?>
 		 <li>Release date: <?php if($patch->releasedate) echo date(HTTP::getDateFormat(), $patch->releasedate); ?> [<a href="/ptimeline/pid/<?php echo $patch->name(); ?>">View Timeline</a>] [<a href="/ptimeline/pid/<?php echo $patch->patch; ?>">View All Revision Timeline</a>]</li>
 		 <li>Detected status: <?php echo $patch->status; ?></li>
-		 <li>Synopsis: <?php echo $patch->synopsis; ?></li>
+		 <li>Synopsis: <?php echo Patch::linkize($patch->synopsis); ?></li>
 		 <li>Archive size: <?php echo $patch->filesize; ?> bytes (<?php echo round($patch->filesize / 1024 / 1024, 2); ?> MBytes)</li>
 		 <li>Keywords: <?php foreach ($patch->a_keywords as $k) { echo $k->keyword.", "; } ?></li>
 		 <li>Architecture: <?php echo $patch->data("arch"); ?></li>
@@ -113,7 +113,7 @@
 		<?php if (!count($patch->a_bugids)) { echo "<p>There is no detected bugid fixed with this patch</p>"; } else { ?>
 		<ul>
 		<?php foreach($patch->a_bugids as $bug) { ?>
-		 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+		 <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".Patch::linkize(htmlentities($bug->synopsis)); } ?></li>
 		<?php } ?>
 		</ul>
 		<p><br/><a href="#top"><img alt="back to top" src="/img/arrow_up.png">back to top</a></p>
@@ -123,7 +123,7 @@
 		  <h4>from <?php echo $p->link(); ?></h4>
 		  <ul>
   		<?php   foreach($p->a_bugids as $bug) { ?>
-		   <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".htmlentities($bug->synopsis); } ?></li>
+		   <li><a href="/bugid/id/<?php echo $bug->id; ?>"><?php echo $bug->id."</a>"; if (!empty($bug->synopsis)) { echo ": ".Patch::linkize(htmlentities($bug->synopsis)); } ?></li>
 		<?php   } ?>
 		  </ul>
 		<?php } ?>
