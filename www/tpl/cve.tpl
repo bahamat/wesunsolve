@@ -20,10 +20,16 @@
        <div class="clear clearfix"></div>
     <a id="top"></a>
     <h4><?php echo $cve->name; ?>: affect <?php echo $cve->affect; ?></h4>
+	     <h3>Description</h3>
+<p><?php echo $cve->desc; ?></p>
 	     <h3>General informations</h3>
 	      <ul class="listinfo">
 		 <li>Name: <?php echo $cve; ?></li>
+		 <li>First release: <?php echo date(HTTP::getDateFormat(), $cve->released); ?></li>
+		 <li>Last revision: <?php echo date(HTTP::getDateFormat(), $cve->revised); ?></li>
 		 <li>Affect: <?php echo $cve->affect; ?></li>
+		 <li>Score: <?php echo $cve->score; ?></li>
+		 <li>Severity: <?php echo $cve->severity; ?></li>
 		 <li>Added on: <?php echo date(HTTP::getDateFormat(), $cve->added); ?></li>
 	       </ul>
              <h3>Patches fixing this alert:</h3>

@@ -15,10 +15,44 @@ class CVE extends mysqlObj
   public $id = -1;		/* ID in the MySQL table */
   public $name = '';
   public $affect = '';
+  public $desc = '';
+  public $score = '';
+  public $severity = '';
+  public $revised = -1;
+  public $released = -1;
   public $added = -1;
   public $updated = -1;
 
   public $a_patches = array();
+  public $a_comments = array();
+
+  /* Users comments */
+  function fetchComments($all=1) {
+
+    $lm = loginCM::getInstance();
+    if (!isset($lm->o_login) || !$lm->o_login) {
+      $id = -1;
+    } else {
+      $id = $lm->o_login->id;
+    }
+    
+
+    $this->a_comments = array();
+    $table = "`u_comments`";
+    $index = "`id`";
+    $where = "WHERE `type`='cve' AND `id_on`='".$this->id."' AND (`is_private`=0 OR (`id_login`=$id AND `is_private`=1)) ORDER BY `added` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UComment($t['id']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_comments, $k);
+      }
+    }
+    return 0;
+  }
+
 
   function link() {
     return '<a href="/cve/id/'.$this->id.'">'.$this->name.'</a>';
@@ -30,6 +64,7 @@ class CVE extends mysqlObj
 
   function fetchAll($all) {
     $this->fetchPatches($all);
+    $this->fetchComments($all);
   }
 
   function viewed() {
@@ -116,6 +151,11 @@ class CVE extends mysqlObj
 			"id" => SQL_INDEX, 
 		        "name" => SQL_PROPE,
 			"affect" => SQL_PROPE,
+			"score" => SQL_PROPE,
+			"severity" => SQL_PROPE,
+			"desc" => SQL_PROPE,
+			"released" => SQL_PROPE,
+			"revised" => SQL_PROPE,
 			"added" => SQL_PROPE,
 			"updated" => SQL_PROPE
  		 );
@@ -125,6 +165,11 @@ class CVE extends mysqlObj
 			"id" => "id", 
 			"name" => "name",
 			"affect" => "affect",
+			"score" => "score",
+			"desc" => "desc",
+			"severity" => "severity",
+			"released" => "released",
+			"revised" => "revised",
 			"added" => "added",
 			"updated" => "updated"
  		 );

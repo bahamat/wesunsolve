@@ -54,6 +54,54 @@
       $cve->insert();
       echo "[-] Found new CVE: $cvename\n";
     }
+    if (empty($cve->desc) || empty($cve->score) || empty($cve->severity) ||
+	$cve->released <= 0 || $cve->revised <= 0) {
+      echo "[-] Trying to gather informations on $cve...\n";
+      $infos = array();
+      exec('/srv/sunsolve/bin/cveInfos.py '.$cve->name, $infos);
+      $i=0;
+      $desc = '';
+      $score = '';
+      $severity = '';
+      $revised = '';
+      $released = '';
+      foreach($infos as $line) {
+        switch($i) {
+          case 0:
+	    $released = explode('/', preg_replace('/Original release date:/', '', $line));
+	    $released = mktime(0,0,0,$released[0], $released[1], $released[2]);
+	    break;
+	  case 1:
+	    $revised = explode('/', preg_replace('/Last revised:/', '', $line));
+	    $revised = mktime(0,0,0,$revised[0], $revised[1], $revised[2]);
+	    break;
+	  case 2:
+            $score = $line;
+	    break;
+	  default:
+	    $line = trim($line);
+            if (empty($line)) continue;
+            $desc .= ' '.$line;
+            break;
+        }
+        $i++;
+      }
+      echo "\t> Found desc: $desc\n";
+      $score = preg_replace('/CVSS v2 Base Score:([0-9]{1,2}\.[0-9]{1})\(([A-Z]*)\).*$/', '${1} ${2}', $score);
+      $score = explode(' ', $score);
+      $severity = $score[1];
+      $score = $score[0];
+      echo "\t> Found score: $score\n";
+      echo "\t> Found severity: $severity\n";
+      $cve->desc = $desc;
+      $cve->score = $score;
+      $cve->severity = $severity;
+      $cve->released = $released;
+      $cve->revised = $revised;
+      echo "\t> Found released: $released\n";
+      echo "\t> Found revised: $revised\n";
+      $cve->update();
+    }
     if (strcmp($cve->affect, $affect)) {
       $cve->affect = $affect;
       $cve->update();
