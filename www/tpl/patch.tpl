@@ -62,6 +62,9 @@
 		 <li>SunOS Release: <?php echo $patch->data("sunos_release"); ?></li>
 		 <li>Unbundled Product: <?php echo $patch->data("unbundled_product"); ?></li>
 		 <li>Unbundled Release: <?php echo $patch->data("unbundled_release"); ?></li>
+<?php if (count($patch->a_cve)) { ?>
+		 <li>Fixing CVE: <?php $i=0; foreach($patch->a_cve as $cve) { if ($i) echo ', '; echo $cve->link(); $i++; } ?></li>
+<?php } ?>
 		 <li>Xref: <?php echo Patch::linkize($patch->data("xref")); ?></li>
 		 <li>Files: <a href="/files/id/<?php echo $patch->name(); ?>">click here</a></li>
                  <li><a href="/readme/id/<?php echo $patch->name(); ?>">View README</a></li>

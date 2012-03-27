@@ -66,6 +66,7 @@ class Patch extends mysqlObj implements JSONizable
   public $a_freadmes = array();
   public $a_readmes = array();
   public $a_tline = array();
+  public $a_cve = array();
 
   public function toJSONArray() {
     return array('name' => $this->name(),
@@ -77,6 +78,62 @@ class Patch extends mysqlObj implements JSONizable
                              'bad' => $this->pca_bad,
                              'filesize' => $this->filesize);
   }
+
+  /* CVE */
+  function addCVE($k) {
+
+    $table = "`jt_patches_cve`";
+    $names = "`cveid`, `patchid`, `revision`";
+    $values = "'$k->id', '".$this->patch."', '".$this->revision."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_cve, $k);
+    return 0;
+  }
+
+  function delCVE($k) {
+
+    $table = "`jt_patches_cve`";
+    $where = " WHERE `cveid`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_cve as $ak => $v) {
+      if (!strcmp($v->name, $k->name)) {
+        unset($this->a_patches[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isCVE($k) {
+    foreach($this->a_cve as $ko)
+      if (!strcmp($ko->name, $k->name))
+        return TRUE;
+    return FALSE;
+  }
+
+  function fetchCVE($all=1) {
+
+    $this->a_cve = array();
+    $table = "`jt_patches_cve`";
+    $index = "`cveid`";
+    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new CVE($t['cveid']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_cve, $k);
+      }
+    }
+    return 0;
+  }
+
 
   public function fetchTimeline() {
 
@@ -333,6 +390,7 @@ class Patch extends mysqlObj implements JSONizable
       $this->fetchRequired($all);
       $this->fetchConflicts($all);
       $this->fetchComments($all);
+      $this->fetchCVE($all);
     }
     $this->fetchData();
   }

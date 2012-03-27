@@ -17,9 +17,9 @@
         </div> 
        </div> 
        <div class="clear clearfix"></div>
+<p class="warning">We will soon celebrate our first anniversary. <a href="http://wiki.wesunsolve.net/FirstBirthday">Help us to make it happen</a>.</p>
        <h3>Join us on IRC!</h3>
        <p>You can join us at <b>#sunsolve</b> on <b>irc.freenode.net</b> with a regular IRC client or by using the <a target="_blank" href="http://webchat.freenode.net?channels=sunsolve&uio=d4">webchat</a>.</p>
-       <p>Come there to simply meet, idle, see the live patch flow, ask questions, drop comments or suggestion and have fun!</p>
        <h3>Recent activity</h3>
        <div class="prefix_1 grid_<?php echo $h->css->s_box; ?> alpha"> 
         <div class="listbox firstbox"> 
