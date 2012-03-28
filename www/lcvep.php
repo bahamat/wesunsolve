@@ -31,11 +31,32 @@
  }
  $nb_page = 0;
 
- $where = " WHERE `released`!='' ORDER BY `cve`.`revised` DESC,`cve`.`released` DESC,`cve`.`name` DESC";
+ $where = " WHERE `patches`.`patch`=`jt_patches_cve`.`patchid` AND ";
+ $where .= "      `patches`.`revision`=`jt_patches_cve`.`revision` AND ";
+ $where .= "      `cve`.`id`=`jt_patches_cve`.`cveid` AND ";
+ $where .= "      `cve`.`released`!='' AND ";
+ $where .= "      `patches`.`releasedate`!='' ";
+ $where .= "GROUP BY `patches`.`patch`, `patches`.`revision` ";
+ $where .= "ORDER BY `patches`.`releasedate` DESC, ";
+ $where .= "         `cve`.`revised` DESC, ";
+ $where .= "         `cve`.`released` DESC ";
 
-  $cves = array();
-  $table = "`cve`";
-  $index = "`id`";
+/*
+ select id,name,patch,c.revision 
+ from cve a,jt_patches_cve b, patches c 
+ where b.patchid=c.patch and 
+       b.revision=c.revision and 
+       a.id=b.cveid and 
+       a.released != '' and 
+       c.releasedate != ''  
+ ORDER BY c.releasedate DESC,
+          a.revised DESC,
+          a.released DESC 
+ LIMIT 0,10
+*/
+  $patches = array();
+  $table = "`patches`, `cve`, `jt_patches_cve`";
+  $index = "`cve`.`id`, `patches`.`patch`, `patches`.`revision`";
   $icount = "count(`id`) as c";
 
   if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
@@ -72,17 +93,19 @@
   if ($nb && ($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
   {
     foreach($idx as $t) {
-      $g = new CVE($t['id']);
+      $g = new Patch($t['patch'], $t['revision']);
       $g->fetchFromId();
-      array_push($cves, $g);
+      $g->o_cve = new CVE($t['id']);
+      $g->o_cve->fetchFromId();
+      array_push($patches, $g);
     }
   }
 
  $head_add = '';
- $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest CVE" href="http://wesunsolve.net/rss/cve" />';
+// $head_add = '<link rel="alternate" type="application/rss+xml" title="Latest CVE" href="http://wesunsolve.net/rss/cve" />';
 // $head_add .= '<script src="./js/jquery-1.7.1.min.js"></script>';
 
- $title = 'Latest Security alerts - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
+ $title = 'Latest Patches fixing security alerts - results from '.$start.' to '.($start+$rpp).' (of '.$nb.')';
 
   $index = new Template("./tpl/index.tpl");
   $head = new Template("./tpl/head.tpl");
@@ -91,9 +114,9 @@
   $menu = new Template("./tpl/menu.tpl");
   $foot = new Template("./tpl/foot.tpl");
   $foot->set("start_time", $start_time);
-  $content = new Template("./tpl/lcve.tpl");
-  $str = "/lcve";
-  $content->set("cves", $cves);
+  $content = new Template("./tpl/lcvep.tpl");
+  $str = "/lcvep";
+  $content->set("patches", $patches);
   $content->set("start", $start);
   $content->set("nb", $nb);
   $content->set("rpp", $rpp);

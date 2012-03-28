@@ -223,7 +223,13 @@ class Login extends mysqlObj
     $this->id = $id;
     $this->_table = "login";
     $this->_nfotable = "nfo_login";
-    $this->_plist = array("patchPerPage" => array("type" => "N",
+    $this->_plist = array(
+			  "cvePerPage" => array("type" => "N",
+						  "desc" => "CVE per page to be shown",
+						  "max" => 100,
+						  "min" => 1,
+						 ),
+			  "patchPerPage" => array("type" => "N",
 						  "desc" => "Patch per page to be shown",
 						  "max" => 100,
 						  "min" => 1,

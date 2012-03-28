@@ -9,6 +9,8 @@
       <li class="m_header">Patches</li> 
       <li class="m_element"><a href="/bundles">Patches bundles</a></li> 
       <li class="m_element"><a href="/lpatches">Latest patches</a></li> 
+      <li class="m_element"><a href="/lcve">Latest security alerts</a></li>
+      <li class="m_element"><a href="/lcvep">Latest CVE patches</a></li>
       <li class="m_element"><a href="/lpatches/sec/1">Latest security patches</a></li> 
       <li class="m_element"><a href="/lpatches/bad/1">Latest obsoleted patches</a></li> 
       <li class="m_element"><a href="/lastreadme">Latest updated READMEs</a></li> 

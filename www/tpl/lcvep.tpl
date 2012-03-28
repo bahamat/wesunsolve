@@ -11,7 +11,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Last security alerts</h2>
+     <h2 class="grid_10 push_1 alpha omega">Latest patches fixing security alerts</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -28,7 +28,19 @@
   <p><?php echo $title; ?></p>
   <p>Check the <a href="http://wiki.wesunsolve.net/LastCVE">documentation</a>.</p>
   <div class="ctable">
-   <table id="legend" class="ctable"><tr>
+   <table id="legend" class="ctable">
+			<tr><td colspan="4">Patch color legend
+			</td></tr>
+			<tr>
+                                <td class="greentd">RECOMMENDED</td>
+                                <td class="orangetd">SECURITY</td>
+                                <td class="redtd">WITHDRAWN</td>
+                                <td class="browntd">OBSOLETE</td>
+                        </tr></table>
+   <table id="legend" class="ctable">
+		        <tr><td colspan="3">CVE color legend
+			</td></tr>
+		        <tr>
                                 <td class="greentd">LOW</td>
                                 <td class="orangetd">MEDIUM</td>
                                 <td class="redtd">HIGH</td>
@@ -36,19 +48,19 @@
   <p class="paging"><?php echo $pagination; ?></p>
   <table id="tbl_cves" class="ctable">
    <tr>
-    <th>Name</th>
-    <th>Affect</th>
+    <th>Patch</th>
+    <th>Affected</th>
+    <th>CVE</th>
     <th>Score</th>
-    <th>Release date</th>
-    <th>Revised date</th>
+    <th>Patch release date</th>
    </tr>
-<?php $i=0; foreach($cves as $p) { ?>
+<?php $i=0; foreach($patches as $p) { ?>
    <tr>
     <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } echo $p->link(); ?></td>
-    <td style="text-align: left"><?php echo $p->affect; ?></td>
-    <td><?php echo $p->score; ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $p->released); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $p->revised); ?></td>
+    <td style="text-align: left"><?php echo $p->o_cve->affect; ?></td>
+    <td <?php echo $p->o_cve->color(); ?>><?php echo $p->o_cve->link(); ?></td>
+    <td><?php echo $p->o_cve->score; ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $p->releasedate); ?></td>
    </tr>
 <?php $i++; } ?>
    </table>

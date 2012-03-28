@@ -50,6 +50,7 @@ class Patch extends mysqlObj implements JSONizable
   public $o_mfile = null;
   public $o_tl_start = null;
   public $o_tl_stop = null;
+  public $o_cve = null;
   
   /* Lists */
   public $a_files = array();

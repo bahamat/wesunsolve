@@ -31,6 +31,7 @@
 		 <li>Score: <?php echo $cve->score; ?></li>
 		 <li>Severity: <?php echo $cve->severity; ?></li>
 		 <li>Added on: <?php echo date(HTTP::getDateFormat(), $cve->added); ?></li>
+		 <li><a href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=<?php echo $cve; ?>">External informations</a></li>
 	       </ul>
              <h3>Patches fixing this alert:</h3>
 <?php if (count($cve->a_patches)) { ?>
