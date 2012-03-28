@@ -67,6 +67,25 @@ class CVE extends mysqlObj
     $this->fetchComments($all);
   }
 
+  function isNew() {
+    /*placeholder*/
+  }
+  function color() {
+    switch($this->severity) {
+      case "LOW":
+        return 'class="greentd"';
+        break;
+      case "MEDIUM":
+        return 'class="orangetd"';
+        break;
+      case "HIGH":
+	return 'class="redtd"';
+        break;
+      default:
+        return '';
+    }
+  }
+
   function viewed() {
     /*placeholder*/
   }
