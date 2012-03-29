@@ -20,6 +20,7 @@ class CVE extends mysqlObj
   public $severity = '';
   public $revised = -1;
   public $released = -1;
+  public $txtfix = '';
   public $added = -1;
   public $updated = -1;
 
@@ -157,6 +158,133 @@ class CVE extends mysqlObj
     parent::insert();
   }
 
+  public function refresh() {
+    global $config;
+    $cmd = $config['rootpath'].'/bin/cveInfos.py '.$this->name;
+    $infos = array();
+    exec('/srv/sunsolve/bin/cveInfos.py '.$this->name, $infos);
+    if (!count($infos)) {
+      echo "[!] No information could be found on the CVE.. something wrong happened\n";
+      return false;
+    }
+    $i=0;
+    $desc = '';
+    $score = '';
+    $severity = '';
+    $revised = '';
+    $released = '';
+    foreach($infos as $line) {
+      switch($i) {
+        case 0:
+          $released = explode('/', preg_replace('/Original release date:/', '', $line));
+          if (count($released) < 3) {
+            $released = '';
+	    break;
+          }
+          $released = mktime(0,0,0,$released[0], $released[1], $released[2]);
+          break;
+        case 1:
+          $revised = explode('/', preg_replace('/Last revised:/', '', $line));
+          if (count($revised) < 3) {
+            $revised = '';
+	    break;
+          }
+          $revised = mktime(0,0,0,$revised[0], $revised[1], $revised[2]);
+          break;
+        case 2:
+          $score = $line;
+          break;
+        default:
+          $line = trim($line);
+          if (empty($line)) continue;
+          $desc .= ' '.$line;
+          break; 
+      }
+      $i++;
+    }
+    $score = preg_replace('/CVSS v2 Base Score:([0-9]{1,2}\.[0-9]{1})\(([A-Z]*)\).*$/', '${1} ${2}', $score);
+    $score = explode(' ', $score);
+    if (count($score) >= 2) {
+      $severity = $score[1];
+    }
+    $score = $score[0];
+    $this->desc = $desc;
+    $this->score = $score;
+    $this->severity = $severity;
+    $this->released = $released;
+    $this->revised = $revised;
+    echo "\t> Found desc: $desc\n";
+    echo "\t> Found score: $score\n";
+    echo "\t> Found severity: $severity\n";
+    echo "\t> Found released: $released\n";
+    echo "\t> Found revised: $revised\n";
+    $this->update();
+  }
+
+  public static function detectNew() {
+    global $config;
+    $cmdDetect = array(
+		       $config['rootpath'].'/bin/cveDetect.py',
+    		       $config['rootpath'].'/bin/cveDetectAlt.py'
+		      );
+    foreach($cmdDetect as $cmd) {
+      echo "[-] Detecting CVE from $cmd...\n";
+      $cves = array();
+      exec($cmd, $cves);
+      if (!count($cves)) {
+        echo "[!] No CVE detected\n";
+        return false;
+      }
+      foreach($cves as $line) {
+        $line = trim($line);
+        if (empty($line)) {
+          continue;
+        }
+        $f = explode(';', $line);
+        if (count($f) < 3)
+          continue;
+        $cvename = $f[0];
+        $affect = $f[1];
+        $fix = $f[2];
+        $cve = new CVE();
+        $cve->name = $cvename;
+        if ($cve->fetchFromField("name")) {
+          $cve->insert();
+          echo "[-] Found new CVE: $cvename\n";
+        }
+        if (strcmp($cve->affect, $affect)) {
+          $cve->affect = $affect;
+          $cve->update();
+          echo "[-] $cve affect $affect\n";
+        }
+        if (empty($cve->desc) || empty($cve->score) || empty($cve->severity) ||
+            $cve->released <= 0 || $cve->revised <= 0) {
+    
+          $cve->refresh();
+        }
+        $cve->fetchPatches(1);
+        $fixes = explode(',', $fix);
+        foreach($fixes as $fix) { 
+          $fix = trim($fix);
+          if (empty($fix)) continue;
+          if (!preg_match("/[0-9]{6}-[0-9]{2}/", $fix)) { // this is not a patch
+            echo "[!] Found fix for $cvename which is not a patch: $fix\n";
+            continue;
+          }
+          $p = explode('-', $fix);
+          $p = new Patch($p[0], $p[1]);
+          if ($p->fetchFromId()) {
+            echo "[!] Patch not found $p\n";
+            continue;
+          }
+          if (!$cve->isPatch($p)) {
+            $cve->addPatch($p);
+            echo "[-] Linked $p to $cve\n";
+          }
+        }
+      }
+    }
+  }
 
   /* ctor */
   public function __construct($id=-1, $daemon=null)
@@ -175,6 +303,7 @@ class CVE extends mysqlObj
 			"desc" => SQL_PROPE,
 			"released" => SQL_PROPE,
 			"revised" => SQL_PROPE,
+			"txtfix" => SQL_PROPE,
 			"added" => SQL_PROPE,
 			"updated" => SQL_PROPE
  		 );
@@ -189,6 +318,7 @@ class CVE extends mysqlObj
 			"severity" => "severity",
 			"released" => "released",
 			"revised" => "revised",
+			"txtfix" => "txtfix",
 			"added" => "added",
 			"updated" => "updated"
  		 );

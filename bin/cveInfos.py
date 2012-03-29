@@ -68,17 +68,32 @@ c = r.content;
 soup = BeautifulSoup(c)
 
 
-released = soup.find(has_released).parent
-revised = soup.find(has_revised).parent
-
-print released.text
-print revised.text
-
-cvsscore = soup.find(has_cvss).parent
-print cvsscore.text
-
-    
+released = soup.find(has_released)
+revised = soup.find(has_revised)
+cvsscore = soup.find(has_cvss)
 overview = soup.find(has_overview)
-print overview.parent.p.text
 
+if released != None and released.parent != None:
+  print released.parent.text
+else:
+  print ''
+
+if revised != None and released.parent != None:
+  print revised.parent.text
+else:
+  print ''
+
+if cvsscore != None and cvsscore.parent != None:
+  print cvsscore.parent.text
+else:
+  print ''
+
+if overview != None and overview.parent != None:
+  overview = overview.parent
+  if overview.p != None:
+    print overview.p.text
+  else:
+    print ''
+else:
+  print ''
 

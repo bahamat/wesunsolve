@@ -57,6 +57,7 @@ if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where))) {
        <li>Number of Keywords: <?php echo MysqlCM::getInstance()->count("keywords"); ?></li>
        <li>Number of Files: <?php echo MysqlCM::getInstance()->count("files"); ?></li>
        <li>Number of Packages: <?php echo MysqlCM::getInstance()->count("pkg"); ?></li>
+       <li>Number of CVE: <?php echo MysqlCM::getInstance()->count("cve"); ?></li>
       </ul>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->
