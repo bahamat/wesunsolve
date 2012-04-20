@@ -23,6 +23,10 @@ class UCList extends mysqlObj
   public $o_login = null;
   public $a_patches = array();
 
+  function __toString() {
+    return $this->name;
+  }
+
   function fetchFiles() {
     foreach($this->a_patches as $p) {
       $p->fetchFiles();

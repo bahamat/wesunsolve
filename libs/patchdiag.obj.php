@@ -464,11 +464,13 @@ class Patchdiag extends mysqlObj
         if (!$oldone) Announce::getInstance()->nPatch($ip);
         $patch->insert();
         $nb++;
-        if (!$oldone) Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")");
+        IrcMsg::void();
+        if (!$oldone) Announce::getInstance()->msg(0, "[BATCH] New patch found in patchdiag.xref (".$patch->name().")", MSG_ADM);
       }
       if (!$oldone && ($patch->pca_rec != $pca_rec || $patch->pca_sec != $pca_sec || $patch->pca_bad != $pca_bad ||
                        $patch->pca_obs != $pca_obs || strcmp($patch->dia_version, $dia_version) ||
-                       strcmp($patch->dia_arch, $dia_arch) || strcmp($patch->dia_pkgs, $dia_pkgs))) {
+                       strcmp($patch->dia_arch, $dia_arch) || strcmp($patch->dia_pkgs, $dia_pkgs)) ||
+		       (!strcmp($patch->status, 'OBSOLETE') && $pca_obs == 0)) {
         $patch->pca_rec = $pca_rec;
         $patch->pca_sec = $pca_sec;
         $patch->pca_bad = $pca_bad;
@@ -479,6 +481,9 @@ class Patchdiag extends mysqlObj
           if (strcmp($patch->status, 'OBSOLETE')) {
             $patch->status = "RELEASED";
           }
+        }
+ 	if (!strcmp($patch->status, 'OBSOLETE') && $pca_obs == 0) {
+	  $patch->status = 'RELEASED';
         }
         if (strcmp($patch->dia_version, $dia_version)) {
           $patch->dia_version = $dia_version;
@@ -541,7 +546,8 @@ class Patchdiag extends mysqlObj
       if (file_exists($fn))
 	unlink($fn);
       copy($out, $fn);
-      Announce::getInstance()->msg(0, "[BATCH] Updated patchdiag.xref (size: ".filesize($out).")");
+      IrcMsg::void();
+      Announce::getInstance()->msg(0, "[BATCH] Updated patchdiag.xref (size: ".filesize($out).")", MSG_ADM);
       return 0;
     } else {
       return -1;

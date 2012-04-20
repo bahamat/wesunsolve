@@ -227,6 +227,10 @@ class CVE extends mysqlObj
 		       $config['rootpath'].'/bin/cveDetect.py',
     		       $config['rootpath'].'/bin/cveDetectAlt.py'
 		      );
+
+    IrcMsg::void();
+    Announce::getInstance()->msg(0, "[BATCH] Trying to detect new CVEs", MSG_ADM);
+
     foreach($cmdDetect as $cmd) {
       echo "[-] Detecting CVE from $cmd...\n";
       $cves = array();
@@ -251,6 +255,7 @@ class CVE extends mysqlObj
         if ($cve->fetchFromField("name")) {
           $cve->insert();
           echo "[-] Found new CVE: $cvename\n";
+          Announce::getInstance()->msg(0, "[BATCH] Found new security alert: $cve", MSG_ADM);
         }
         if (strcmp($cve->affect, $affect)) {
           $cve->affect = $affect;
@@ -280,6 +285,7 @@ class CVE extends mysqlObj
           if (!$cve->isPatch($p)) {
             $cve->addPatch($p);
             echo "[-] Linked $p to $cve\n";
+            Announce::getInstance()->msg(0, "[SEC] $p Fix $cve in ".$cve->affect);
           }
         }
       }

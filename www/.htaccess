@@ -83,6 +83,7 @@ RewriteRule ^(.*)$ http://wesunsolve.net/denied.php [R=301,L,S=42]
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,NC]
 RewriteCond %{HTTP_HOST} ^wesunsolve.be$ [OR]
+RewriteCond %{HTTP_HOST} ^78.46.118.46$ [OR]
 RewriteCond %{HTTP_HOST} ^sunsolve.espix.org$
 RewriteRule ^(.*)$ http://wesunsolve.net/$1 [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f

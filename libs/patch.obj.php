@@ -398,6 +398,7 @@ class Patch extends mysqlObj implements JSONizable
 
   public static function parseList($list, $format) {
     $plist = array();
+    $format = trim($format);
     switch($format) {
       case "text":
         $patches = explode(PHP_EOL, $list);
@@ -434,7 +435,7 @@ class Patch extends mysqlObj implements JSONizable
         $lines = explode(PHP_EOL, $list);
         foreach($lines as $line) {
           if (empty($line)) continue;
-	  if(!preg_match("/^Patch: [0-9]{6}-[0-9]{2}/", $line)) continue;
+	  if(!preg_match("/^Patch:[\s]*[0-9]{6}-[0-9]{2}/", $line)) continue;
 	  $f = preg_split("/[\s ]+/", $line);
 	  if (count($f) > 2) {
  	    $p = $f[1];
