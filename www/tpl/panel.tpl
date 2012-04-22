@@ -21,8 +21,8 @@
    <div class="listbox grid_<?php echo $h->css->s_box; ?> firstbox alpha">
     <h3>Last viewed patches</h3>
     <ul>
-     <?php foreach($lvp as $p) { ?>
-     <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></li>
+     <?php foreach($lvp as $w => $p) { ?>
+     <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> on <?php echo date(HTTP::getDateTimeFormat(), $p->u_when); ?></li>
      <?php } ?>
     </ul>
    </div>
@@ -32,7 +32,7 @@
     <h3>Last viewed bugs</h3>
     <ul>
      <?php foreach($lvb as $b) { ?>
-     <li><a href="/bugid/id/<?php echo $b->id; ?>"><?php echo $b->id; ?></a></li>
+     <li><a href="/bugid/id/<?php echo $b->id; ?>"><?php echo $b->id; ?></a> on <?php echo date(HTTP::getDateTimeFormat(), $b->u_when); ?></li>
      <?php } ?>
     </ul>
    </div>
@@ -51,6 +51,7 @@
       <th></th>
       <th></th>
       <th></th>
+      <th></th>
      </tr>
 <?php foreach($uclists as $l) { ?>
      <tr>
@@ -60,6 +61,7 @@
       <td style="text-align: center;"><a href="/uclist/i/<?php echo $l->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/del_uclist/i/<?php echo $l->id; ?>">Del</a></td>
       <td style="text-align: center;"><a href="/ucl_pdiag/i/<?php echo $l->id; ?>">Generate patchdiag.xref</a></td>
+      <td style="text-align: center;"><a href="/uclreadme/i/<?php echo $l->id; ?>">Fetch READMEs</a></td>
      </tr>
 <?php } ?>
     </table>

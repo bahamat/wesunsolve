@@ -42,6 +42,9 @@ class Patch extends mysqlObj implements JSONizable
   public $score = 0;
   public $lmod = 0;
 
+  /* tmp */
+  public $u_when = 0;
+
   /* Others */
   public $o_obsby = null; /* Obsoleted by .. */
   public $o_latest = null;
@@ -51,6 +54,7 @@ class Patch extends mysqlObj implements JSONizable
   public $o_tl_start = null;
   public $o_tl_stop = null;
   public $o_cve = null;
+  public $o_lreadme = null;
   
   /* Lists */
   public $a_files = array();
@@ -1095,6 +1099,26 @@ class Patch extends mysqlObj implements JSONizable
 
 
   /* Readmes */
+  function fetchLastReadme() {
+    $this->o_lreadme = array();
+    $table = "`p_readmes`";
+    $index = "`when`";
+    $where = "WHERE `patch`='".$this->patch."' AND `revision`='".$this->revision."' ORDER BY `when` ASC LIMIT 0,1";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0])) {
+        $k = new Readme();
+        $k->patch = $this->patch;
+        $k->revision = $this->revision;
+        $k->when = $idx[0]['when'];
+        $k->fetchFromId();
+        $this->o_lreadme = $k;
+      } else return false;
+    } else return false;
+    return true;
+  }
+
   function fetchReadmes($all=1) {
 
     $this->a_readmes = array();
@@ -1809,7 +1833,7 @@ class Patch extends mysqlObj implements JSONizable
 
     $res = array();
     $table = "`u_history`";
-    $index = "`id_link`";
+    $index = "`id_link`,`when`";
     $where = "WHERE `id_login`=".$l->id." AND `what`='patch'";
     $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
 
@@ -1820,6 +1844,7 @@ class Patch extends mysqlObj implements JSONizable
         $w = explode('-', $w);
         $k = new Patch($w[0], $w[1]);
         $k->fetchFromId();
+        $k->u_when = $t['when'];
         array_push($res, $k);
       }
     }

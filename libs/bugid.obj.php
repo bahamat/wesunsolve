@@ -51,6 +51,7 @@ class Bugid extends mysqlObj
   public $score = 0; // Score result from full text search
 
   public $a_comments = array();
+  public $u_when = 0;
 
   public static function linkize($str) {
     $ret = $str;
@@ -552,7 +553,7 @@ class Bugid extends mysqlObj
 
     $res = array();
     $table = "`u_history`";
-    $index = "`id_link`";
+    $index = "`id_link`,`when`";
     $where = "WHERE `id_login`=".$l->id." AND `what`='bug'";
     $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
  
@@ -561,6 +562,7 @@ class Bugid extends mysqlObj
       foreach($idx as $t) {
         $k = new Bugid($t['id_link']);
         $k->fetchFromId();
+        $k->u_when = $t['when'];
         array_push($res, $k);
       }
     }

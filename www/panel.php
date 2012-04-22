@@ -42,13 +42,13 @@
    $content->set('lvp', Patch::getLastviewed($lo));
    $content->set('lvb', Bugid::getLastviewed($lo));
  }
-
+ 
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
  $menu = new Template("./tpl/menu.tpl");
  $foot = new Template("./tpl/foot.tpl");
  $foot->set("start_time", $start_time);
-
+ 
  $index->set("head", $head);
  $index->set("menu", $menu);
  $head->set("title", "Panel for registered users of We Sun Solve!");

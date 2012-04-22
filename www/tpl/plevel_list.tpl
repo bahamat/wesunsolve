@@ -24,8 +24,8 @@
       <th>Name</th>
       <th>Comment</th>
       <th># of Patches</th>
-      <th>View Patching level</th>
-      <th>Delete Patching level</th>
+      <th></th>
+      <th></th>
      </tr>
 <?php foreach($plevels as $plevel) { ?>
      <tr>

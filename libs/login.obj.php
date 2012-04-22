@@ -143,7 +143,6 @@ class Login extends mysqlObj
     if ($ul->fetchFromId()) {
       $ul->insert();
     } else {
-      $ul->fetchFromId();
       $ul->when = time();
       $ul->update();
     }
