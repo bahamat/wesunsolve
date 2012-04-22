@@ -18,6 +18,9 @@
        </div>
        <div class="clear clearfix"></div>
   <p><?php echo $msg; ?></p>
+<?php if (isset($back)) { ?>
+  <br/><p id="backto">Back to <a href="<?php echo $back['href']; ?>"><?php echo $back['name']; ?></a></p>
+<?php } ?>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->
  </div><!-- d_content -->

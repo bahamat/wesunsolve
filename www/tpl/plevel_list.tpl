@@ -19,7 +19,7 @@
        <div class="clear clearfix"></div>
   <p>Patch level of <?php echo $s->name; ?></p>
     <p>You have <?php echo count($plevels); ?> different patch level</p>
-    <table class="slist">
+    <table class="ctable">
      <tr>
       <th>Name</th>
       <th>Comment</th>
@@ -37,6 +37,7 @@
      </tr>
 <?php } ?>
     </table>
+    <br/>
     <p><a href="/add_plevel/s/<?php echo $s->id; ?>">Add patch level</a></p>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->

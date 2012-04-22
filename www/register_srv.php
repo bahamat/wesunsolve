@@ -56,6 +56,8 @@
  }
 
 screen:
+  $back = array('name' => 'Panel', 'href' => '/panel');
+  $content->set('back', $back);
   $index->set("content", $content);
   $index->set("head", $head);
   $index->set("menu", $menu);

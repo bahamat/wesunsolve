@@ -128,6 +128,14 @@ class MList extends mysqlObj
   }
 
  /**
+  * Implementation of mailing list for packages report
+  *
+  */
+  static public function pkgReport($delay) {
+
+  }
+
+ /**
   * Implementation of mailling list text generation for recurrents ones
   *
   */
