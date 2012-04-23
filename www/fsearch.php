@@ -143,8 +143,8 @@
 
        } else { // filename search
          $mfile = new File();
-         $mfile->name = $s_fpa;
-	 if ($mfile->fetchFromField("name")) {
+         $mfile->name = '%'.$s_fpa;
+	 if ($mfile->fetchFromField("name", 'LIKE')) {
            $content = new Template("./tpl/fsearch.tpl");
            $content->set("error", "File not found in database");
            goto screen;
