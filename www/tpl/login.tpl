@@ -17,6 +17,7 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
+       <br/>
 <?php if (isset($error)) { ?>
     <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>

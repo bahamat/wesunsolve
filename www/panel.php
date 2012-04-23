@@ -42,6 +42,12 @@
    $content->set('lvp', Patch::getLastviewed($lo));
    $content->set('lvb', Bugid::getLastviewed($lo));
  }
+
+ $error = '';
+ if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
+   $error .= 'The connection is not secured, consider using <a href="https://wesunsolve.net/login">HTTPS</a> to avoid possible eavesdropping.<br/>';
+ }
+
  
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
@@ -52,6 +58,9 @@
  $index->set("head", $head);
  $index->set("menu", $menu);
  $head->set("title", "Panel for registered users of We Sun Solve!");
+ if (isset($error) && !empty($error)) {
+   $content->set('error', $error);
+ }
  $index->set("content", $content);
  $index->set("foot", $foot);
  echo $index->fetch();

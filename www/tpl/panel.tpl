@@ -17,6 +17,10 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
+<?php if (isset($error)) { ?>
+    <br/>
+    <span class="red"><p><?php echo $error; ?></p></span>
+<?php } ?>
    <?php if (isset($lvp)) { ?>
    <div class="listbox grid_<?php echo $h->css->s_box; ?> firstbox alpha">
     <h3>Last viewed patches</h3>
