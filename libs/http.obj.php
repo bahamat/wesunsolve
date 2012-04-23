@@ -166,7 +166,14 @@ class HTTP
       }
     }
     $_GET = $g;
+    //$_GET = array_merge($_GET, $g);
     return;
+  }
+
+  public static function redirect($url) {
+    header("Status: 301 Moved Permanently");
+    header("Location: ".$url);
+    exit();
   }
 
  /**
