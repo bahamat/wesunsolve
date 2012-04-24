@@ -26,6 +26,10 @@ class Patchdiag extends mysqlObj
   public $a_pp = array();
   public $a_raw = array();
 
+  public function __toString() {
+    return $this->filename;
+  }
+
   public static function fetchLatest() {
 
     $index = "`id`";

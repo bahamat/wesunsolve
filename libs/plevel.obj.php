@@ -27,6 +27,11 @@ class PLevel extends mysqlObj
   
   public $o_server = null;
   public $a_patches = array();
+  public $a_srv4pkgs = array();
+
+  /* PCA Run output */
+  public $a_ppatches = array();
+  public $a_pcvep = array();
 
   function fetchFiles() {
     foreach($this->a_patches as $p) {
@@ -38,6 +43,62 @@ class PLevel extends mysqlObj
   function fetchServer() {
     $this->o_server = new Server($this->id_server);
     return $this->o_server->fetchFromId();
+  }
+
+  function fetchSRV4Pkgs($all=1) {
+    $this->a_srv4pkgs = array();
+    $table = "`jt_srv4pkg_plevel`";
+    $index = "`id_srv4pkg`, `arch`, `version`";
+    $where = "WHERE `id_plevel`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new SRV4Pkg($t['id_srv4pkg']);
+        $k->fetchFromId();
+        $k->arch = $t['arch'];
+        $k->version = $t['version'];
+        array_push($this->a_srv4pkgs, $k);
+      }
+    }
+    return 0;
+  }
+
+  function addSRV4Pkg($k, $arch='', $version='') {
+
+    $table = "`jt_srv4pkg_plevel`";
+    $names = "`id_srv4pkg`, `arch`, `version`, `id_plevel`";
+    $values = "'$k->id', '".$k->arch."', '".$k->version."', '".$this->id."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_srv4pkgs, $k);
+    return 0;
+  }
+
+  function delSRV4Pkg($k) {
+
+    $table = "`jt_srv4pkg_plevel`";
+    $where = " WHERE `id_srv4pkg`='".$k->id."' AND `id_plevel`='".$this->id."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_srv4pkgs as $ak => $v) {
+      if (!strcmp($k->name, $v->name)) {
+        unset($this->a_srv4pkgs[$ak]);
+	break;
+      }
+    }
+    return 0;
+  }
+
+  function isSRV4Pkg($p) {
+    foreach($this->a_srv4pkgs as $po)
+      if (!strcmp($p->name, $po->name))
+        return TRUE;
+    return FALSE;
   }
 
   function fetchPatches($all=1) {
@@ -94,13 +155,19 @@ class PLevel extends mysqlObj
     return 0;
   }
 
-  function isConflict($p) {
-    foreach($this->a_conflicts as $po)
+  function isPatch($p) {
+    foreach($this->a_patches as $po)
       if ($p->patch == $po->patch && $p->revision == $po->revision)
         return TRUE;
     return FALSE;
   }
  
+  public function delete() {
+
+   /* @TODO: Remove srv4 and patches links */
+
+    parent::delete();
+  }
 
   public function update() {
    $this->updated = time();
@@ -110,6 +177,49 @@ class PLevel extends mysqlObj
   public function insert() {
     $this->added = time();
     parent::insert();
+  }
+
+  public function parsePCA($output = null, $pdiag = null) {
+
+    if (!$output) {
+      $output = $this->runPCA($pdiag);
+    }
+
+    $this->a_ppatches = array();
+    $this->a_pcve = array();
+
+    foreach($output as $line) {
+      $line = trim($line);
+      if (empty($line))
+        continue;
+
+      $tmp = explode(' ', $line, 7);
+      if (count($tmp) != 7)
+	continue;
+
+      $patch = $tmp[0];
+      $irev = $tmp[1];
+      $crev = $tmp[3];
+
+      $p = new Patch($patch, $crev);
+      if (!$p->fetchFromId()) {
+        $p->fetchCVE();
+        $p->o_latest = Patch::pLatest($p->patch);
+        if ($p->o_latest && $p->o_latest->patch == $p->patch && $p->o_latest->revision == $p->revision) $p->o_latest = false;
+        if ($irev > 0) $p->o_current = new Patch($patch, $irev);
+        if (count($p->a_cve)) {
+          foreach($p->a_cve as $cve) {
+            $pp = new Patch($p->patch, $p->revision);
+	    $pp->fetchFromId();
+	    $pp->o_cve = $cve;
+	    $this->a_pcvep[] = $pp;
+	  }
+	}
+      }
+      $p->u_irev = $irev;
+
+      $this->a_ppatches[] = $p;
+    }
   }
 
   public function runPCA($pdiag=null) {
@@ -130,7 +240,6 @@ class PLevel extends mysqlObj
     $pkginfo_out = '';
     $uname_out = 'SunOS HNAME 5.10 Generic_000000-00 cputype arch SUNW,Model';
 
-    $pkga = array();
     foreach($this->a_patches as $p) {
       $p->fetchFromId();
       $line = 'Patch: '.$p.' Obsoletes: ';
@@ -179,12 +288,11 @@ class PLevel extends mysqlObj
       }
       $showrev_out .= "$line\n";
     }
-    $pkginfo_out = '';
-    foreach($pkgv as $pkg => $ver) {
-      $arch = $pkga[$pkg];
-      $pkginfo_out .= "   PKGINST:  ".$pkg."\n";
-      $pkginfo_out .= "      ARCH:  ".$arch."\n";
-      $pkginfo_out .= "   VERSION:  ".$ver."\n";
+
+    foreach($this->a_srv4pkgs as $spkg) {
+      $pkginfo_out .= "   PKGINST:  ".$spkg->name."\n";
+      $pkginfo_out .= "      ARCH:  ".$spkg->arch."\n";
+      $pkginfo_out .= "   VERSION:  ".$spkg->version."\n";
       $pkginfo_out .= "\n";
     }
 
@@ -222,6 +330,89 @@ class PLevel extends mysqlObj
     return $rc;
   }
 
+  public function buildFromFiles($showrev = array(), $pkginfo = array()) {
+    
+    if (empty($showrev) && empty($pkginfo)) {
+      return $rc;
+    }
+
+    $this->fetchPatches();
+    $this->fetchSRV4Pkgs();
+
+    foreach($showrev as $line) {
+      $line = trim($line);
+      if (empty($line))
+        continue;
+      if(!preg_match("/^Patch:[\s]*[0-9]{6}-[0-9]{2}/", $line)) 
+        continue;
+      $f = preg_split("/[\s ]+/", $line);
+      if (count($f) > 2) {
+        $p = $f[1];
+        $p = explode("-", $p);
+        $patch = new Patch($p[0], $p[1]);
+	if ($patch->fetchFromId()) { /* unknown one */
+          $patch->insert();
+	}
+	if (!$this->isPatch($patch)) {
+	  $this->addPatch($patch);
+	}
+      }
+
+    }
+    
+    $pkgname = '';
+    $spkg = null;
+    foreach($pkginfo as $line) {
+      $line = trim($line);
+      if (empty($line))
+        continue;
+      
+      $tmp = explode(':', $line, 2);
+      $n = trim($tmp[0]);
+      $v = trim($tmp[1]);
+
+      switch($n) {
+        case 'PKGINST':
+	  /* we are potentially looping,
+	   * so if $spkg is not null, treat the previous
+	   * package before doing this one...
+	   */
+	  if ($spkg) {
+	    if (!$this->isSRV4Pkg($spkg)) {
+	      $this->addSRV4Pkg($spkg, $spkg->arch, $spkg->version);
+	    }
+	    $spkg = null;
+	  }
+	  $pkgname = $v;
+	  $spkg = new SRV4Pkg();
+	  $spkg->name = $v;
+	  if ($spkg->fetchFromField('name')) { /* unknown package, add it anyway, we don't care... */
+	    $spkg->insert();
+	  }
+	  break;
+	case 'NAME':
+	  if (empty($spkg->description)) {
+	    $spkg->description = $v;
+	    $spkg->update();
+	  }
+	  break;
+	case 'CATEGORY':
+	  if (empty($spkg->category)) {
+	    $spkg->category = $v;
+	  }
+	  break;
+	case 'ARCH':
+	  $spkg->arch = $v;
+	  break;
+	case 'VERSION':
+	  $spkg->version = $v;
+	  break;
+	default:
+	  break;
+      }
+    }
+    return $rc;
+  }
 
 
  /**

@@ -35,6 +35,7 @@ class Server extends mysqlObj
         $g = new PLevel($t['id']);
         $g->fetchFromId();
         $g->fetchPatches(0);
+        $g->fetchSRV4Pkgs(0);
         array_push($this->a_plevel, $g);
       }
     }

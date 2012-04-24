@@ -27,7 +27,6 @@
    $content = new Template("./tpl/denied.tpl");
    goto screen;
  }
-
  if (!isset($_GET['s']) || empty($_GET['s'])) {
    $content = new Template("./tpl/error.tpl");
    $error = "No id of server specified.";
@@ -65,11 +64,23 @@
      $content->set("error", $error);
      goto screen;
    }
+   if (isset($_GET['patchdiag']) && !empty($_GET['patchdiag'])) {
+     $pdiag = new Patchdiag($_GET['patchdiag']);
+     $pdiag->fetchFromId();
+   } else { 
+     $pdiag = null;
+   }
    $pl->fetchFromId();
    $pl->fetchPatches(1);
+   $pl->fetchSRV4Pkgs(1);
+   if (!$pdiag) {
+     $pdiag = Patchdiag::fetchLatest();
+   }
    $content = new Template("./tpl/plevel_pca.tpl");
-   $pca = $pl->runPCA();
-   $content->set('pca', $pca);
+   $pl->parsePCA(null, $pdiag);
+   $content->set('pl', $pl);
+   $content->set('s', $s);
+   $content->set('pdiag', $pdiag);
  } else {
    $s->fetchPLevels();
    $content = new Template("./tpl/plevel_list.tpl");

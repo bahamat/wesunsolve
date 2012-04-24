@@ -23,7 +23,7 @@
      <tr>
       <th>Name</th>
       <th>Comment</th>
-      <th># of Patches</th>
+      <th></th>
       <th></th>
       <th></th>
      </tr>
@@ -31,9 +31,26 @@
      <tr>
       <td><?php echo $plevel->name; ?></td>
       <td><?php echo $plevel->comment; ?></td>
-      <td style="text-align: center;"><?php echo count($plevel->a_patches); ?></td>
+      <td style="text-align: center;"><?php echo count($plevel->a_patches); ?> Patches</td>
+      <td style="text-align: center;"><?php echo count($plevel->a_srv4pkgs); ?> Packages</td>
       <td style="text-align: center;"><a href="/plevel/s/<?php echo $s->id; ?>/p/<?php echo $plevel->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/del_plevel/s/<?php echo $s->id; ?>/p/<?php echo $plevel->id; ?>">Del</a></td>
+      <td style="text-align: center;">
+	<form action="/plevel_pca" method="GET">
+	  <input type="hidden" name="s" value="<?php echo $s->id; ?>"/>
+	  <input type="hidden" name="p" value="<?php echo $plevel->id; ?>"/>
+	  <select name="patchdiag">
+<?php if (isset($pdiags)) {
+        $latest = Patchdiag::fetchLatest();
+        foreach($pdiags as $pdiag) { ?>
+            <option value="<?php echo $pdiag->id; ?>" <?php if ($pdiag->id == $latest->id) echo "selected"; ?>><?php echo $pdiag->format(); ?></option>
+<?php   }
+      } ?>
+
+	  </select>
+	  <input type="submit" name="form" value="Report"/>
+	</form>
+      </td>
      </tr>
 <?php } ?>
     </table>

@@ -67,6 +67,7 @@
    }
    $pl->fetchFromId();
    $pl->fetchPatches(1);
+   $pl->fetchSRV4Pkgs(1);
    $content = new Template("./tpl/plist_report.tpl");
    $content->set("plist", $pl->a_patches);
    $content->set("curr", 0);
@@ -76,6 +77,7 @@
    $s->fetchPLevels();
    $content = new Template("./tpl/plevel_list.tpl");
    $content->set("plevels", $s->a_plevel);
+   $content->set("pdiags", Patchdiag::listFiles());
    $content->set("s", $s);
  }
 screen:

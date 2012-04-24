@@ -58,26 +58,24 @@
    if(!isset($_FILES) && isset($HTTP_POST_FILES))
      $_FILES = $HTTP_POST_FILES;
 
-   if (isset($_FILES['plist_file'])) {
-     $fc = file_get_contents($_FILES['plist_file']['tmp_name']);
-     if (empty($fc)) {
+   if (isset($_FILES['showrev']) && isset($_FILES['pkginfo'])) {
+     $showrev = file($_FILES['showrev']['tmp_name']);
+     $pkginfo = file($_FILES['pkginfo']['tmp_name']);
+     if (empty($showrev)) {
        $content = new Template("./tpl/add_plevel.tpl");
-       $content->set("error", "File provided is empty");
+       $content->set("error", "Showrev file empty");
        $content->set("s", $s);
        goto screen;
      }
-     $plist = Patch::parseList($fc, $_POST['format']);
-   } else if (isset($_POST['plist']) && !empty($_POST['plist'])) {
-     $plist = Patch::parseList(stripslashes($_POST['plist']), $_POST['format']);
+     if (empty($pkginfo)) {
+       $content = new Template("./tpl/add_plevel.tpl");
+       $content->set("error", "Pkginfo file empty");
+       $content->set("s", $s);
+       goto screen;
+     }
    } else {
      $content = new Template("./tpl/add_plevel.tpl");
-     $content->set("error", "You must either fill the field for patch list or upload a file...");
-     $content->set("s", $s);
-     goto screen;
-   }
-   if (!$plist) {
-     $content = new Template("./tpl/add_plevel.tpl");
-     $content->set("error", "Format error of list provided...");
+     $content->set("error", "You must fill the field for patch level and upload the two requested files...");
      $content->set("s", $s);
      goto screen;
    }
@@ -90,9 +88,6 @@
      $content->set("s", $s);
      goto screen;
    }
-   $pl = new PLevel();
-   $pl->id_server = $s->id;
-   $pl->name = addslashes($_POST['name']);
    if (isset($_POST['comment']))
      $pl->comment = addslashes($_POST['comment']);
    if (isset($_POST['is_applied']) && $_POST['is_applied']) {
@@ -103,11 +98,11 @@
    }
    $pl->insert();
    IrcMsg::add("[WWW] User added Patch level: ".$pl->name." to his account (".$lm->o_login->username.")", MSG_ADM);
-   foreach($plist as $p) {
-     $pl->addPatch($p);
-   }
+
+   $pl->buildFromFiles($showrev, $pkginfo);
+
    $content = new Template("./tpl/message.tpl");
-   $content->set("msg", "Patch level added with ".count($plist)." patches");
+   $content->set("msg", "Patch level added with ".count($pl->a_patches)." patches and ".count($pl->a_srv4pkgs)." packages.");
  } else {
    $content = new Template("./tpl/add_plevel.tpl");
    $content->set("s", $s);

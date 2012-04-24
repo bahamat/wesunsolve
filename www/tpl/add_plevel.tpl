@@ -18,14 +18,7 @@
        </div>
        <div class="clear clearfix"></div>
   <p>Add patch level for <?php echo $s->name; ?></p>
-    <p>Paste below the list of patches using one of the available formats</p>
-      <ul class="bullet">
-       <li><b>PCA</b>: Output of <span class="code">pca -l m</span></li>
-       <li><b>Text</b>: One full patch number per line (e.g.:123456-78)</li>
-       <li><b>showrev</b>: Output of <span class="code">showrev -p</span></li>
-      </ul>
-    <br/>
-    <p>You could also use a file to upload directly, but you must fill one of the field...</p>
+  <p>You should upload both <i>showrev-p.out</i> and <i>pkginfo-l.out</i> files. check <a href="http://wiki.wesunsolve.net/PatchLevel">documentation</a>.</p>
 <?php if (isset($error)) { ?>
     <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>
@@ -36,18 +29,11 @@
       <tr><td>Comment</td><td><input type="text" value="<?php if (isset($comment)) echo $comment; ?>" name="comment"></td></tr>
       <tr><td>Current ?</td><td><input type="checkbox" <?php if (isset($current) && $current) echo "checked"; ?> name="is_current"></td></tr>
       <tr><td>Applied ?</td><td><input type="checkbox" <?php if (isset($applied) && $applied) echo "checked"; ?> name="is_applied"></td></tr>
-      <tr><td>Format</td>
-        <td><select name="format">
-              <option value="pca">PCA</option>
-              <option value="text">Text</option>
-              <option value="showrev">Showrev</option>
-            </select></td>
+      <tr><td>showrev-p.out</td>
+	  <td><input type="file" name="showrev"/></td>
       </tr>
-      <tr><td>File source</td>
-	  <td><input type="file" name="plist_file"/></td>
-      </tr>
-      <tr><td>Patch list</td>
-       <td><textarea rows="50" cols="50" name="plist"></textarea></td>
+      <tr><td>pkginfo-l.out</td>
+	  <td><input type="file" name="pkginfo"/></td>
       </tr>
       <tr><td></td><td><input type="submit" value="Register" name="save"></td></tr>
     </table>

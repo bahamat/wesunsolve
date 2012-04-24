@@ -44,6 +44,7 @@ class Patch extends mysqlObj implements JSONizable
 
   /* tmp */
   public $u_when = 0;
+  public $u_irev = -1;
 
   /* Others */
   public $o_obsby = null; /* Obsoleted by .. */
