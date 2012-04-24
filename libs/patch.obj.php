@@ -87,23 +87,13 @@ class Patch extends mysqlObj implements JSONizable
 
   /* SRV4 Pkg */
 
-  function setSRV4PkgAttr($k, $arch = "", $version = "") {
+  function setSRV4PkgAttr($spkg, $arch = "", $version = "") {
 
-    $spkg = null;
-    foreach ($this->a_srv4pkg as $ak => $v) {
-      if (!strcmp($k->name, $v->name)) {
-        $spkg = $v;
-	break;
-      }
-    }
     if (!$spkg)
       return -1;
   
-    $spkg->arch = $arch;
-    $file->version = $version;
-
     $table = "jt_patches_srv4pkg";
-    $set = "`arch`='".$spkg->arch."', `version`='".$spkg->version."'";
+    $set = "`arch`='".$arch."', `version`='".$version."'";
     $where = " WHERE `id_srv4pkg`='".$spkg->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
 
     if (mysqlCM::getInstance()->update($table, $set, $where)) {
@@ -2128,9 +2118,10 @@ class Patch extends mysqlObj implements JSONizable
     global $config;
 
     $this->fetchData();
-    if ($this->data("cksum_done") == 1) {
+    if ($this->data('cksum_done') && $this->data('srv4pkg_done')) {
       return 0;
     }
+    $this->fetchSRV4Pkg(1);
     $this->fetchFiles();
   
     $tp = $this->extPath().'/'.$this->name();
@@ -2153,55 +2144,74 @@ class Patch extends mysqlObj implements JSONizable
       $pkgname = $pkgname[count($pkgname)-1];
       echo "[>] Found $pkgname:\n";
 
-      /* Find files modified by this package */
-      $pkgmap = file($pkg."/pkgmap");
-      foreach($pkgmap as $line) {
-        $line = trim($line);
-
-        if (empty($line))
-	  continue;
-
-        if($line[0] == '#')
-	  continue;
-
-	$fields = explode(" ", $line);
-        if ($fields[1] != 'f')
-	  continue;
-
-	$fpath = $pkg."/reloc/".$fields[3];
-        $fname = "/".$fields[3];
-
-	/* Check that the file do exist inside the reloc/ dir */
-	if (!file_exists($fpath)) {
-          echo "[!] $fpath not inside reloc/\n";
-	  continue;
-        }
-
-	/* Check that the file is already linked to this patch... */
-	if (!$this->isFile($fname)) {
-          echo "[!] linking $fname the patch\n";
-          $file = new File();
-	  $file->name = $fname;
-          if ($file->fetchFromField("name")) {
-            $file->insert();
-	  }
-          $this->addFile($file);
+      if (file_exists($pkg.'/pkginfo') && !$this->data('srv4pkg_done')) {
+        $spkg = new SRV4Pkg();
+        $spkg->name = $pkgname;
+        if ($spkg->fetchFromField('name')) {
+          $spkg->insert();
+	  echo "[>] Added package to DB\n";
 	}
+	$spkg->fromFile($pkg.'/pkginfo');
+        $spkg->update();
+        if (!$this->isSRV4Pkg($spkg)) {
+	  $this->addSRV4Pkg($spkg);
+	  $this->setSRV4PkgAttr($spkg, $spkg->arch, $spkg->version);
+	  echo "[>] Linked $spkg to $this\n";
+	}
+      }
 
-	$size = filesize($fpath);
-        $h_md5 = md5_file($fpath);
-        $h_sha1 = sha1_file($fpath);
+      /* Find files modified by this package */
+      if (!$this->data('cksum_done')) {
+        $pkgmap = file($pkg."/pkgmap");
+        foreach($pkgmap as $line) {
+          $line = trim($line);
+  
+          if (empty($line))
+  	  continue;
+  
+          if($line[0] == '#')
+  	  continue;
+  
+  	  $fields = explode(" ", $line);
+          if ($fields[1] != 'f')
+  	    continue;
+  
+  	  $fpath = $pkg."/reloc/".$fields[3];
+          $fname = "/".$fields[3];
+  
+    	  /* Check that the file do exist inside the reloc/ dir */
+  	  if (!file_exists($fpath)) {
+            echo "[!] $fpath not inside reloc/\n";
+  	    continue;
+            }
 
-	$this->setFileAttr($fname, $size, $h_md5, $h_sha1, $pkgname);
-        echo "[>] Updated $fname with:\n";
-	echo "\t> size: $size\n";
-	echo "\t> h_md5: $h_md5\n";
-	echo "\t> h_sha1: $h_sha1\n";
-	echo "\t> pkg: $pkgname\n";
+  	  /* Check that the file is already linked to this patch... */
+	  if (!$this->isFile($fname)) {
+            echo "[!] linking $fname the patch\n";
+            $file = new File();
+	    $file->name = $fname;
+            if ($file->fetchFromField("name")) {
+              $file->insert();
+	    }
+            $this->addFile($file);
+	  }
 
+	  $size = filesize($fpath);
+          $h_md5 = md5_file($fpath);
+          $h_sha1 = sha1_file($fpath);
+
+	  $this->setFileAttr($fname, $size, $h_md5, $h_sha1, $pkgname);
+          echo "[>] Updated $fname with:\n";
+	  echo "\t> size: $size\n";
+	  echo "\t> h_md5: $h_md5\n";
+  	  echo "\t> h_sha1: $h_sha1\n";
+  	  echo "\t> pkg: $pkgname\n";
+  
+        }
       }
     }
-    $this->setData("cksum_done", 1);
+    $this->setData('cksum_done', 1);
+    $this->setData('srv4pkg_done', 1);
     return 0;
   }
 

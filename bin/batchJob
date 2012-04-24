@@ -42,7 +42,6 @@
     echo "\t -t\tTreat the TODO queue\n";
     echo "\t -f\tForce README extract/download\n";
     echo "\t -k\tChecksum every file of a patch\n";
-    echo "\t -z\tIndex packages of patches\n";
     echo "\t -q\tGenerate the ws2_patchdiag.xref of today...\n";
     echo "\t -v\tView if patch is present in db and readme/archive ok\n";
     echo "\t -m\tSend confirm email to users unactivated.\n";
@@ -188,43 +187,6 @@
     OSRelease::checksum($dir);
     return;
   }
-
-  /* check for patches' pkgs */
-  if (isset($opts['z'])) {
-    $table = "`patches`";
-    $index = "`patch`, `revision`";
-    $cindex = "COUNT(`patch`)";
-    $where = "";
-    if (isset($opts['i'])) {
-      $p = explode("-", $opts['i']);
-      if (count($p) != 2) { die("Malformed patch id\n"); }
-      $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
-    }
-    $where .= " ORDER BY `releasedate` DESC";
-
-    $it = new mIterator("Patch", $index, $table, $where, $cindex);
-    $fields = array("patch", "revision", "when");
-    while(($p = $it->next())) {
-      echo "[-] Treating ".$p->name()."...\n";
-      $p->fetchFromId();
-      $archive = $p->findArchive();
-      if (!$archive) {
-        echo "[-] Archive not found, trying to get it from master...\n";
-	$rc = $p->getFromMaster();
-        if ($rc) continue;
-      }
-      echo "[-] Archive being extracted if needed...\n";
-      /* Check if archive is already extracted */
-      if ($p->extract()) {
-        continue;
-      }
-      echo "[-] Will try to checksum patch ".$p->name()."\n";
-      $p->mkSRV4PkgIndex();
-    }
-
-    return;
-  }
-
 
   /* check for patches checksumming */
   if (isset($opts['k'])) {
