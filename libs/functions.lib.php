@@ -10,6 +10,34 @@
  * @filesource
  */
 
+function make_seed()
+{
+  list($usec, $sec) = explode(' ', microtime());
+  return (float) $sec + ((float) $usec * 100000);
+}
+
+function make_temp_folder() {
+  global $config;
+
+  while(1) {
+    $dp = $config['tmppath'];
+    srand(make_seed());
+    $randval = rand();
+    $dp .= '/'.'ws2-pca-'.$randval;
+    if (file_exists($dp)) {
+      continue;
+    } else {
+      break;
+    }
+  }
+  mkdir($dp, 0700, true);
+  if (file_exists($dp) && is_dir($dp)) {
+    return $dp;
+  } else {
+    return false;
+  }
+}
+
 function arrayCount($a, $i=0) {
   $i += count($a);
   foreach($a as $v) {

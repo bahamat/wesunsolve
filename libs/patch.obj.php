@@ -72,6 +72,7 @@ class Patch extends mysqlObj implements JSONizable
   public $a_readmes = array();
   public $a_tline = array();
   public $a_cve = array();
+  public $a_srv4pkg = array();
 
   public function toJSONArray() {
     return array('name' => $this->name(),
@@ -83,6 +84,88 @@ class Patch extends mysqlObj implements JSONizable
                              'bad' => $this->pca_bad,
                              'filesize' => $this->filesize);
   }
+
+  /* SRV4 Pkg */
+
+  function setSRV4PkgAttr($k, $arch = "", $version = "") {
+
+    $spkg = null;
+    foreach ($this->a_srv4pkg as $ak => $v) {
+      if (!strcmp($k->name, $v->name)) {
+        $spkg = $v;
+	break;
+      }
+    }
+    if (!$spkg)
+      return -1;
+  
+    $spkg->arch = $arch;
+    $file->version = $version;
+
+    $table = "jt_patches_srv4pkg";
+    $set = "`arch`='".$spkg->arch."', `version`='".$spkg->version."'";
+    $where = " WHERE `id_srv4pkg`='".$spkg->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->update($table, $set, $where)) {
+      return -1;
+    }
+    return 0;
+  }
+
+  function addSRV4Pkg($k) {
+
+    $table = "`jt_patches_srv4pkg`";
+    $names = "`id_srv4pkg`, `patchid`, `revision`";
+    $values = "'$k->id', '".$this->patch."', '".$this->revision."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_srv4pkg, $k);
+    return 0;
+  }
+
+  function delSRV4Pkg($k) {
+
+    $table = "`jt_patches_srv4pkg`";
+    $where = " WHERE `id_srv4pkg`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_srv4pkg as $ak => $v) {
+      if (!strcmp($v->name, $k->name)) {
+        unset($this->a_srv4pkg[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isSRV4Pkg($k) {
+    foreach($this->a_srv4pkg as $ko)
+      if (!strcmp($ko->name, $k->name))
+        return TRUE;
+    return FALSE;
+  }
+
+  function fetchSRV4Pkg($all=1) {
+
+    $this->a_srv4pkg = array();
+    $table = "`jt_patches_srv4pkg`";
+    $index = "`id_srv4pkg`";
+    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new SRV4Pkg($t['id_srv4pkg']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_srv4pkg, $k);
+      }
+    }
+    return 0;
+  }
+
 
   /* CVE */
   function addCVE($k) {
@@ -108,7 +191,7 @@ class Patch extends mysqlObj implements JSONizable
     }
     foreach ($this->a_cve as $ak => $v) {
       if (!strcmp($v->name, $k->name)) {
-        unset($this->a_patches[$ak]);
+        unset($this->a_cve[$ak]);
       }
     }
     return 0;
@@ -2167,6 +2250,24 @@ class Patch extends mysqlObj implements JSONizable
     $ret .= $this->dia_pkgs.'|';
     $ret .= $synopsis;
     return $ret;
+  }
+
+  public function getPkgArray() {
+    if (empty($this->dia_pkgs)) 
+      return array();
+
+    $rc = array();
+
+    $pkgs = explode(';', $this->dia_pkgs);
+    foreach($pkgs as $pkg) {
+      $pkg = explode(':', $pkg);
+      if (isset($pkg[1])) {
+        $rc[$pkg[0]] = $pkg[1];
+      } else {
+        $rc[$pkg[0]] = true;
+      }
+    }
+    return $rc;
   }
 
 

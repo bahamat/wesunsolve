@@ -26,6 +26,22 @@ class Patchdiag extends mysqlObj
   public $a_pp = array();
   public $a_raw = array();
 
+  public static function fetchLatest() {
+
+    $index = "`id`";
+    $table = "`patchdiag`";
+    $where = " ORDER BY `date` DESC LIMIT 0,1";
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['id'])) {
+        $ppd = new Patchdiag($idx[0]['id']);
+        $ppd->fetchFromId();
+        return $ppd;
+      }
+    }
+    return null;
+  }
+
   public function bEvent($pid, $rev) {
     $tEvent = new pTimeline();
     $tEvent->id_patchdiag = $this->id;
@@ -357,6 +373,11 @@ class Patchdiag extends mysqlObj
       return sprintf("%02d", $max);
     }
     return "00";
+  }
+
+  public function getPath() {
+    global $config;
+    return $config['pdiagpath'].'/'.$this->filename;
   }
 
   public function loadFromFile($treat = false) {

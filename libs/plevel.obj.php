@@ -11,6 +11,8 @@
  * @filesource
  */
 
+@require_once($config['rootpath']."/libs/functions.lib.php");
+
 
 class PLevel extends mysqlObj
 {
@@ -109,6 +111,118 @@ class PLevel extends mysqlObj
     $this->added = time();
     parent::insert();
   }
+
+  public function runPCA($pdiag=null) {
+    global $config;
+
+    /* Check patchdiag.xref presence */
+    if (!$pdiag) {
+      $pdiag = Patchdiag::fetchLatest();
+    }
+    if (!file_exists($pdiag->getPath())) {
+      return false;
+    }
+
+    /**
+     * Fill 3 data file output required by PCA
+     */
+    $showrev_out = '';
+    $pkginfo_out = '';
+    $uname_out = 'SunOS HNAME 5.10 Generic_000000-00 cputype arch SUNW,Model';
+
+    $pkga = array();
+    foreach($this->a_patches as $p) {
+      $p->fetchFromId();
+      $line = 'Patch: '.$p.' Obsoletes: ';
+      $p->fetchObsolated(0);
+      $i=0;
+      foreach($p->a_obso as $po) {
+	if ($i) {
+	  $line .= ', ';
+	}
+        $line .= $po;
+	$i++;
+      }
+      $line .= ' Requires: ';
+      $p->fetchRequired(0);
+      $i=0;
+      foreach($p->a_depend as $po) {
+        if ($i) {
+          $line .= ', ';
+        }
+        $line .= $po;
+        $i++;
+      }
+      $line .= ' Incompatibles: ';
+      $p->fetchConflicts(0);
+      $i=0;
+      foreach($p->a_conflicts as $po) {
+        if ($i) {
+          $line .= ', ';
+        }
+        $line .= $po;
+        $i++;
+      }
+      $line .= ' Packages: ';
+      $i=0;
+      foreach ($p->getPkgArray() as $pkg => $ver) {
+	if (empty($pkg)) continue;
+        if ($i) {
+          $line .= ', ';
+        }
+        $line .= $pkg;
+        $i++;
+        if (!isset($pkga[$pkg])) {
+          $pkgv[$pkg] = $ver;
+          $pkga[$pkg] = $p->dia_arch;
+        }
+      }
+      $showrev_out .= "$line\n";
+    }
+    $pkginfo_out = '';
+    foreach($pkgv as $pkg => $ver) {
+      $arch = $pkga[$pkg];
+      $pkginfo_out .= "   PKGINST:  ".$pkg."\n";
+      $pkginfo_out .= "      ARCH:  ".$arch."\n";
+      $pkginfo_out .= "   VERSION:  ".$ver."\n";
+      $pkginfo_out .= "\n";
+    }
+
+    /* Create the temp directory */
+    $tmpdir = make_temp_folder();
+    @mkdir($tmpdir.'/patch+pkg');
+    @mkdir($tmpdir.'/sysconfig');
+    file_put_contents($tmpdir.'/sysconfig'.'/uname-a.out', $uname_out);
+    file_put_contents($tmpdir.'/patch+pkg'.'/showrev-p.out', $showrev_out);
+    file_put_contents($tmpdir.'/patch+pkg'.'/pkginfo-l.out', $pkginfo_out);
+
+    /* Copy patchdiag.xref into this directory */
+    copy($pdiag->getPath(), $tmpdir.'/patchdiag.xref');
+    
+    /* Execute PCA against this directory */
+
+    $cmd = '/usr/bin/perl '.$config['rootpath'].'/bin/pca ';
+    $cmd .= '--xrefdir='.$tmpdir.' ';				// Specify Xref path
+    $cmd .= '-y ';						// Do not check xref for accuracy
+    $cmd .= '--fromfiles='.$tmpdir.' ';				// Source data directory
+    $cmd .= '-H ';						// No Headers
+    $cmd .= '-l ';						// List only
+
+    @exec($cmd, $rc);
+
+    /* cleanup */
+    @unlink($tmpdir.'/patch+pkg'.'/pkginfo-l.out');
+    @unlink($tmpdir.'/patch+pkg'.'/showrev-p.out');
+    @unlink($tmpdir.'/sysconfig'.'/uname-a.out');
+    @unlink($tmpdir.'/patchdiag.xref');
+    @rmdir($tmpdir.'/sysconfig');
+    @rmdir($tmpdir.'/patch+pkg');
+    @rmdir($tmpdir);
+
+    return $rc;
+  }
+
+
 
  /**
   * ctor
