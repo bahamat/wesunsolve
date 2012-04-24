@@ -16,7 +16,7 @@
   require_once("../libs/autoload.lib.php");
   require_once("../libs/functions.lib.php");
 
-  $shortopts = "p::r::hlfva";
+  $shortopts = "p::r::hlfvam";
   $opts = getopt($shortopts);
 
   if (isset($opts['h'])) {
@@ -26,6 +26,7 @@
     echo "\t [-l] list repo\n";
     echo "\t [-v] view only\n";
     echo "\t [-f] do not index files\n";
+    echo "\t [-m] loop through all repo\n";
     echo "\t [-a] do not announce new packages\n";
     exit();
   }

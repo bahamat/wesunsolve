@@ -52,4 +52,4 @@ sudo pkgrepo -s ${PKG_DEST} refresh
 
 
 echo "[-] Restarting pkgserver ...";
-sudo svcadm restart pkg/server
+#sudo svcadm restart pkg/server
