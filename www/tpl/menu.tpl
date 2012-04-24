@@ -9,6 +9,8 @@
       <li class="m_header">Patches</li> 
       <li class="m_element"><a href="/bundles">Patches bundles</a></li> 
       <li class="m_element"><a href="/lpatches">Latest patches</a></li> 
+      <li class="m_element"><a href="/lcve">Latest security alerts</a></li>
+      <li class="m_element"><a href="/lcvep">Latest CVE patches</a></li>
       <li class="m_element"><a href="/lpatches/sec/1">Latest security patches</a></li> 
       <li class="m_element"><a href="/lpatches/bad/1">Latest obsoleted patches</a></li> 
       <li class="m_element"><a href="/lastreadme">Latest updated READMEs</a></li> 
@@ -50,10 +52,12 @@
      </ul> 
      <ul> 
       <li class="m_header">News</li> 
-      <li class="m_element"><a href="/backlinks">Backlinks</a></li> 
+      <li class="m_element"><a href="http://wiki.wesunsolve.net/Backlinks">Backlinks</a></li> 
+      <li class="m_element"><a href="http://wiki.wesunsolve.net/ThanksTo">Thanks to...</a></li> 
+      <li class="m_element"><a href="http://wiki.wesunsolve.net/Documentation">Documentation</a></li> 
+      <li class="m_element"><a href="http://wiki.wesunsolve.net">Wiki</a></li> 
       <li class="m_element"><a href="/stats">Figures and numbers</a></li> 
       <li class="m_element"><a href="/changelog">Change log</a></li> 
-      <li class="m_element"><a href="/docs">Documentation</a></li> 
       <li class="m_element"><a href="/rss/bundles"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest bundles</a></li> 
       <li class="m_element"><a href="/rss/patches"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest patches</a></li> 
       <li class="m_element"><a href="/rss/s11pkg"><img src="/img/rss.png" alt="RSS Feed"/> RSS Latest packages</a></li> 

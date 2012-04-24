@@ -1,4 +1,5 @@
 <?php 
+/*
       if ($start != 0 && $start >= $rpp) {
         $idprev = $start - $rpp;
       }
@@ -7,6 +8,7 @@
       } else {
         $idnext = $start + $rpp;
       }
+*/
   $h = HTTP::getInstance();
   if (!$h->css) $h->fetchCSS();
 ?>

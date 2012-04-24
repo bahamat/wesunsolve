@@ -423,7 +423,11 @@
       Patchdiag::parsePatchdiag($opts['j'], true);
       return 0; // exit after parsing if file is specified
     } else {
-      Patchdiag::parsePatchdiag();
+      if (isset($opts['f'])) {
+        Patchdiag::parsePatchdiag(NULL, true);
+      } else {
+        Patchdiag::parsePatchdiag();
+      }
     }
   }
   
@@ -633,7 +637,8 @@
   }
 
   if (!isset($opts['i']) && !isset($opts['t'])) {
-    Announce::getInstance()->msg(0, "[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.");
+    IrcMsg::void();
+    Announce::getInstance()->msg(0, "[BATCH] Finished batch run. ".$stats['new']." new patches | ".$stats['mod']." patches updated.", MSG_ADM);
   }
   $m->disconnect();
 

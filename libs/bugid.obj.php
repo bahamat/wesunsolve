@@ -51,6 +51,7 @@ class Bugid extends mysqlObj
   public $score = 0; // Score result from full text search
 
   public $a_comments = array();
+  public $u_when = 0;
 
   public static function linkize($str) {
     $ret = $str;
@@ -197,6 +198,14 @@ class Bugid extends mysqlObj
 	if (!count($raw_lines)) {
 	  return false;
 	}
+/* @TODO ADD check for bugContent.XXX here */
+        if (preg_match("/bugsContent.Sun/", $raw)) {
+	   $vendor = "Sun";
+        } else if (preg_match("/bugsContent.Oracle/", $raw)) {
+           $vendor = "Oracle";
+        } else {
+           $vendor = "";
+        }
 	foreach($raw_lines as $line) {
 	  $line = trim($line);
 	  if(empty($line)) {
@@ -207,8 +216,8 @@ class Bugid extends mysqlObj
             $rb = preg_replace('/.*<b>.*<\/b>:(.+)<br/>/i', '$1', $line);
 	  }
 */
-	  if (preg_match("/^bugsContent.Sun/", $line)) {
-	    $bcraw = preg_split("/bugsContent.Sun = \"/", $line);
+	  if (preg_match("/^bugsContent.".$vendor."/", $line)) {
+	    $bcraw = preg_split("/bugsContent.".$vendor." = \"/", $line);
 	    $bcraw = $bcraw[1];
 	    $bcraw = substr($bcraw,0,strlen($bcraw)-2);
 	    //$bcraw = stripslashes(substr($bcraw,0,strlen($bcraw)-2));
@@ -544,7 +553,7 @@ class Bugid extends mysqlObj
 
     $res = array();
     $table = "`u_history`";
-    $index = "`id_link`";
+    $index = "`id_link`,`when`";
     $where = "WHERE `id_login`=".$l->id." AND `what`='bug'";
     $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
  
@@ -553,6 +562,7 @@ class Bugid extends mysqlObj
       foreach($idx as $t) {
         $k = new Bugid($t['id_link']);
         $k->fetchFromId();
+        $k->u_when = $t['when'];
         array_push($res, $k);
       }
     }

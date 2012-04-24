@@ -183,17 +183,17 @@ var_dump($connection->response);
     return $msg;
   }
 
-  public function msg($p, $m) {
+  public function msg($p, $m, $l=1) {
     switch($p) {
       case 1:
-        IrcMsg::add($m);
+        IrcMsg::add($m, $l);
         return $this->tweet($m);
       break;
       case 10:
         return $this->tweet($m);
       break;
       default:
-        IrcMsg::add($m);
+        IrcMsg::add($m, $l);
       break;
     }
     return 0;

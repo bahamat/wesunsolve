@@ -17,12 +17,16 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
+<?php if (isset($error)) { ?>
+    <br/>
+    <span class="red"><p><?php echo $error; ?></p></span>
+<?php } ?>
    <?php if (isset($lvp)) { ?>
    <div class="listbox grid_<?php echo $h->css->s_box; ?> firstbox alpha">
     <h3>Last viewed patches</h3>
     <ul>
-     <?php foreach($lvp as $p) { ?>
-     <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></li>
+     <?php foreach($lvp as $w => $p) { ?>
+     <li><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a> on <?php echo date(HTTP::getDateTimeFormat(), $p->u_when); ?></li>
      <?php } ?>
     </ul>
    </div>
@@ -32,7 +36,7 @@
     <h3>Last viewed bugs</h3>
     <ul>
      <?php foreach($lvb as $b) { ?>
-     <li><a href="/bugid/id/<?php echo $b->id; ?>"><?php echo $b->id; ?></a></li>
+     <li><a href="/bugid/id/<?php echo $b->id; ?>"><?php echo $b->id; ?></a> on <?php echo date(HTTP::getDateTimeFormat(), $b->u_when); ?></li>
      <?php } ?>
     </ul>
    </div>
@@ -40,7 +44,7 @@
    <?php } ?>
    <div class="clear"></div>
 
-  <h4>Custom Lists</h4>
+  <h4>Custom Lists (<a href="/add_clist">Add</a>)</h4>
     <p>You have <?php echo count($uclists); ?> custom list of patches</p>
     <?php if (count($uclists)) { ?>
     <table class="ctable">
@@ -50,19 +54,23 @@
       <th></th>
       <th></th>
       <th></th>
+      <th></th>
+      <th></th>
      </tr>
 <?php foreach($uclists as $l) { ?>
      <tr>
       <td><?php echo $l->name; ?></td>
       <td style="text-align: center;"><?php echo count($l->a_patches); ?></td>
+      <td style="text-align: center;"><a href="/add2uclist/uid/<?php echo $l->id; ?>">Add Patches</a></td>
       <td style="text-align: center;"><a href="/uclist/i/<?php echo $l->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/del_uclist/i/<?php echo $l->id; ?>">Del</a></td>
       <td style="text-align: center;"><a href="/ucl_pdiag/i/<?php echo $l->id; ?>">Generate patchdiag.xref</a></td>
+      <td style="text-align: center;"><a href="/uclreadme/i/<?php echo $l->id; ?>">Fetch READMEs</a></td>
      </tr>
 <?php } ?>
     </table>
 <?php  } ?>
-    <h4>Servers</h4>
+    <h4>Servers (<a href="/register_srv">Add</a>)</h4>
     <p>You have <?php echo count($servers); ?> server registered</p>
     <table class="ctable">
      <tr>
@@ -71,6 +79,7 @@
       <th># of Patch level</th>
       <th>View Patching level</th>
       <th>Add Patching level</th>
+      <th></th>
      </tr>
 <?php foreach($servers as $srv) { ?>
      <tr>
@@ -79,11 +88,12 @@
       <td style="text-align: center;"><?php echo count($srv->a_plevel); ?></td>
       <td style="text-align: center;"><a href="/plevel/s/<?php echo $srv->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/add_plevel/s/<?php echo $srv->id; ?>">Add</a></td>
+      <td style="text-align: center;"><a href="/del_srv/s/<?php echo $srv->id; ?>">Delete</a></td>
      </tr>
 <?php } ?>
     </table>
     <h4>Other tools</h4>
-    <ul>
+    <ul class="bullet">
       <li><a href="/srvUpgrade">Server upgrade</a> through patchdiag.xref generation</li>
     </ul>
    </div><!-- d_content_box -->

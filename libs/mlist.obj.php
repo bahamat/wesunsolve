@@ -110,6 +110,8 @@ class MList extends mysqlObj
     $headers = "From: $from\r\n";
     $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
     $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+    $headers .= "Content-Transfer-Encoding: 7bit\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
 
     mail($login->email, "[SUNSOLVE] ".$this->name, $content, $headers);
 
@@ -123,6 +125,14 @@ class MList extends mysqlObj
     $fct = $this->fct;
     $mlc = Mlist::$fct();
     return $mlc;
+  }
+
+ /**
+  * Implementation of mailing list for packages report
+  *
+  */
+  static public function pkgReport($delay) {
+
   }
 
  /**
@@ -209,7 +219,7 @@ class MList extends mysqlObj
     }
     $nb_p = arrayCount($patches) - count($patches);
     $nb_r = arrayCount($readmes) - count($readmes);
-    $txt .= "<p>Notice: This mailling list is BETA and no information contained here could be trusted as-is. The WeSunSolve! <a href=\"http://wesunsolve.net/disclaimer\">disclaimer</a> apply.</p>\n"; 
+    $txt .= "<p>Notice: This mailling list is BETA and no information contained here could be trusted as-is. The WeSunSolve! <a href=\"http://wiki.wesunsolve.net/Disclaimer\">disclaimer</a> apply.</p>\n"; 
     $txt .= "<p>Report of patches released and modifications made from $d_start to $d_stop.</p>\n"; 
     $txt .= "<h2>Table of contents</h2>\n";
      $txt .= "<h3><a href=\"#patches\">Patches released</a> (".$nb_p.")</h3>\n";
@@ -278,7 +288,7 @@ EOF;
       }
     }
 
-    $txt .= "\n".$config['mlist']['footer'];
+    $txt .= "\n".$config['mlist']['footer']."\n";
     return $txt;
   }
 

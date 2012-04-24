@@ -19,6 +19,7 @@
        <div class="clear clearfix"></div>
     <?php if (isset($error)) { ?><p class="red"><?php if (isset($error) && !empty($error)) echo $error; ?></p><?php } ?>
     <?php if (isset($msg)) { ?><p class="red"><?php if (isset($msg) && !empty($msg)) echo $msg; ?></p><?php } ?>
+<p>You can check the documentations about <a href="http://wiki.wesunsolve.net/SettingsManagement">Your settings</a>.</p>
      <form method="POST" action="/settings">
       <table class="ctable">
         <tr><th>Login:</th><td><?php echo $login; ?></td></tr>

@@ -20,7 +20,7 @@
        <div class="clear clearfix"></div>
 	     <h3>General informations</h3>
 		<ul>
-		 <li>Synopsis: <?php echo htmlentities($bug->synopsis); ?></li>
+		 <li>Synopsis: <?php echo Patch::linkize(htmlentities($bug->synopsis)); ?></li>
 		</ul>
              <h3>Packages that fixes the bug</h3>
              <?php if (!count($bug->a_pkgs)) { echo "<p>There is no packages update for this bug</p>"; } else { ?>

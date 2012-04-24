@@ -20,7 +20,7 @@
   <p>Here you can generate a <i>patchdiag.xref</i> file to upgrade a server patch level (source) to match another one (destination).</p>
     <p>You have <?php echo count($as); ?> server registered</p>
     <form method="GET" action="/srvPdiag">
-    <table class="slist">
+    <table class="ctable">
      <tr>
       <th>Patch Level source</th>
       <th>Patch Level destination</th>

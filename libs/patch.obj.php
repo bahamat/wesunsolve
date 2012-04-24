@@ -42,12 +42,19 @@ class Patch extends mysqlObj implements JSONizable
   public $score = 0;
   public $lmod = 0;
 
+  /* tmp */
+  public $u_when = 0;
+
   /* Others */
   public $o_obsby = null; /* Obsoleted by .. */
   public $o_latest = null;
   public $o_current = null;
   public $o_csum = null;
   public $o_mfile = null;
+  public $o_tl_start = null;
+  public $o_tl_stop = null;
+  public $o_cve = null;
+  public $o_lreadme = null;
   
   /* Lists */
   public $a_files = array();
@@ -63,6 +70,9 @@ class Patch extends mysqlObj implements JSONizable
   public $a_bundles = array();
   public $a_freadmes = array();
   public $a_readmes = array();
+  public $a_tline = array();
+  public $a_cve = array();
+  public $a_srv4pkg = array();
 
   public function toJSONArray() {
     return array('name' => $this->name(),
@@ -75,11 +85,203 @@ class Patch extends mysqlObj implements JSONizable
                              'filesize' => $this->filesize);
   }
 
+  /* SRV4 Pkg */
+
+  function setSRV4PkgAttr($k, $arch = "", $version = "") {
+
+    $spkg = null;
+    foreach ($this->a_srv4pkg as $ak => $v) {
+      if (!strcmp($k->name, $v->name)) {
+        $spkg = $v;
+	break;
+      }
+    }
+    if (!$spkg)
+      return -1;
+  
+    $spkg->arch = $arch;
+    $file->version = $version;
+
+    $table = "jt_patches_srv4pkg";
+    $set = "`arch`='".$spkg->arch."', `version`='".$spkg->version."'";
+    $where = " WHERE `id_srv4pkg`='".$spkg->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->update($table, $set, $where)) {
+      return -1;
+    }
+    return 0;
+  }
+
+  function addSRV4Pkg($k) {
+
+    $table = "`jt_patches_srv4pkg`";
+    $names = "`id_srv4pkg`, `patchid`, `revision`";
+    $values = "'$k->id', '".$this->patch."', '".$this->revision."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_srv4pkg, $k);
+    return 0;
+  }
+
+  function delSRV4Pkg($k) {
+
+    $table = "`jt_patches_srv4pkg`";
+    $where = " WHERE `id_srv4pkg`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_srv4pkg as $ak => $v) {
+      if (!strcmp($v->name, $k->name)) {
+        unset($this->a_srv4pkg[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isSRV4Pkg($k) {
+    foreach($this->a_srv4pkg as $ko)
+      if (!strcmp($ko->name, $k->name))
+        return TRUE;
+    return FALSE;
+  }
+
+  function fetchSRV4Pkg($all=1) {
+
+    $this->a_srv4pkg = array();
+    $table = "`jt_patches_srv4pkg`";
+    $index = "`id_srv4pkg`";
+    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new SRV4Pkg($t['id_srv4pkg']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_srv4pkg, $k);
+      }
+    }
+    return 0;
+  }
+
+
+  /* CVE */
+  function addCVE($k) {
+
+    $table = "`jt_patches_cve`";
+    $names = "`cveid`, `patchid`, `revision`";
+    $values = "'$k->id', '".$this->patch."', '".$this->revision."'";
+
+    if (mysqlCM::getInstance()->insert($names, $values, $table)) {
+      return -1;
+    }
+    array_push($this->a_cve, $k);
+    return 0;
+  }
+
+  function delCVE($k) {
+
+    $table = "`jt_patches_cve`";
+    $where = " WHERE `cveid`='".$k->id."' AND `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (mysqlCM::getInstance()->delete($table, $where)) {
+      return -1;
+    }
+    foreach ($this->a_cve as $ak => $v) {
+      if (!strcmp($v->name, $k->name)) {
+        unset($this->a_cve[$ak]);
+      }
+    }
+    return 0;
+  }
+
+  function isCVE($k) {
+    foreach($this->a_cve as $ko)
+      if (!strcmp($ko->name, $k->name))
+        return TRUE;
+    return FALSE;
+  }
+
+  function fetchCVE($all=1) {
+
+    $this->a_cve = array();
+    $table = "`jt_patches_cve`";
+    $index = "`cveid`";
+    $where = "WHERE `patchid`='".$this->patch."' AND `revision`='".$this->revision."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new CVE($t['cveid']);
+        if ($all) $k->fetchFromId();
+        array_push($this->a_cve, $k);
+      }
+    }
+    return 0;
+  }
+
+
+  public function fetchTimeline() {
+
+    $this->a_tline = array();
+    $table = "`p_timeline`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "";
+    $where .= " WHERE `id_patch`='".$this->patch."' AND `id_revision`='".$this->revision."'";
+    $where .= " ORDER BY `when` ASC, `id_patch` ASC, `id_revision` ASC";
+    $it = new mIterator("pTimeline", $index, $table, $where, $cindex);
+    while(($e = $it->next())) {
+      $e->fetchFromId();
+      $this->a_tline[] = $e;
+      if (!$this->o_tl_stop) {
+        $this->o_tl_stop = $e;
+      } else {
+        if ($this->o_tl_stop->when < $e->when)
+          $this->o_tl_stop = $e;
+      }
+      if (!$this->o_tl_start) {
+        $this->o_tl_start = $e;
+      } else {
+        if ($this->o_tl_start->when > $e->when)
+          $this->o_tl_start = $e;
+      }
+    }
+    return 0;
+  }
+
   public function toJSON() {
     return json_encode($this->toJSONArray());
   }
 
+  public static function fromString($str) {
+    $f = explode('-', $str);
+    return new Patch($f[0], $f[1]);
+  }
+
+  public function shortLink($full=0, $color=false) {
+
+    if ($this->added <= 0) 
+      return '-'.sprintf("%02d", $this->revision);
+
+    $link = "";
+    $cl = "";
+    if ($color) $cl = $this->color();
+    if ($full) {
+      $link = '<a '.$cl.' href="http://wesunsolve.net/patch/id/'.$this->name().'">-'.sprintf("%02d", $this->revision).'</a>';
+    } else {
+      $link = '<a '.$cl.' href="/patch/id/'.$this->name().'">-'.sprintf("%02d", $this->revision).'</a>';
+    }
+    return $link;
+  }
+
   public function link($full=0, $color=false) {
+
+    if ($this->added <= 0)
+      return $this->name();
+
     $link = "";
     $cl = "";
     if ($color) $cl = $this->color();
@@ -93,10 +295,12 @@ class Patch extends mysqlObj implements JSONizable
 
   public static function linkize($str) {
     $ret = $str;
-    // match 6 digit as patchids
-    $ret = preg_replace('/(^|\s| )([0-9]{6})/', '${1}<a href="/psearch/pid/${2}">${2}</a>', $ret);
+    // match 0000000 as bugs
+    $ret = preg_replace('/(^|\s| )([0-9]{7})/', '${1}<a href="/bugid/id/${2}">${2}</a>', $ret);
     // match 000000-00 as patches
     $ret = preg_replace('/(^|\s| )([0-9]{6}-[0-9]{2})/', '${1}<a href="/patch/id/${2}">${2}</a>', $ret);
+    // match 6 digit as patchids
+    $ret = preg_replace('/(^|\s| )([0-9]{6})/', '${1}<a href="/psearch/pid/${2}">${2}</a>', $ret);
     return $ret;
   }
 
@@ -274,12 +478,14 @@ class Patch extends mysqlObj implements JSONizable
       $this->fetchRequired($all);
       $this->fetchConflicts($all);
       $this->fetchComments($all);
+      $this->fetchCVE($all);
     }
     $this->fetchData();
   }
 
   public static function parseList($list, $format) {
     $plist = array();
+    $format = trim($format);
     switch($format) {
       case "text":
         $patches = explode(PHP_EOL, $list);
@@ -316,7 +522,7 @@ class Patch extends mysqlObj implements JSONizable
         $lines = explode(PHP_EOL, $list);
         foreach($lines as $line) {
           if (empty($line)) continue;
-	  if(!preg_match("/^Patch: [0-9]{6}-[0-9]{2}/", $line)) continue;
+	  if(!preg_match("/^Patch:[\s]*[0-9]{6}-[0-9]{2}/", $line)) continue;
 	  $f = preg_split("/[\s ]+/", $line);
 	  if (count($f) > 2) {
  	    $p = $f[1];
@@ -976,6 +1182,26 @@ class Patch extends mysqlObj implements JSONizable
 
 
   /* Readmes */
+  function fetchLastReadme() {
+    $this->o_lreadme = array();
+    $table = "`p_readmes`";
+    $index = "`when`";
+    $where = "WHERE `patch`='".$this->patch."' AND `revision`='".$this->revision."' ORDER BY `when` ASC LIMIT 0,1";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0])) {
+        $k = new Readme();
+        $k->patch = $this->patch;
+        $k->revision = $this->revision;
+        $k->when = $idx[0]['when'];
+        $k->fetchFromId();
+        $this->o_lreadme = $k;
+      } else return false;
+    } else return false;
+    return true;
+  }
+
   function fetchReadmes($all=1) {
 
     $this->a_readmes = array();
@@ -1613,6 +1839,22 @@ class Patch extends mysqlObj implements JSONizable
     }
   }
 
+  public function svgColor() {
+    if ($this->pca_bad) {
+      return "color=red";
+    }
+    if (!strcmp($this->status, 'OBSOLETE')) {
+      return "color=rowntd";
+    }
+    if ($this->pca_sec) {
+      return "color=orange";
+    }
+    if ($this->pca_rec) {
+      return "color=green";
+    }
+  }
+
+
   public function color() {
     if ($this->pca_bad) {
       return "class=\"redtd\"";
@@ -1674,7 +1916,7 @@ class Patch extends mysqlObj implements JSONizable
 
     $res = array();
     $table = "`u_history`";
-    $index = "`id_link`";
+    $index = "`id_link`,`when`";
     $where = "WHERE `id_login`=".$l->id." AND `what`='patch'";
     $where .= " ORDER BY `u_history`.`when` DESC LIMIT 0,10";
 
@@ -1685,6 +1927,7 @@ class Patch extends mysqlObj implements JSONizable
         $w = explode('-', $w);
         $k = new Patch($w[0], $w[1]);
         $k->fetchFromId();
+        $k->u_when = $t['when'];
         array_push($res, $k);
       }
     }
@@ -2007,6 +2250,24 @@ class Patch extends mysqlObj implements JSONizable
     $ret .= $this->dia_pkgs.'|';
     $ret .= $synopsis;
     return $ret;
+  }
+
+  public function getPkgArray() {
+    if (empty($this->dia_pkgs)) 
+      return array();
+
+    $rc = array();
+
+    $pkgs = explode(';', $this->dia_pkgs);
+    foreach($pkgs as $pkg) {
+      $pkg = explode(':', $pkg);
+      if (isset($pkg[1])) {
+        $rc[$pkg[0]] = $pkg[1];
+      } else {
+        $rc[$pkg[0]] = true;
+      }
+    }
+    return $rc;
   }
 
 

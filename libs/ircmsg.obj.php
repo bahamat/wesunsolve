@@ -39,6 +39,9 @@ class IrcMsg extends mysqlObj
     return $msg->insert();
   }
 
+  public static function void() {
+  }
+
   public function insert() {
     $this->added = time();
     parent::insert();

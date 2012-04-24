@@ -57,6 +57,8 @@
  $content->set("msg", "List has been removed.");
 
 screen:
+  $back = array('name' => 'Panel', 'href' => '/panel');
+  $content->set('back', $back);
   $index->set("content", $content);
   echo $index->fetch();
 ?>

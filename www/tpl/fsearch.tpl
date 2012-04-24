@@ -21,7 +21,7 @@
 <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>
   <p>Search files using a string or a MD5/SHA1 checksum, we'll try to find to which release or patch it correspond...</p>
-  <form method="post" action="/fsearch/form/1">
+  <form method="POST" action="/fsearch/form/1">
   <div class="ctable">
   <table class="ctable">
     <tr><th>File pattern:</th><td><input type="text" name="fpa"/></td></tr>

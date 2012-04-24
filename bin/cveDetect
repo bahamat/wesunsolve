@@ -1,0 +1,43 @@
+#!/usr/bin/php
+<?php
+/**
+ * Detect CVEs
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011-2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+/*
+
+  $shortopts = "p::r::hlfva";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h'])) {
+    echo $argv[0]."\n";
+    echo "\t [-r=<repo name>]\n";
+    echo "\t [-p=<pkg filter>]\n";
+    echo "\t [-l] list repo\n";
+    echo "\t [-v] view only\n";
+    echo "\t [-f] do not index files\n";
+    echo "\t [-a] do not announce new packages\n";
+    exit();
+  }
+*/
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  CVE::detectNew();
+
+?>

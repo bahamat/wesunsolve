@@ -174,10 +174,7 @@ class sunsolve extends module {
         private function announce_pkg($p, $new=0) {
           $msg = "";
           if ($new) $msg = "[NEW]";
-	  $msg .= "[".$p."]";
-          if ($p->pstamp) {
-            $msg .= " ".date('d/m/Y', $p->pstamp);
-          }
+	  $msg .= "[".$p->name()."]";
 	  $desc = $p->desc;
 	  if (empty($desc)) $desc = $p->summary;
           if (!empty($desc)) {

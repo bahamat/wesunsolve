@@ -13,6 +13,11 @@
   }
   $lm = loginCM::getInstance();
   $lm->startSession();
+  $error = '';
+
+  if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
+    $error .= 'The connection is not secured, consider using <a href="https://wesunsolve.net/login">HTTPS</a> to avoid possible eavesdropping.<br/>';
+  }
 
   if (!isset($_POST['save'])) {
     $content = new Template("./tpl/login.tpl");
@@ -22,6 +27,7 @@
   if (!isset($_POST["username"]) || !isset($_POST["password"])) {
     $content = new Template("./tpl/login.tpl");
     $content->set("error", "Missing field");
+    $error .= "Missing field.<br/>";
     goto screen;
   } else {
     if (isset($_POST['keep']) && $_POST['keep']) {
@@ -31,7 +37,7 @@
     }
     if (($rc = $lm->login($_POST["username"], $_POST["password"], $keep)) == -1) {
       $content = new Template("./tpl/login.tpl");
-      $content->set("error", "Error in either login or password");
+      $error .= "Error in either login or password<br/>";
       $f = new LoginFailed();
       $f->when = time();
       $f->login = $_POST["username"];
@@ -43,11 +49,12 @@
       goto screen;
     } else if ($rc == -2) {
       $content = new Template("./tpl/error.tpl");
-      $content->set("error", "Your account hasn't been confirmed yet");
+      $error .= "Your account hasn't been confirmed yet<br/>";
       goto screen;
     }
   }
   IrcMsg::add("[WWW] Login succeed: ".$lm->o_login->username."/".$_SERVER['REMOTE_ADDR'], MSG_ADM);
+  HTTP::piwikLogin($lm->o_login->username);
 
   header("Location: /panel"); 
   exit();
@@ -62,6 +69,9 @@ screen:
   $page->set("head", $head);
   $page->set("menu", $menu);
   $page->set("foot", $foot);
+  if (isset($error) && !empty($error)) {
+    $content->set('error', $error);
+  }
   $page->set("content", $content);
   echo $page->fetch();
   $m->disconnect();

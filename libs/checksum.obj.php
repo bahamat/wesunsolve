@@ -34,8 +34,9 @@ class Checksum extends mysqlObj
     $cmd = "/usr/bin/wget -q -O \"$out\" --no-check-certificate ".$config['checksumurl'];
     $ret = `$cmd`;
 
-    if (file_exists($out) && filesize($out)) {
-      Announce::getInstance()->msg(3, "[BATCH] Updated CHECKSUMS (size: ".filesize($out).")");
+    if (file_exists($out) && filesize($out)) {  
+      IrcMsg::void();
+      Announce::getInstance()->msg(3, "[BATCH] Updated CHECKSUMS (size: ".filesize($out).")", MSG_ADM);
       $fn = $config['ckpath']."/CHECKSUM-".date('dmY');
       if (file_exists($fn)) {
 	unlink ($fn);
@@ -148,7 +149,8 @@ class Checksum extends mysqlObj
       }
     }
     echo "[-] Done parsing CHECKSUMS, $nb new checksums\n";
-    Announce::getInstance()->msg(3, "[BATCH] Parsed CHECKSUMS $nb new checksums, $mod updates");
+    IrcMsg::void();
+    Announce::getInstance()->msg(3, "[BATCH] Parsed CHECKSUMS $nb new checksums, $mod updates", MSG_ADM);
     if (isset($stats) && isset($stats['new']) && isset($stats['mod'])) {
       $stats['new'] += $nb;
       $stats['mod'] += $mod;

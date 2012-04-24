@@ -429,7 +429,7 @@ class mysqlObj
    * Fetch object with XXX
    * @return -1 on error
    */
-  function fetchFromField($field)
+  function fetchFromField($field, $op='=')
   {
     $my = mysqlCM::getInstance();
     $i = 0;
@@ -441,7 +441,7 @@ class mysqlObj
       $i++;
     }    
 
-    $where = "WHERE `".$field."`=".$my->quote($this->{$this->_myc[$field]});
+    $where = "WHERE `".$field."` $op ".$my->quote($this->{$this->_myc[$field]});
 
     if (($data = $my->select($fields, $this->_table, $where)) == FALSE)
       return -1;

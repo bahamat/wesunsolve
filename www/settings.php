@@ -27,9 +27,18 @@
      } else {
        $newval = $_POST[$name];
      }
-     $min = $param['min'];
-     $desc = $param['desc'];
-     $max = $param['max'];
+     if (isset($param['min'])) {
+       $min = $param['min'];
+     } else { $min = null; }
+
+     if (isset($param['desc'])) {
+       $desc = $param['desc'];
+     } else { $desc = null; }
+
+     if (isset($param['max'])) {
+       $max = $param['max'];
+     } else { $max = null; }
+
      if (isset($param['objvar'])) {
        $val = $lo->{$name};
      } else {
@@ -53,6 +62,7 @@
           $lo->setData($name, $newval);
         }
         $msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+        IrcMsg::add("[WWW] ".$lo->username." changed setting $name to $newval", MSG_ADM);
        break;
        case "B":
         if ($val == $newval) {
@@ -65,6 +75,7 @@
 	  $lo->setData($name, $newval);
 	}
 	$msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+        IrcMsg::add("[WWW] ".$lo->username." changed setting $name to $newval", MSG_ADM);
        break;
        case "N":
         if ($val == $newval) {
@@ -85,6 +96,7 @@
           $lo->setData($name, $newval);
         }
 	$msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+        IrcMsg::add("[WWW] ".$lo->username." changed setting $name to $newval", MSG_ADM);
 	break;
        default:
 	continue;

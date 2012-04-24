@@ -20,11 +20,12 @@
   <form method="post" action="/plist_report/form/1">
   <div class="ctable">
   <p>Paste below the list of patches using one of the available formats</p>
-  <ul>
+  <ul class="bullet">
    <li><b>PCA</b>: Output of <span class="code">pca -l m</span></li>
    <li><b>Text</b>: One full patch number per line (e.g.: 123456-78)</li>
    <li><b>showrev</b>: Output of <span class="code">showrev -p</span></li>
   </ul>
+  <br/>
   <table class="ctable">
     <tr><td><select name="format">
 	      <option value="pca">PCA</option>

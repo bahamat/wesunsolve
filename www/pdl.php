@@ -108,7 +108,7 @@
  }
  header('Accept-Ranges: bytes');
  header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$size);
- header('Content-Type: $ctype');
+ header('Content-Type: '.$ctype);
  header("Content-Disposition: attachment; filename=\"$fn\""); 
  header('Content-Transfer-Encoding: binary');
  //header('Content-Length: '.filesize($archive));
