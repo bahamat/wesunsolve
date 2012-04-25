@@ -24,7 +24,11 @@ class Server extends mysqlObj
   public $o_owner = null;
   public $a_plevel = array();
 
-  public function fetchPLevels() {
+  public function __toString() {
+    return $this->name;
+  }
+
+  public function fetchPLevels($all=1) {
     $table = "`u_plevel`";
     $index = "`id`";
     $where = "WHERE `id_server`='".$this->id."'";
@@ -34,8 +38,10 @@ class Server extends mysqlObj
       foreach($idx as $t) {
         $g = new PLevel($t['id']);
         $g->fetchFromId();
-        $g->fetchPatches(0);
-        $g->fetchSRV4Pkgs(0);
+        if ($all) {
+          $g->fetchPatches(0);
+          $g->fetchSRV4Pkgs(0);
+        }
         array_push($this->a_plevel, $g);
       }
     }
@@ -44,6 +50,15 @@ class Server extends mysqlObj
   public function update() {
    $this->updated = time();
    parent::update();
+  }
+
+  public function delete() {
+
+    $this->fetchPlevels();
+    foreach($this->a_plevel as $pl) {
+      $pl->delete();
+    }
+    parent::delete();
   }
 
   public function insert() {

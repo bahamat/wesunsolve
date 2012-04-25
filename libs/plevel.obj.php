@@ -33,7 +33,12 @@ class PLevel extends mysqlObj
   public $a_ppatches = array();
   public $a_pcvep = array();
 
+  function __toString() {
+    return $this->name;
+  }
+
   function fetchFiles() {
+
     foreach($this->a_patches as $p) {
       $p->fetchFiles();
     }
@@ -164,7 +169,16 @@ class PLevel extends mysqlObj
  
   public function delete() {
 
-   /* @TODO: Remove srv4 and patches links */
+    $this->fetchPatches(0);
+    $this->fetchSRV4Pkgs(0);
+
+    foreach($this->a_patches as $p) {
+      $this->delPatch($p);
+    }
+
+    foreach($this->a_srv4pkgs as $p) {
+      $this->delSRV4Pkg($p);
+    }
 
     parent::delete();
   }
@@ -368,6 +382,8 @@ class PLevel extends mysqlObj
         continue;
       
       $tmp = explode(':', $line, 2);
+      if (count($tmp) != 2)
+	continue;
       $n = trim($tmp[0]);
       $v = trim($tmp[1]);
 
@@ -411,7 +427,7 @@ class PLevel extends mysqlObj
 	  break;
       }
     }
-    return $rc;
+    return 0;
   }
 
 

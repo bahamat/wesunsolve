@@ -242,6 +242,9 @@ class Login extends mysqlObj
                                                   "desc" => "Log your action for history purpose",
                                                  "objvar" => 1
                                                 ),
+                          "apiAccess" => array("type" => "B",
+                                                  "desc" => "Access to API enabled",
+                                                ),
 			  "resolution" => array("type" => "E", // enum
 						"desc" => "Width of the page",
 						"values" => array("960" => 3,

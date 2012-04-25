@@ -79,7 +79,7 @@
     if (isset($name) && !empty($name)) {
       $name = trim($name);
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
-      $where .= "`name` LIKE '$name'";
+      $where .= "`pkg`.`name` LIKE '$name'";
       $str .= "/name/".urlencode($name);
     }
     if (isset($desc) && !empty($desc)) {
