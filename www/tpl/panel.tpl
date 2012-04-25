@@ -44,7 +44,7 @@
    <?php } ?>
    <div class="clear"></div>
 
-  <h4>Custom Lists (<a href="/add_clist">Add</a>)</h4>
+  <h4>Custom Lists (<a href="/add_clist">Add</a>) (<a href="http://wiki.wesunsolve.net/PatchesLists">Documentation</a>)</h4>
     <p>You have <?php echo count($uclists); ?> custom list of patches</p>
     <?php if (count($uclists)) { ?>
     <table class="ctable">
@@ -70,7 +70,7 @@
 <?php } ?>
     </table>
 <?php  } ?>
-    <h4>Servers (<a href="/register_srv">Add</a>)</h4>
+    <h4>Servers (<a href="/register_srv">Add</a>) (<a href="http://wiki.wesunsolve.net/ServerManagement">Documentation</a>)</h4>
     <p>You have <?php echo count($servers); ?> server registered</p>
     <table class="ctable">
      <tr>
@@ -92,7 +92,7 @@
      </tr>
 <?php } ?>
     </table>
-    <h4>Patch reports (<a href="/add_report">Add</a>)</h4>
+    <h4>Patch reports (<a href="/add_report">Add</a>) (<a href="http://wiki.wesunsolve.net/MailReports">Documentation</a>)</h4>
     <p>You have <?php echo count($ureports); ?> reports</p>
     <table class="ctable">
      <tr>

@@ -64,7 +64,7 @@
    }
    $pl->delete();
  }
- IrcMsg::add("[WWW] ".$lo->username." removed $s from his account", MSG_ADM);
+ IrcMsg::add("[WWW] ".$lm->o_login->username." removed $s from his account", MSG_ADM);
  $s->delete();
 
  $content = new Template("./tpl/message.tpl");

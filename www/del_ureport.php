@@ -51,7 +51,7 @@
  }
  
  $r->delete();
- IrcMsg::add("[WWW] ".$lo->username." removed report from his account", MSG_ADM);
+ IrcMsg::add("[WWW] ".$lm->o_login->username." removed report from his account", MSG_ADM);
 
  $content = new Template("./tpl/message.tpl");
  $content->set("msg", "Report has been removed.");
