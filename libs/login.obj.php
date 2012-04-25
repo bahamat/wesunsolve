@@ -33,6 +33,11 @@ class Login extends mysqlObj
   public $a_servers = array();
   public $a_uclists = array();
   public $a_mlists = array();
+  public $a_reports = array();
+
+  public function __toString() {
+    return $this->username;
+  }
 
   function fetchMList() {
     $this->a_mlists = array();
@@ -87,6 +92,27 @@ class Login extends mysqlObj
         return TRUE;
     return FALSE;
   }
+
+  public function fetchUReports() {
+
+    $this->a_ureports = array();
+    $table = "`u_report`";
+    $index = "`id`";
+    $where = "WHERE `id_owner`='".$this->id."'";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $g = new UReport($t['id']);
+        $g->fetchFromId();
+        $g->fetchServer();
+        array_push($this->a_ureports, $g);
+      }
+      return true;
+    }
+    return false;
+  }
+
 
   public function fetchUCLists() {
     $table = "`u_clist`";

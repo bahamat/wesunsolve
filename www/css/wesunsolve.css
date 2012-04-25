@@ -707,3 +707,25 @@ a:hover {
   width: 870px;
   text-align: left;
 }
+
+.toclist li {
+  background-image: url(http://wesunsolve.net/img/tag_red.png);
+  background-repeat: no-repeat;
+  background-position: 0;
+  padding-left: 20px;
+  margin-left: 50px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+ul.toclist {
+  list-style-type:none;
+}
+.toclist ul {
+  list-style-type:none;
+  list-style-position: inside;
+  vertical-align: middle;
+  padding: 0px;
+  margin-left: 0px;
+  padding-bottom: 0px;
+}
+

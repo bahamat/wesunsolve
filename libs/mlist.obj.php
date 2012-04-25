@@ -103,7 +103,7 @@ class MList extends mysqlObj
     }
   }
 
-  public function sendTo($login, $content) {
+  public static function _sendTo($login, $content, $subject="") {
     global $config;
     $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
     $headers = "";
@@ -113,9 +113,13 @@ class MList extends mysqlObj
     $headers .= "Content-Transfer-Encoding: 7bit\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
 
-    mail($login->email, "[SUNSOLVE] ".$this->name, $content, $headers);
+    mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
 
     return true;
+  }
+
+  public function sendTo($login, $content) {
+    return MList::_sendTo($login, $content, $this->name);
   }
 
   public function example() {

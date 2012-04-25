@@ -320,6 +320,48 @@ class Patch extends mysqlObj implements JSONizable
     return false;
   }
 
+  /**
+   * This one is a bit tricky,
+   * We need to fetch previous patches
+   * until we reach a certain patch level
+   * which correspond to the currently installed
+   * patch. As we don't care getting older than installed
+   * revision, we simply stop fetch afterwards.
+   */
+  public function fetchUntil($p, $all = 0) {
+
+    if (!$p) {
+      return -1;
+    }
+
+    $this->a_previous = array();
+
+    if ($this->patch == $p->patch && $p->revision >= $this->revision) // Nothing to do...
+      return 0;
+
+    /* First fetch previous revision of this patch */
+    $this->a_previous = array();
+    $table = "`patches`";
+    $index = "`patch`, `revision`";
+    $where = "WHERE `patch`='".$this->patch."' AND `revision`<".$this->revision;
+    if ($this->patch == $p->patch) {
+      $where .= ' AND `revision`>'.$p->revision;
+    }
+    $where .= " ORDER BY `patches`.`revision` DESC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Patch($t['patch'], $t['revision']);
+        if ($all==2) $k->fetchBugids();
+        array_push($this->a_previous, $k);
+      }
+    }
+
+    return 0;
+  }
+
+
   public function fetchPrevious($all=2) {
 
     $this->fetchObsolated();
@@ -359,7 +401,6 @@ class Patch extends mysqlObj implements JSONizable
         }
       }
     }
-
     /* we should have everything we need ! */
     return 0;
   }

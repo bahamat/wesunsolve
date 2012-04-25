@@ -38,7 +38,7 @@
      <ul> 
       <li class="m_header">User</li> 
 <?php $lm = loginCM::getInstance(); if (!isset($lm->o_login) || !$lm->o_login) { ?>
-      <li class="m_element"><a href="/login">Login</a></li>
+      <li class="m_element"><a href="https://wesunsolve.net/login">Login</a></li>
       <li class="m_element"><a href="/register">Register</a></li>
 <?php } else { ?>
       <li class="m_element"><a href="/panel">Panel</a></li>

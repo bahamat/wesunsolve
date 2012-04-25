@@ -92,6 +92,31 @@
      </tr>
 <?php } ?>
     </table>
+    <h4>Patch reports (<a href="/add_report">Add</a>)</h4>
+    <p>You have <?php echo count($ureports); ?> reports</p>
+    <table class="ctable">
+     <tr>
+      <th>Patch Level</th>
+      <th>Patchdiag Delay</th>
+      <th>Last Sent</th>
+      <th>Frequency</th>
+      <th>Next report</th>
+      <th></th>
+      <th></th>
+     </tr>
+<?php foreach($ureports as $r) { ?>
+     <tr>
+      <td><?php echo $r->o_server.' / '.$r->o_plevel; ?></td>
+      <td><?php if ($r) { echo $r->pdiag_delay.'days'; } else { echo "latest"; } ?></td>
+      <td><?php if ($r->lastrun) { echo date(HTTP::getDateFormat(), $r->lastrun); } else { echo 'never'; } ?></td>
+      <td><?php echo $r->frequency/86400; ?> day(s)</td>
+      <td><?php echo date(HTTP::getDateFormat(), $r->nextrun()); ?></td>
+      <td style="text-align: center;"><a href="/send_ureport/r/<?php echo $r->id; ?>">Send Now</a></td>
+      <td style="text-align: center;"><a href="/del_ureport/r/<?php echo $r->id; ?>">Delete</a></td>
+     </tr>
+<?php } ?>
+    </table>
+
     <h4>Other tools</h4>
     <ul class="bullet">
       <li><a href="/srvUpgrade">Server upgrade</a> through patchdiag.xref generation</li>

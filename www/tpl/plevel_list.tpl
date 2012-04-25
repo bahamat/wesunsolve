@@ -17,8 +17,8 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
-  <p>Patch level of <?php echo $s->name; ?></p>
-    <p>You have <?php echo count($plevels); ?> different patch level</p>
+  <h3>Patch level of <?php echo $s->name; ?></h3>
+    <p>You have <?php echo count($plevels); ?> different patch level</p><br/>
     <table class="ctable">
      <tr>
       <th>Name</th>

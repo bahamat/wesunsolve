@@ -30,6 +30,25 @@ class Patchdiag extends mysqlObj
     return $this->filename;
   }
 
+  /* Fetch the first patchdiag.xref found $days ago */
+  public static function fetchFirst($days = 0) {
+
+    $ts = time() - (24*3600*$days);
+
+    $index = '`id`';
+    $table = '`patchdiag`';
+    $where = ' WHERE `date`<='.$ts.' ORDER BY `date` DESC LIMIT 0,1';
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0]) && isset($idx[0]['id'])) {
+        $ppd = new Patchdiag($idx[0]['id']);
+        $ppd->fetchFromId();
+        return $ppd;
+      }
+    }
+    return null;
+  }
+
   public static function fetchLatest() {
 
     $index = "`id`";

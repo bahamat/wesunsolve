@@ -1,0 +1,44 @@
+#!/usr/bin/php
+<?php
+/**
+ * Send reports
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011-2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $now = time();
+
+  $table = '`u_report`';
+  $index = '`id`';
+  $cindex = 'COUNT(`id`)';
+  $where = '';
+  $it = new mIterator("UReport", $index, $table, $where, $cindex);
+  while(($r = $it->next())) {
+    $r->fetchFromId();
+    /* check if we should send this report */
+    if ($r->nextrun() < $now) { /* yes we should */
+      $r->run();
+      $r->sendMail();
+      echo "[-] Sent $r to ".$r->o_owner."\n";
+      $r->lastrun = $now;
+      $r->update();
+    }
+  }
+
+?>

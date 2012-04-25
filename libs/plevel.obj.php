@@ -30,8 +30,15 @@ class PLevel extends mysqlObj
   public $a_srv4pkgs = array();
 
   /* PCA Run output */
-  public $a_ppatches = array();
-  public $a_pcvep = array();
+  public $a_ppatches = array(); // PCA Patches
+  public $a_pcvep = array();	// PCA CVE Fix Patches
+  public $a_apcvep = array();	// PCA Accumulated CVE Fix Patches
+
+  public $cnt_pcap = 0; // patches to install
+  public $cnt_pcar = 0; // recommended
+  public $cnt_pcas = 0; // security
+  public $cnt_pcaa = 0; // accumulated
+  public $cnt_cvep = 0; // patch fixing a cve
 
   function __toString() {
     return $this->name;
@@ -221,7 +228,10 @@ class PLevel extends mysqlObj
         $p->o_latest = Patch::pLatest($p->patch);
         if ($p->o_latest && $p->o_latest->patch == $p->patch && $p->o_latest->revision == $p->revision) $p->o_latest = false;
         if ($irev > 0) $p->o_current = new Patch($patch, $irev);
+        $p->fetchUntil($p->o_current);
+
         if (count($p->a_cve)) {
+          $this->cnt_cvep++; // This patch fix some CVEs
           foreach($p->a_cve as $cve) {
             $pp = new Patch($p->patch, $p->revision);
 	    $pp->fetchFromId();
@@ -229,10 +239,23 @@ class PLevel extends mysqlObj
 	    $this->a_pcvep[] = $pp;
 	  }
 	}
+        foreach($p->a_previous as $pp) {
+          $this->cnt_pcaa++;
+	  $pp->fetchCVE();
+	  foreach($pp->a_cve as $cve) {
+	    $ppp = new Patch($pp->patch, $pp->revision);
+	    $ppp->fetchFromId();
+	    $ppp->o_cve = $cve;
+	    $this->a_apcvep[] = $ppp;
+	  }
+        }
       }
       $p->u_irev = $irev;
 
       $this->a_ppatches[] = $p;
+      $this->cnt_pcap++;
+      if ($p->pca_sec) $this->cnt_pcas++;
+      if ($p->pca_rec) $this->cnt_pcar++;
     }
   }
 

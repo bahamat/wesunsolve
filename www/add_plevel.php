@@ -103,6 +103,8 @@
 
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Patch level added with ".count($pl->a_patches)." patches and ".count($pl->a_srv4pkgs)." packages.");
+   $back = array('name' => 'Panel', 'href' => '/panel');
+   $content->set('back', $back);
  } else {
    $content = new Template("./tpl/add_plevel.tpl");
    $content->set("s", $s);
