@@ -1,4 +1,12 @@
 <?php
+  if ($start != 0 && $start >= $rpp) {
+    $idprev = $start - $rpp;
+  }
+  if (($start + 50) >= $nb) {
+    $idnext = $nb - 1;
+  } else {
+    $idnext = $start + $rpp;
+  }
   $h = HTTP::getInstance();
   if (!$h->css) $h->fetchCSS();
 ?>
@@ -71,7 +79,8 @@
     </table>
 <?php  } ?>
     <h4>Servers (<a href="/register_srv">Add</a>) (<a href="http://wiki.wesunsolve.net/ServerManagement">Documentation</a>)</h4>
-    <p>You have <?php echo count($servers); ?> server registered</p>
+    <p>You have <?php echo $nb; ?> server registered</p>
+    <p class="paging"><?php echo $pagination; ?></p> 
     <table class="ctable">
      <tr>
       <th>Server Name</th>
@@ -92,6 +101,7 @@
      </tr>
 <?php } ?>
     </table>
+    <p class="paging"><?php echo $pagination; ?></p> 
     <h4>Patch reports (<a href="/add_report">Add</a>) (<a href="http://wiki.wesunsolve.net/MailReports">Documentation</a>)</h4>
     <p>You have <?php echo count($ureports); ?> reports</p>
     <table class="ctable">

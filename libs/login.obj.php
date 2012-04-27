@@ -35,6 +35,9 @@ class Login extends mysqlObj
   public $a_mlists = array();
   public $a_reports = array();
 
+  public function countServers() {
+    return MysqlCM::getInstance()->count("u_servers", " WHERE `id_owner`='".$this->id."'");
+  }
 
   public static function fetchLast($nb = 20) {
     $rc  = array();
@@ -150,10 +153,10 @@ class Login extends mysqlObj
     return false;
   }
 
-  public function fetchServers() {
+  public function fetchServers($start=0, $nb=65535) {
     $table = "`u_servers`";
     $index = "`id`";
-    $where = "WHERE `id_owner`='".$this->id."'";
+    $where = "WHERE `id_owner`='".$this->id."' LIMIT $start,$nb";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {
@@ -268,6 +271,11 @@ class Login extends mysqlObj
     $this->_table = "login";
     $this->_nfotable = "nfo_login";
     $this->_plist = array(
+			  "serversPerPage" => array("type" => "N",
+						  "desc" => "Servers per page to be shown",
+						  "max" => 100,
+						  "min" => 1,
+						 ),
 			  "cvePerPage" => array("type" => "N",
 						  "desc" => "CVE per page to be shown",
 						  "max" => 100,

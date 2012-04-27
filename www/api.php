@@ -68,6 +68,7 @@
 	 die('Server Already exist');
        } else {
 	 $srv->insert();
+         IrcMsg::add("[WWW] User added server: ".$srv->name." to his account (".$lm->o_login->username.")", MSG_ADM);
 	 die('Added');
        }
      } else {
@@ -96,6 +97,7 @@
         $pl->comment = 'Imported from API on '.time();
         $pl->insert();
 	$pl->buildFromFiles($showrev, $pkginfo);
+	IrcMsg::add("[WWW] User added Patch level: ".$pl->name." to his account (".$lm->o_login->username.")", MSG_ADM);
         echo "Level $pl added to $s with ".count($pl->a_patches)." patches and ".count($pl->a_srv4pkgs)." pkgs";
 	die();
      } else {

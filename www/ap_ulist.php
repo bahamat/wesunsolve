@@ -34,6 +34,7 @@
    $table = "`login`";
    $index = "`id`";
    $icount = "count(`id`) as c";
+   $where = '';
    if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
    {
      $nb = 0;
@@ -94,6 +95,7 @@
  $index->set("head", $head);
  $index->set("menu", $menu);
  $head->set("title", "Admin panel of We Sun Solve!");
+ $content->set("title", "Admin panel of We Sun Solve!");
  if (isset($error) && !empty($error)) {
    $content->set('error', $error);
  }

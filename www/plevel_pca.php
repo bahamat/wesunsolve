@@ -73,6 +73,7 @@
    $pl->fetchFromId();
    $pl->fetchPatches(1);
    $pl->fetchSRV4Pkgs(1);
+   $pl->fetchServer();
    if (!$pdiag) {
      $pdiag = Patchdiag::fetchLatest();
    }

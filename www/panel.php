@@ -16,9 +16,39 @@
  if (!$lm->isLogged) {
    $content = new Template("./tpl/denied.tpl");
  } else {
-   $lo->fetchServers();
+   $lo->fetchData();
    $lo->fetchUCLists();
    $lo->fetchUReports();
+   $rpp = $config['serversPerPage'];
+   $val = $lo->data('serversPerPage');
+   if ($val) $rpp = $val;
+   $nb = $lo->countServers();
+   if (isset($_POST['page']) && !empty($_POST['page'])) {
+   $page = $_POST['page'];
+   } else if (isset($_GET['page']) && !empty($_GET['page'])) {
+     $page = $_GET['page'];
+   } else {
+     $page = 1;
+   }
+   $nb_page = 0;
+   if($nb) {
+     $nb_page = $nb / $rpp;
+     $nb_page = round($nb_page,0);
+   }
+   if(isset($page) && !empty($page)) {
+     if (preg_match("/[0-9]*/", $page)) {
+       $start = ($page - 1) * $rpp;
+       if ($start >= $nb) { /* could not start after the number of results... */
+         $start = 0;
+       }
+     } else {
+       $start = 0;
+     }
+   } else { /* otherwise start from scratch */
+     $start = 0;
+   }
+   $lo->fetchServers($start, $rpp);
+   $str = '/panel';
 
    foreach($lo->a_uclists as $l) $l->fetchPatches(0);
    foreach($lo->a_servers as $srv) $srv->fetchPLevels(0);
@@ -43,6 +73,13 @@
    $content->set("news", $news);
    $content->set('lvp', Patch::getLastviewed($lo));
    $content->set('lvb', Bugid::getLastviewed($lo));
+
+   $content->set("start", $start);
+   $content->set("nb", $nb);
+   $content->set("rpp", $rpp);
+   $content->set("str", $str);
+   $content->set("pagination", HTTP::pagine($page, $nb_page, $str."/page/%d"));
+
  }
 
  $error = '';
