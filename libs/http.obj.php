@@ -170,6 +170,14 @@ class HTTP
     return;
   }
 
+  public static function eval_img($cond) {
+    if ($cond) {
+      return '<img src="./img/tick.png" alt="true"/>';
+    } else {
+      return '<img src="./img/cross.png" alt="false"/>';
+    }
+  }
+
   public static function redirect($url) {
     header("Status: 301 Moved Permanently");
     header("Location: ".$url);

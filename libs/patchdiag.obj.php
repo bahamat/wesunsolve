@@ -30,6 +30,14 @@ class Patchdiag extends mysqlObj
     return $this->filename;
   }
 
+  public function age() {
+    $now = time();
+    $delta = $now - $this->date;
+    $days = $delta / (24*3600);
+    return round($days);
+
+  }
+
   /* Fetch the first patchdiag.xref found $days ago */
   public static function fetchFirst($days = 0) {
 

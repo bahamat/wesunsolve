@@ -17,6 +17,9 @@
         </div>
        </div>
        <div class="clear clearfix"></div>
+<p>Report for <?php echo $pl->o_server; ?> / <?php echo $pl; ?> with <?php echo $pdiag; ?> (<?php echo $pdiag->age(); ?> day old)<br/>
+   You can create a <a href="/add_report">mail report</a> to receive periodic mail report like this one directly to your inbox.</p>
+
   <h3><a id="top"></a>Table of contents</h3>
   <ul class="toclist">
     <li><a href="#summary">Summary</a></li>

@@ -1,0 +1,39 @@
+#!/usr/bin/php
+<?php
+/**
+ * Sent mail to all users except thoses subscribed to any mailling list
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011-2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+ 
+  if (!isset($argv[1]) || empty($argv[1])) {
+    die("no file provided\n");
+  }
+  $file = $argv[1];
+  if (!file_exists($file)) {
+    die("This file does not exists\n");
+  }
+
+  $ml = new MList(3);
+  $ml->fetchFromId();
+  $ml->fetchLogins();
+  $ml->fct = 'contentFromFile';
+  $ml->sendToAll($file);
+
+
+?>

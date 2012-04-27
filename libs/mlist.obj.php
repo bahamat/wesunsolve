@@ -91,16 +91,24 @@ class MList extends mysqlObj
     return FALSE;
   }
 
-  function sendToAll() {
+  function sendToAll($arg = null) {
     if (!method_exists('Mlist', $this->fct)) {
       return false;
     }
     $fct = $this->fct;
-    $mlc = Mlist::$fct();
+    $mlc = Mlist::$fct($arg);
     foreach($this->a_logins as $l) {
       $this->sendTo($l, $mlc);
       echo "[-] Sending mail to ".$l->email."\n";
     }
+  }
+
+  public function contentFromFile($f) {
+    $rc = '';
+    if (file_exists($f)) {
+      $rc = file_get_contents($f);
+    }
+    return $rc;
   }
 
   public static function _sendTo($login, $content, $subject="") {

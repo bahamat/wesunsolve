@@ -21,7 +21,7 @@
 <?php if (isset($error)) { ?>
     <span class="red"><p><?php echo $error; ?></p></span>
 <?php } ?>
-    <form method="POST" action="/login">
+    <form method="POST" action="https://wesunsolve.net/login">
     <table class="ctable">
       <tr><td>Login</td><td><input type="text" value="" name="username"></td></tr>
       <tr><td>Password</td><td><input type="password" value="" name="password"></td></tr>

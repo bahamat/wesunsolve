@@ -47,14 +47,14 @@ print "[-] Using hostname: $host\n";
 if ($#ARGV >= 2) {
   $showrev_path = $ARGV[2];
 } else {
-  $showrev_path = "|/usr/bin/showrev -p";
+  $showrev_path = "/usr/bin/showrev -p |";
 }
 print "[-] showrev path: $showrev_path\n";
 
 if ($#ARGV >= 3) {
   $pkginfo_path = $ARGV[3];
 } else {
-  $pkginfo_path = "|/usr/bin/pkginfo -l";
+  $pkginfo_path = "/usr/bin/pkginfo -l |";
 }
 print "[-] pkginfo path: $pkginfo_path\n";
 
@@ -88,7 +88,7 @@ close IN;
 close OUT;
 
 print "[-] Sending... ";
-$rc = `$wget -q --post-file=$rawfile -O - $url`;
+$rc = `$wget --no-check-certificate -q --post-file=$rawfile -O - $url`;
 print trim($rc);
 print "\n[-] Cleanup...\n";
 unlink($rawfile);

@@ -41,10 +41,15 @@
       <li class="m_element"><a href="https://wesunsolve.net/login">Login</a></li>
       <li class="m_element"><a href="/register">Register</a></li>
 <?php } else { ?>
+<?php   if ($lm->o_login->is_admin) { ?>
+      <li class="m_element"><a href="/apanel">Admin Panel</a></li>
+      <li class="m_element"><a href="/ap_ulist">User list</a></li>
+<?php   } ?>
       <li class="m_element"><a href="/panel">Panel</a></li>
       <li class="m_element"><a href="/mlist">Mail reports</a></li>
       <li class="m_element"><a href="/add_clist">Add custom list</a></li>
       <li class="m_element"><a href="/register_srv">Add server</a></li>
+      <li class="m_element"><a href="/add_report">Add report</a></li>
       <li class="m_element"><a href="/password">Change password</a></li>
       <li class="m_element"><a href="/settings">Change settings</a></li>
       <li class="m_element"><a href="/logout">Logout</a></li>

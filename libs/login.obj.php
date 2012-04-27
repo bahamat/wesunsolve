@@ -35,6 +35,25 @@ class Login extends mysqlObj
   public $a_mlists = array();
   public $a_reports = array();
 
+
+  public static function fetchLast($nb = 20) {
+    $rc  = array();
+    $table = "`login`";
+    $index = "`id`";
+    $where = " ORDER BY `last_seen` DESC LIMIT 0,$nb";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Login($t['id']);
+        $k->fetchFromId();
+        array_push($rc, $k);
+      }
+    }
+    return $rc;
+  }
+
+
   public function __toString() {
     return $this->username;
   }

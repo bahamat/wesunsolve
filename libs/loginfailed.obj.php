@@ -22,6 +22,26 @@ class LoginFailed extends mysqlObj
   public $pass = "";
   public $agent = "";
 
+  
+
+  public static function fetchLast($nb = 20) {
+    $rc  = array();
+    $table = "`login_failed`";
+    $index = "`id`";
+    $where = " ORDER BY `when` DESC LIMIT 0,$nb";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new LoginFailed($t['id']);
+        $k->fetchFromId();
+        array_push($rc, $k);
+      }
+    }
+    return $rc;
+  }
+
+
  /**
   * Constructor
   */
