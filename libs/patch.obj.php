@@ -511,6 +511,7 @@ class Patch extends mysqlObj implements JSONizable
       $this->fetchConflicts($all);
       $this->fetchComments($all);
       $this->fetchCVE($all);
+      $this->fetchSRV4Pkg($all);
     }
     $this->fetchData();
   }

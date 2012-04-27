@@ -56,6 +56,7 @@
 		 <li>Detected status: <?php echo $patch->status; ?></li>
 		 <li>Synopsis: <?php echo Patch::linkize($patch->synopsis); ?></li>
 		 <li>Archive size: <?php echo $patch->filesize; ?> bytes (<?php echo round($patch->filesize / 1024 / 1024, 2); ?> MBytes)</li>
+		 <li>Packages impacted: <?php foreach($patch->a_srv4pkg as $pkg) { echo $pkg.", "; } ?></li>
 		 <li>Keywords: <?php foreach ($patch->a_keywords as $k) { echo $k->keyword.", "; } ?></li>
 		 <li>Architecture: <?php echo $patch->data("arch"); ?></li>
 		 <li>Solaris Release: <?php echo $patch->data("solaris_release"); ?></li>

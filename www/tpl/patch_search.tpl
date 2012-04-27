@@ -27,6 +27,7 @@
     <tr><th>Synopsis:</th><td><input type="text" name="synopsis"/></td></tr>
     <tr><th>Status:</th><td><input type="text" name="status"/></td></tr>
     <tr><th>File:</th><td><input type="text" name="files"/></td></tr>
+    <tr><th>Package:</th><td><input type="text" name="pkg"/></td></tr>
 <!--
     <tr><th>*Keyword:</th><td><input type="text" name="keyword"/></td></tr>
     <tr><th>*Architecture:</th><td><input type="text" name="arch"/></td></tr>

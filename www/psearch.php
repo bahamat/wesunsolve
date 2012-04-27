@@ -32,7 +32,7 @@
   $index->set("menu", $menu);
   $index->set("foot", $foot);
 
-  $str = "/psearch/form/1";
+  $str = "/psearch/form/2";
 
   $patches = array();
   $table = "`patches`";
@@ -83,7 +83,12 @@
   } else if (isset($_GET['files']) && !empty($_GET['files'])) {
     $files = $_GET['files'];
   }
-  if (isset($_GET['form']) && $_GET['form'] == 1) {
+  if (isset($_POST['pkg']) && !empty($_POST['pkg'])) {
+    $pkg = $_POST['pkg'];
+  } else if (isset($_GET['pkg']) && !empty($_GET['pkg'])) {
+    $pkg = $_GET['pkg'];
+  }
+  if (isset($_GET['form']) && ($_GET['form'] == 1 || $_GET['form'] == 2)) {
 
     if (isset($pid) && !empty($pid)) {
       $pid = trim($pid);
@@ -113,13 +118,24 @@
       $where .= "`status` LIKE '$status'";
     }
 
+    if (isset($pkg) && !empty($pkg)) {
+      $str .= "/pkg/".urlencode($pkg);
+      $table .= ",`jt_patches_srv4pkg`, `srv4pkg`";
+      if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
+      $where .= " `srv4pkg`.`name` LIKE '$pkg' AND `jt_patches_srv4pkg`.`id_srv4pkg`=`srv4pkg`.`id` ";
+      $where .= " AND `patches`.`patch`=`jt_patches_srv4pkg`.`patchid` AND `patches`.`revision`=`jt_patches_srv4pkg`.`revision`";
+    }
+
     if (isset($files) && !empty($files)) {
       $str .= "/files/".urlencode($files);
       $table .= ",`jt_patches_files`, `files`";
       if (!$w) { $where = "WHERE "; $w++; } else { $where .= " AND "; }
       $where .= " `files`.`name` LIKE '$files' AND `jt_patches_files`.`fileid`=`files`.`id` ";
       $where .= " AND `patches`.`patch`=`jt_patches_files`.`patchid` AND `patches`.`revision`=`jt_patches_files`.`revision`";
-      //echo "SELECT $idx FROM $table $where<br/>\n";
+    }
+    if ($_GET['form'] == 1) {
+      HTTP::redirect($str);
+      exit();
     }
   } else if (isset($pid) && !empty($pid)) {
     $pid = trim($pid);
@@ -138,6 +154,7 @@
       $where .= "`revision` LIKE '".$rev."'";
     }
   }
+
 
     if (!isset($idxcount)) $idxcount = "count(`patches`.`patch`) as c";
 
