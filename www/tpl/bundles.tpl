@@ -25,14 +25,14 @@
     <th>Last Updated</th>
     <th></th>
    </tr>
-<?php foreach($bundles as $b) { ?>
-   <tr>
+<?php $i=1; foreach($bundles as $b) { ?>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <td style="text-align: left;"><?php echo $b->synopsis; ?></td>
     <td><?php echo round($b->size / 1024 / 1024, 2); ?> MBytes</td>
     <td><?php echo date(HTTP::getDateFormat(), $b->lastmod); ?></td>
     <td><a href="bundle/id/<?php echo $b->id; ?>">details</a></td>
    </tr>
-<?php } ?>
+<?php $i++; } ?>
    </table>
   </div>
    </div><!-- d_content_box -->

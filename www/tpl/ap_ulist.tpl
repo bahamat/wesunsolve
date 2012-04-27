@@ -42,7 +42,7 @@
     <th></th>
    </tr>
 <?php $i=0; foreach($logins as $l) { $l->fetchData(); ?>
-   <tr>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <td style="text-align: left"><a href="/ap_umod/i/<?php echo $l->id; ?>"><?php echo $l->username; ?></a></td>
     <td style="text-align: left"><?php echo $l->fullname; ?></td>
     <td style="text-align: left"><?php echo $l->email; ?></td>

@@ -65,8 +65,8 @@
       <th></th>
       <th></th>
      </tr>
-<?php foreach($uclists as $l) { ?>
-     <tr>
+<?php $i=1; foreach($uclists as $l) { ?>
+     <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
       <td><?php echo $l->name; ?></td>
       <td style="text-align: center;"><?php echo count($l->a_patches); ?></td>
       <td style="text-align: center;"><a href="/add2uclist/uid/<?php echo $l->id; ?>">Add Patches</a></td>
@@ -75,7 +75,7 @@
       <td style="text-align: center;"><a href="/ucl_pdiag/i/<?php echo $l->id; ?>">Generate patchdiag.xref</a></td>
       <td style="text-align: center;"><a href="/uclreadme/i/<?php echo $l->id; ?>">Fetch READMEs</a></td>
      </tr>
-<?php } ?>
+<?php $i++; } ?>
     </table>
 <?php  } ?>
     <h4>Servers (<a href="/register_srv">Add</a>) (<a href="http://wiki.wesunsolve.net/ServerManagement">Documentation</a>)</h4>
@@ -90,8 +90,8 @@
       <th>Add Patching level</th>
       <th></th>
      </tr>
-<?php foreach($servers as $srv) { ?>
-     <tr>
+<?php $i=1; foreach($servers as $srv) { ?>
+     <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
       <td><?php echo $srv->name; ?></td>
       <td><?php echo $srv->comment; ?></td>
       <td style="text-align: center;"><?php echo count($srv->a_plevel); ?></td>
@@ -99,7 +99,7 @@
       <td style="text-align: center;"><a href="/add_plevel/s/<?php echo $srv->id; ?>">Add</a></td>
       <td style="text-align: center;"><a href="/del_srv/s/<?php echo $srv->id; ?>">Delete</a></td>
      </tr>
-<?php } ?>
+<?php $i++; } ?>
     </table>
     <p class="paging"><?php echo $pagination; ?></p> 
     <h4>Patch reports (<a href="/add_report">Add</a>) (<a href="http://wiki.wesunsolve.net/MailReports">Documentation</a>)</h4>
@@ -114,8 +114,8 @@
       <th></th>
       <th></th>
      </tr>
-<?php foreach($ureports as $r) { ?>
-     <tr>
+<?php $i=1; foreach($ureports as $r) { ?>
+     <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
       <td><?php echo $r->o_server.' / '.$r->o_plevel; ?></td>
       <td><?php if ($r) { echo $r->pdiag_delay.'days'; } else { echo "latest"; } ?></td>
       <td><?php if ($r->lastrun) { echo date(HTTP::getDateFormat(), $r->lastrun); } else { echo 'never'; } ?></td>
@@ -124,7 +124,7 @@
       <td style="text-align: center;"><a href="/send_ureport/r/<?php echo $r->id; ?>">Send Now</a></td>
       <td style="text-align: center;"><a href="/del_ureport/r/<?php echo $r->id; ?>">Delete</a></td>
      </tr>
-<?php } ?>
+<?php $i++; } ?>
     </table>
 
     <h4>Other tools</h4>

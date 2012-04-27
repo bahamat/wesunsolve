@@ -29,12 +29,12 @@
        <th>Last seen</th>
        <th>Login</th>
      </tr>
-<?php foreach ($llogins as $l) { ?>
-     <tr>
+<?php $i=1; foreach ($llogins as $l) { ?>
+     <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
        <td><?php echo date(HTTP::getDateTimeFormat(), $l->last_seen); ?></td>
        <td><?php echo $l->username; ?></td>
      </tr>
-<?php } ?>
+<?php $i++; } ?>
    </table>
    </div>
 
@@ -47,14 +47,14 @@
        <th>Login</th>
        <th>Agent</th>
      </tr>
-<?php foreach ($flogins as $f) { ?>
-     <tr>
+<?php $i=1; foreach ($flogins as $f) { ?>
+     <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
        <td><?php echo date(HTTP::getDateTimeFormat(), $f->when); ?></td>
        <td><?php echo $f->ip; ?></td>
        <td><?php echo $f->login; ?></td>
        <td><?php echo substr($f->agent, 0, 20); ?></td>
      </tr>
-<?php } ?>
+<?php $i++; } ?>
    </table>
    </div>
    </div><!-- d_content_box -->

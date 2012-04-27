@@ -529,6 +529,14 @@ p.warning {
   padding-bottom: 1px;
 }
 
+tr.tdp {
+  background-color: #ddd;
+}
+
+tr.tdup {
+  background-color: #DDE6EC;
+}
+
 .tdcode {
   font-size: 0.8em;
 }
