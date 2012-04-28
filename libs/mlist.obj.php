@@ -111,7 +111,7 @@ class MList extends mysqlObj
     return $rc;
   }
 
-  public static function _sendTo($login, $content, $subject="") {
+  public static function _sendTo($login, $content, $subject="", $canCrypt = true) {
     global $config;
     $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
     $headers = "";
@@ -121,13 +121,57 @@ class MList extends mysqlObj
     $headers .= "Content-Transfer-Encoding: 7bit\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
 
-    mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
+/* @TODO: Fix crypted mail to be rendered properly in HTML in the MUA */
+    $login->fetchData();
+    $pgpkey = $login->data('pgpKeyID');
+    $sCrypt = false;
+    if (!empty($pgpkey) && $canCrypt) {
+      if (!GPG::isKey($pgpkey)) {
+	  IrcMsg::add("[CRYPT] $pgpkey not yet setup for ".$login->username, MSG_ADM);
+      } else {
+        if (GPG::checkKey($pgpkey, $login->email)) {
+	  $sCrypt = true;
+        } else {
+	  IrcMsg::add("[CRYPT] Key $pgpkey is not valid for ".$login->username, MSG_ADM);
+	  GPG::delKey($pgpkey);
+        }
+      }
+    }
+    if ($sCrypt) {
+      $clearContent = $content;
+      $content = GPG::cryptTxt($pgpkey, $clearContent);
+      if (!$content) {
+        $content = $clearContent;
+        IrcMsg::add("[CRYPT] Failed to encrypt content for ".$login->username." with key $pgpkey for ".$login->email, MSG_ADM);
+      }
+    }
+
+    if (!$sCrypt) {
+      mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
+    } else {
+      require_once('Mail.php');
+      require_once('Mail/mime.php');
+      $text = 'You must decrypt the html version of this email to read the report.';
+      $crlf = "\n";
+      $hdrs = array(
+    			'From' => $from,
+    			'Reply-to' => $config['mailFrom'],
+    			'Subject' => "[SUNSOLVE] ".$subject
+	      );
+      $mime = new Mail_mime(array('eol' => $crlf, 'html_encoding' => 'multipart/encrypted'));
+      $mime->setTXTBody($text);
+      $mime->addAttachment($content, 'multipart/encrypted; protocol="application/pgp-encrypted";', 'report.html', false);
+      $body = $mime->get();
+      $hdrs = $mime->headers($hdrs);
+      $mail = &Mail::factory('mail');
+      $mail->send($login->email, $hdrs, $body);
+    }
 
     return true;
   }
 
   public function sendTo($login, $content) {
-    return MList::_sendTo($login, $content, $this->name);
+    return MList::_sendTo($login, $content, $this->name, false);
   }
 
   public function example() {

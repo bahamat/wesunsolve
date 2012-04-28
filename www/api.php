@@ -22,7 +22,6 @@
  if ($lm->login($_GET['u'], $_GET['p'])) {
    die("Authentication failed");
  }
- if ($lm->o_login) $lm->o_login->fetchData();
 
  if (!isset($lm->o_login) || !$lm->o_login->data("apiAccess")) {
    die("Authorization failed");

@@ -13,7 +13,6 @@
  $h->parseUrl();
 
 // $lo = $lm->o_login;
- //$lo->fetchData();
  $mlist = new MList($_GET['id']);
  $mlist->fetchFromId();
  echo $mlist->example();

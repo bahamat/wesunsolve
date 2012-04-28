@@ -162,6 +162,20 @@ select {
   padding-bottom:5px;
 }
 
+.m_irc {
+  background-color: #ddd;
+  text-align: center;
+  padding-left: 3px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+.m_irc a {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+
 .m_header {
   background-color: #3e6b8a;
   color: #ffffff;

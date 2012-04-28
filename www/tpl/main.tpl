@@ -17,8 +17,8 @@
         </div> 
        </div> 
        <div class="clear clearfix"></div>
-       <h3>Join us on IRC!</h3>
-       <p>You can join us at <b>#sunsolve</b> on <b>irc.freenode.net</b> with a regular IRC client or by using the <a target="_blank" href="http://webchat.freenode.net?channels=sunsolve&uio=d4">webchat</a>.</p>
+       <p>This website is free of charge, without ads and not related nor associated with Oracle Corporation.</p>
+       <p>Consider to <a href="/register">create an account</a> to <a href="http://wiki.wesunsolve.net/RegistrationProcess">take advantage of the website</a> for your daily sysadmin work!</p>
        <h3>Recent activity</h3>
        <div class="prefix_1 grid_<?php echo $h->css->s_box; ?> alpha"> 
         <div class="listbox firstbox"> 

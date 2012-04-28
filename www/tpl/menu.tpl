@@ -6,6 +6,7 @@
    <div class="grid_<?php echo $h->css->s_menu; ?>"> 
     <div id="d_menu"> 
      <ul> 
+      <li class="m_irc"><a href="http://webchat.freenode.net/?channels=sunsolve&uio=d4" target="_blank">[IRC Chat]</a> <a href="http://wiki.wesunsolve.net/IRC">[Chat Rules]</a></li> 
       <li class="m_header">Patches</li> 
       <li class="m_element"><a href="/bundles">Patches bundles</a></li> 
       <li class="m_element"><a href="/lpatches">Latest patches</a></li> 
@@ -47,6 +48,10 @@
 <?php   } ?>
       <li class="m_element"><a href="/panel">Panel</a></li>
       <li class="m_element"><a href="/mlist">Mail reports</a></li>
+<?php $pgpk = $lm->o_login->data('pgpKeyID');
+     if (!empty($pgpk)) { ?>
+      <li class="m_element"><a href="/pgps">PGP Key Status</a></li>
+<?php } ?>
       <li class="m_element"><a href="/add_clist">Add custom list</a></li>
       <li class="m_element"><a href="/register_srv">Add server</a></li>
       <li class="m_element"><a href="/add_report">Add report</a></li>

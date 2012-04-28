@@ -17,7 +17,6 @@
  if ($lm->isLogged) {
    $lo = $lm->o_login;
    if ($lo) {
-     $lo->fetchData();
      $val = $lo->data('patchPerPage');
      if ($val) $rpp = $val;
    }

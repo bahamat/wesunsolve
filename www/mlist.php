@@ -18,7 +18,6 @@
  }
  $lo = $lm->o_login;
  $lo->fetchMList();
- $lo->fetchData();
  $mlist = array();
  $table = "`mlist`";
  $index = "`id`";

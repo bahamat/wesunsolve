@@ -16,7 +16,6 @@
  if (!$lm->isLogged) {
    $content = new Template("./tpl/denied.tpl");
  } else {
-   $lo->fetchData();
    $lo->fetchUCLists();
    $lo->fetchUReports();
    $rpp = $config['serversPerPage'];

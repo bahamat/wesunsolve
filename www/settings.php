@@ -17,7 +17,6 @@
    $content = new Template("./tpl/denied.tpl");
    goto screen;
  }
- $lo->fetchData();
  if (isset($_POST['save'])) { /* Try to find every settings and update its value if necessary */
    $msg = "";
    foreach ($lo->_plist as $name => $param) {
@@ -98,6 +97,28 @@
 	$msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
         IrcMsg::add("[WWW] ".$lo->username." changed setting $name to $newval", MSG_ADM);
 	break;
+       case "H":
+        if ($val == $newval) {
+          continue; // nothing to change
+        }
+        /* @TODO: check that it is hexa! */
+        if (!ctype_xdigit($newval)) {
+          $error = "Value for \"$desc\" can only contain hexadecimal characters.";
+          $content = new Template("./tpl/settings.tpl");
+          $content->set("error", $error);
+          $content->set("login", $lo->username);
+          $content->set("lo", $lo);
+	  goto screen;
+        }
+        if (isset($param['objvar'])) {
+          $lo->{$name} = $newval;
+          $lo->update();
+        } else {
+          $lo->setData($name, $newval);
+        }
+        $msg .= "\"$desc\" Parameters has been updated with value $newval<br/>\n";
+        IrcMsg::add("[WWW] ".$lo->username." changed setting $name to $newval", MSG_ADM);
+        break;
        default:
 	continue;
         break;

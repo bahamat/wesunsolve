@@ -25,6 +25,9 @@ class loginCM
   public function startSession() {
     session_start();
     $this->checkLogin();
+    if ($this->o_login) {
+      $this->o_login->fetchData();
+    }
   }
 
   public function login($username, $password, $keep = 0) {

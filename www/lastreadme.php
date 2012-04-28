@@ -17,7 +17,6 @@
    $lo = $lm->o_login;
    $lo->fetchUCLists();
    if ($lo) {
-     $lo->fetchData();
      $val = $lo->data('patchPerPage');
      if ($val) $rpp = $val;
    }

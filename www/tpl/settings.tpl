@@ -70,7 +70,15 @@
          $val = "";
         }
         echo "<tr><th>$desc:</th><td><input class=\"field\" name=\"$name\" value=\"1\" ".$val." type=\"checkbox\"/></td></tr>\n";
-
+      break;
+      case "H": // Hexadecimal settings
+        $val = $lo->data($name);
+        global $config;
+        /* if val is not populated, try default value... */
+        if (!$val && isset($config[$name])) {
+          $val = $config[$name];
+        }
+        echo "<tr><th>$desc:</th><td><input class=\"field\" name=\"$name\" value=\"$val\" type=\"text\"/></td></tr>\n";
       break;
       default:
 	continue;

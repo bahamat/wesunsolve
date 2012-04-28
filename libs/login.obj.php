@@ -291,6 +291,9 @@ class Login extends mysqlObj
 						 "max" => 200,
 						 "min" => 1
 						),
+			  "pgpKeyID" => array("type" => "H",
+						  "desc" => "ID of your PGP Key",
+						),
 		  	  "is_log" => array("type" => "B",
                                                   "desc" => "Log your action for history purpose",
                                                  "objvar" => 1

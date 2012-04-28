@@ -26,7 +26,6 @@
  if ($lm->isLogged) {
    $lo = $lm->o_login;
    if ($lo) {
-     $lo->fetchData();
      $val = $lo->data('bugsPerPage');
      if ($val) $rpp = $val;
    }
