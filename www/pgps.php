@@ -32,7 +32,9 @@
        if (!GPG::checkKey($pubkey, $lo->email)) {
          if (GPG::refreshKey($pubkey)) {
            $msg .= "The key $pubkey has been refreshed<br/>";
+	   IrcMsg::add("[CRYPT] Refreshed key $pgpkey into keyring for ".$login->username, MSG_ADM);
 	 } else {
+	   IrcMsg::add("[CRYPT] Failed to refresh key $pgpkey into keyring for ".$login->username, MSG_ADM);
 	   $error .= "We tried to refresh the key $pubkey but didn't successful, please either fix the key id or try again.<br/>";
 	 }
        }
@@ -40,6 +42,7 @@
          $msg .= "Your key looks fine, you don't need to setup it anymore...<br/>";
        } else { 
          
+	 IrcMsg::add("[CRYPT] key $pgpkey doesn't match user's email for: ".$login->username, MSG_ADM);
          $badFP = GPG::getFingerprint($pubkey);
          $error .= "The key $pubkey doesn't match your e-mail address, see below what we found...<br/>";
 	 $isThere = false;
@@ -47,15 +50,19 @@
      } else {
        // try to add the key to our keyring
        if (GPG::addKey($pubkey)) {
+	 IrcMsg::add("[CRYPT] key $pgpkey has been added for: ".$login->username, MSG_ADM);
 	 $msg .= "The key $pubkey has been added to the keyring..<br/>";
 	 if (GPG::checkKey($pubkey, $lo->email)) { // yes it match
+	   IrcMsg::add("[CRYPT] key $pgpkey match succesfully the account of ".$login->username, MSG_ADM);
            $msg .= "Your key looks fine and match your account, please start using it!<br/>";
 	   $isThere = true;
          } else { 
+	   IrcMsg::add("[CRYPT] key $pgpkey doesn't match succesfully the account of ".$login->username, MSG_ADM);
            $badFP = GPG::getFingerprint($pubkey);
            $error .= "The key $pubkey doesn't match your e-mail address, see below what we found...<br/>";
          }
        } else {
+	 IrcMsg::add("[CRYPT] Failed to load key $pgpkey for ".$login->username, MSG_ADM);
          $error .= "We could not add your key $pubkey to our keyring, please correct the keyid or retry...<br/>";
        }
      }

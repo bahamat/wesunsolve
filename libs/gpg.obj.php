@@ -103,6 +103,28 @@ class GPG
     return false;
   }
 
+  public static function signTxt($pubkey, $body) {
+    global $config;
+
+    $of = tempnam($config['tmppath'], 'out-');
+    $if = tempnam($config['tmppath'], 'in-');
+    @unlink($of);
+    @file_put_contents($if, $body);
+
+    $cmd = $config['gpgbin'].' '.$config['gpgopt'].' -a --recipient "'.$pubkey.'" --sign --digest-algo sha1 -t -o "'.$of.'" "'.$if.'" 2>&1';
+    $rc = 0;
+    $output = array();
+    @exec($cmd, $output, $rc);
+    if (!$rc) {
+      $crypted = @file_get_contents($of);
+      @unlink($if);
+      @unlink($of);
+      return $crypted;
+    }
+    return false;
+
+  }
+
   public static function cryptTxt($pubkey, $body) {
     global $config;
 

@@ -146,25 +146,46 @@ class MList extends mysqlObj
       }
     }
 
+    $headers = "";
+    $headers = "From: $from\r\n";
+    $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
+    $headers .= "X-Sender: WeSunSolve v2.0\r\n";
     if (!$sCrypt) {
+      $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+      $headers .= "Content-Transfer-Encoding: 7bit\r\n";
+      $headers .= "MIME-Version: 1.0\r\n";
       mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
     } else {
-      require_once('Mail.php');
-      require_once('Mail/mime.php');
-      $text = 'You must decrypt the html version of this email to read the report.';
-      $crlf = "\n";
-      $hdrs = array(
-    			'From' => $from,
-    			'Reply-to' => $config['mailFrom'],
-    			'Subject' => "[SUNSOLVE] ".$subject
-	      );
-      $mime = new Mail_mime(array('eol' => $crlf, 'html_encoding' => 'multipart/encrypted'));
-      $mime->setTXTBody($text);
-      $mime->addAttachment($content, 'multipart/encrypted; protocol="application/pgp-encrypted";', 'report.html', false);
-      $body = $mime->get();
-      $hdrs = $mime->headers($hdrs);
-      $mail = &Mail::factory('mail');
-      $mail->send($login->email, $hdrs, $body);
+/*
+http://www.kfwebs.com/emailclass.php.txt
+http://www.ietf.org/rfc/rfc2015.txt
+http://de.wikipedia.org/wiki/PGP/MIME
+*/
+      $bound = '-----='.md5(uniqid(rand()));
+      $bound2 = '-----='.md5(uniqid(rand()));
+
+      $headers .= "MIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: multipart/encrypted; protocol=\"application/pgp-encrypted\"; boundary=\"".$bound."\"\r\n";
+      $mime = "";
+      $pgpmime="";
+
+      $mime .= "--".$bound."\r\nContent-Type: application/pgp-encrypted\r\n\r\nVersion: 1\r\n\r\n";
+      $mime .= "--".$bound."\r\nContent-Type: application/octet-stream\r\n\r\n";
+      $pgpmime .= "Content-Type: multipart/mixed;boundary=\"".$bound2."\"\r\n\r\nThis is a multi-part message in MIME format.\r\n\r\n";
+      $pgpmime .= "--".$bound2."\r\nContent-Type: text/html; charset=\"utf-8\"\r\nContent-Transfer-Encoding: 7bit\r\nContent-Disposition: inline\r\n\r\n".$content."\r\n\r\n";
+   
+      $pgpmime .= "\r\n--".$bound2."--\r\n\r\n";
+   
+      $pgpmime = GPG::cryptTxt($pgpkey, $pgpmime);
+      if (!$pgpmime) {
+        IrcMsg::add("[CRYPT] Failed to encrypt content for ".$login->username." with key $pgpkey for ".$login->email, MSG_ADM);
+        return false;
+      }
+      $mime .= $pgpmime;
+      $mime .= "\r\n--".$bound."--";
+
+
+      mail($login->email, "[SUNSOLVE] ".$subject, $mime, $headers);
     }
 
     return true;
