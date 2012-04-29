@@ -19,7 +19,7 @@
        <div class="clear clearfix"></div>
     <?php if (isset($error)) { ?><p class="red"><?php if (isset($error) && !empty($error)) echo $error; ?></p><?php } ?>
     <?php if (isset($msg)) { ?><p class="red"><?php if (isset($msg) && !empty($msg)) echo $msg; ?></p><?php } ?>
-     <form method="POST" action="/ap_umod/form/1">
+     <form method="POST" action="/ap_umod/i/<?php echo $l->id; ?>/form/1">
       <table class="ctable">
         <tr><th>Login:</th><td><?php echo $l->username; ?></td></tr>
         <tr><th>Password:</th><td><input style="width: 300px;" type="password" name="u_password"/></td></tr>
@@ -29,7 +29,6 @@
         <tr><th>is_enabled</th><td><input type="checkbox" name="u_enabled" <?php if ($l->is_enabled) echo "checked"; ?> /></td></tr>
         <tr><th>is_dl</th><td><input type="checkbox" name="u_dl" <?php if ($l->is_dl) echo "checked"; ?> /></td></tr>
         <tr><th>is_log</th><td><input type="checkbox" name="u_log" <?php if ($l->is_log) echo "checked"; ?> /></td></tr>
-        <tr><th>is_api</th><td><input type="checkbox" name="u_api" <?php if ($l->data("apiAccess")) echo "checked"; ?> /></td></tr>
         <tr><td></td><td><input type="submit" class="submit" name="save" value="Save changes"/></td></tr>
       </table>
      </form>

@@ -32,7 +32,7 @@
 <?php $i=1; foreach ($llogins as $l) { ?>
      <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
        <td><?php echo date(HTTP::getDateTimeFormat(), $l->last_seen); ?></td>
-       <td><?php echo $l->username; ?></td>
+       <td><a href="/ap_umod/i/<?php echo $l->id; ?>"><?php echo $l->username; ?></a></td>
      </tr>
 <?php $i++; } ?>
    </table>

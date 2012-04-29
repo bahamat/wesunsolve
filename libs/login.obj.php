@@ -22,7 +22,6 @@ class Login extends mysqlObj
   public $added = -1;
   public $last_seen = -1;
   public $is_admin = 0;
-  public $is_api = 0;
   public $is_dl = 0;
   public $is_log = 1;
   public $is_enabled = 1;
@@ -317,7 +316,6 @@ class Login extends mysqlObj
                         "last_seen" => SQL_PROPE,
                         "is_admin" => SQL_PROPE,
                         "is_dl" => SQL_PROPE,
-                        "is_api" => SQL_PROPE,
                         "is_log" => SQL_PROPE,
                         "is_enabled" => SQL_PROPE,
                         "fullname" => SQL_PROPE
@@ -333,7 +331,6 @@ class Login extends mysqlObj
                         "last_seen" => "last_seen",
                         "is_admin" => "is_admin",
                         "is_dl" => "is_dl",
-                        "is_api" => "is_api",
                         "is_log" => "is_log",
                         "is_enabled" => "is_enabled",
                         "fullname" => "fullname"

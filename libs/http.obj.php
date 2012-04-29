@@ -172,9 +172,9 @@ class HTTP
 
   public static function eval_img($cond) {
     if ($cond) {
-      return '<img src="./img/tick.png" alt="true"/>';
+      return '<img src="/img/tick.png" alt="true"/>';
     } else {
-      return '<img src="./img/cross.png" alt="false"/>';
+      return '<img src="/img/cross.png" alt="false"/>';
     }
   }
 

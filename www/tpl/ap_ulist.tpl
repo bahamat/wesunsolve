@@ -26,6 +26,7 @@
        </div>
        <div class="clear clearfix"></div>
   <p><?php echo $title; ?></p>
+  <p><form action="/ap_ulist" method="GET"><input type="text" name="filter" value=""/><input type="submit" name="f" value="filter"/></form></p>
   <div class="ctable">
   <p class="paging"><?php echo $pagination; ?></p>
   <table id="tbl_patches" class="ctable">

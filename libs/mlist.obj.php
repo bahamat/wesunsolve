@@ -115,11 +115,11 @@ class MList extends mysqlObj
     global $config;
     $from = '"'.$config['mailName']."\" <".$config['mailFrom'].">";
     $headers = "";
-    $headers = "From: $from\r\n";
-    $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
-    $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
-    $headers .= "Content-Transfer-Encoding: 7bit\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
+    $headers = "From: $from\n";
+    $headers .= "Reply-to: ".$config['mailFrom']."\n";
+    $headers .= "Content-Type: text/html; charset=\"utf-8\"\n";
+    $headers .= "Content-Transfer-Encoding: 7bit\n";
+    $headers .= "MIME-Version: 1.0\n";
 
 /* @TODO: Fix crypted mail to be rendered properly in HTML in the MUA */
     $login->fetchData();
@@ -139,51 +139,57 @@ class MList extends mysqlObj
     }
     if ($sCrypt) {
       $clearContent = $content;
-      $content = GPG::cryptTxt($pgpkey, $clearContent);
+      $pgpmime = '';
+      $bound = '------------'.substr(strtoupper(md5(uniqid(rand()))), 0, 25);
+      $pgpmime .= "Content-Type: multipart/alternative;\r\n boundary=\"$bound\"\r\n\r\n";
+      $pgpmime .= "This is a multi-part message in MIME format.\r\n";
+      $pgpmime .= "--$bound\r\n";
+      $pgpmime .= "Content-Type: text/plain; charset=utf-8\r\n";
+      $pgpmime .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
+      $pgpmime .= $config['txtMailVersion']."\r\n\r\n";
+      $pgpmime .= "--$bound\r\n";
+      $pgpmime .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+      $pgpmime .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
+      $pgpmime .= $clearContent."\r\n";
+      $pgpmime .= "--$bound--\r\n";
+      $content = GPG::cryptTxt($pgpkey, $pgpmime);
       if (!$content) {
         $content = $clearContent;
+	$sCrypt = false;
         IrcMsg::add("[CRYPT] Failed to encrypt content for ".$login->username." with key $pgpkey for ".$login->email, MSG_ADM);
       }
     }
 
-    $headers = "";
+    $headers = '';
     $headers = "From: $from\r\n";
     $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
     $headers .= "X-Sender: WeSunSolve v2.0\r\n";
+    $headers .= "Message-ID: <".time()."@".$_SERVER['SERVER_NAME'].">\r\n"; 
+    $headers .= "Date: " . date("r") . "\r\n";
+
     if (!$sCrypt) {
       $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
       $headers .= "Content-Transfer-Encoding: 7bit\r\n";
       $headers .= "MIME-Version: 1.0\r\n";
       mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
     } else {
-/*
-http://www.kfwebs.com/emailclass.php.txt
-http://www.ietf.org/rfc/rfc2015.txt
-http://de.wikipedia.org/wiki/PGP/MIME
-*/
-      $bound = '-----='.md5(uniqid(rand()));
-      $bound2 = '-----='.md5(uniqid(rand()));
-
+      $bound = '------------enig'.substr(strtoupper(md5(uniqid(rand()))), 0, 25);
       $headers .= "MIME-Version: 1.0\r\n";
-      $headers .= "Content-Type: multipart/encrypted; protocol=\"application/pgp-encrypted\"; boundary=\"".$bound."\"\r\n";
-      $mime = "";
-      $pgpmime="";
-
-      $mime .= "--".$bound."\r\nContent-Type: application/pgp-encrypted\r\n\r\nVersion: 1\r\n\r\n";
-      $mime .= "--".$bound."\r\nContent-Type: application/octet-stream\r\n\r\n";
-      $pgpmime .= "Content-Type: multipart/mixed;boundary=\"".$bound2."\"\r\n\r\nThis is a multi-part message in MIME format.\r\n\r\n";
-      $pgpmime .= "--".$bound2."\r\nContent-Type: text/html; charset=\"utf-8\"\r\nContent-Transfer-Encoding: 7bit\r\nContent-Disposition: inline\r\n\r\n".$content."\r\n\r\n";
-   
-      $pgpmime .= "\r\n--".$bound2."--\r\n\r\n";
-   
-      $pgpmime = GPG::cryptTxt($pgpkey, $pgpmime);
-      if (!$pgpmime) {
-        IrcMsg::add("[CRYPT] Failed to encrypt content for ".$login->username." with key $pgpkey for ".$login->email, MSG_ADM);
-        return false;
-      }
-      $mime .= $pgpmime;
-      $mime .= "\r\n--".$bound."--";
-
+      $headers .= "Content-Type: multipart/encrypted;\r\n";
+      $headers .= " protocol=\"application/pgp-encrypted\";\r\n";
+      $headers .= " boundary=\"$bound\"\r\n\r\n";
+      $mime = '';
+      $mime .= "This is an OpenPGP/MIME encrypted message (RFC 2440 and 3156)\r\n";
+      $mime .= "--$bound\r\n";
+      $mime .= "Content-Type: application/pgp-encrypted\r\n";
+      $mime .= "Content-Description: PGP/MIME version identification\r\n\r\n";
+      $mime .= "Version: 1\r\n\r\n";
+      $mime .= "--$bound\r\n";
+      $mime .= "Content-Type: application/octet-stream; name=\"encrypted.asc\"\r\n";
+      $mime .= "Content-Description: OpenPGP encrypted message\r\n";
+      $mime .= "Content-Disposition: inline; filename=\"encrypted.asc\"\r\n\r\n";
+      $mime .= $content."\r\n";
+      $mime .= "--$bound--";
 
       mail($login->email, "[SUNSOLVE] ".$subject, $mime, $headers);
     }

@@ -29,12 +29,18 @@
      $page = 1;
    }
    $nb_page = 0;
+   if (isset($_GET['filter']) && !empty($_GET['filter'])) {
+     $filter = $_GET['filter'];
+   }
 
    $patches = array();
    $table = "`login`";
    $index = "`id`";
    $icount = "count(`id`) as c";
    $where = '';
+   if (isset($filter)) {
+     $where .= ' WHERE `username` LIKE \'%'.$filter.'%\'';
+   }
    if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
    {
      $nb = 0;
@@ -62,7 +68,7 @@
    }
  
    if ($start < 0) $start = 0;
-   $where = " ORDER BY `username` ASC ";
+   $where .= " ORDER BY `username` ASC ";
    $where .= " LIMIT $start,$rpp";
  
    if ($nb && ($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
