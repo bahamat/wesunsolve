@@ -164,7 +164,7 @@ class MList extends mysqlObj
     $headers = "From: $from\r\n";
     $headers .= "Reply-to: ".$config['mailFrom']."\r\n";
     $headers .= "X-Sender: WeSunSolve v2.0\r\n";
-    $headers .= "Message-ID: <".time()."@".$_SERVER['SERVER_NAME'].">\r\n"; 
+    if (isset($_SERVER['SERVER_NAME'])) $headers .= "Message-ID: <".time()."@".$_SERVER['SERVER_NAME'].">\r\n"; 
     $headers .= "Date: " . date("r") . "\r\n";
 
     if (!$sCrypt) {

@@ -15,6 +15,7 @@
  $lo = $lm->o_login;
  if (!$lm->isLogged || !$lo->is_admin || !isset($_GET['i']) || empty($_GET['i'])) {
    $content = new Template("./tpl/denied.tpl");
+   goto screen;
  } else {
    $lid = $_GET['i'];
    $content = new Template("./tpl/ap_umod.tpl");

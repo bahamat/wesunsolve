@@ -15,6 +15,7 @@
  $lo = $lm->o_login;
  if (!$lm->isLogged || !$lo->is_admin) {
    $content = new Template("./tpl/denied.tpl");
+   goto screen;
  } else {
    $content = new Template("./tpl/apanel.tpl");
    $content->set('flogins', LoginFailed::fetchLast(20));
@@ -22,6 +23,7 @@
 
  }
  
+screen:
  $index = new Template("./tpl/index.tpl");
  $head = new Template("./tpl/head.tpl");
  $menu = new Template("./tpl/menu.tpl");
