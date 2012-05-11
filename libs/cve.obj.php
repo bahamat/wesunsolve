@@ -54,9 +54,12 @@ class CVE extends mysqlObj
     return 0;
   }
 
-
-  function link() {
-    return '<a href="/cve/id/'.$this->id.'">'.$this->name.'</a>';
+  function link($full=0) {
+    if ($full) { 
+      return '<a href="http://wesunsolve.net/cve/id/'.$this->id.'">'.$this->name.'</a>';
+    } else {
+      return '<a href="/cve/id/'.$this->id.'">'.$this->name.'</a>';
+    }
   }
 
   function __toString() {

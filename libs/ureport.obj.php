@@ -125,10 +125,10 @@ EOF;
 
     foreach($this->o_plevel->a_ppatches as $p) {
       $txt .= "<tr>\n";
-      $txt .= '<td '.$p->color().'><a href="/patch/id/'.$p->name().'">'.$p->name()."</a></td>\n";
+      $txt .= '<td '.$p->color().'>'.$p->link(1)."</a></td>\n";
       $txt .= '<td>'.date(HTTP::getDateFormat(), $p->releasedate)."</td>\n";
       if ($p->o_current) {
-        $txt .= '<td><a href="/patch/id/'.$p->o_current->name().'">'.$p->o_current->name()."</a></td>\n";
+        $txt .= '<td>'.$p->o_current->link(1)."</td>\n";
       } else {
         $txt .= "<td>None</td>\n";
       }
@@ -137,7 +137,7 @@ EOF;
     $txt .= <<< EOF
   </table>
   </div>
-  <p><br/><a href="#top"><img alt="back to top" src="/img/arrow_up.png">back to top</a></p>
+  <p><br/><a href="#top"><img alt="back to top" src="http://wesunsolve.net/img/arrow_up.png">back to top</a></p>
   <h3><a id="cve_fix"></a>CVE Fixed by list of patches</h3>
   <div class="ctable">
   <table id="tbl_cves" class="ctable">
@@ -155,12 +155,12 @@ EOF;
       $txt .= "<tr>\n";
       $txt .= '<td '.$p->color().'>';
       if ($p->isNew()) { 
-        $txt .= '<img class="newimg" src="/img/new.png" alt="New"/>'."\n";
+        $txt .= '<img class="newimg" src="http://wesunsolve.net/img/new.png" alt="New"/>'."\n";
       } 
-      $txt .= $p->link();
+      $txt .= $p->link(1);
       $txt .= "</td>\n";
       $txt .= '<td style="text-align: left">'.$p->o_cve->affect."</td>\n";
-      $txt .= '<td '.$p->o_cve->color().'>'.$p->o_cve->link()."</td>\n";
+      $txt .= '<td '.$p->o_cve->color().'>'.$p->o_cve->link(1)."</td>\n";
       $txt .= '<td>'.$p->o_cve->score."</td>\n";
       $txt .= '<td>'.date(HTTP::getDateFormat(), $p->releasedate)."</td>\n";
       $txt .= "</tr>\n";
@@ -170,7 +170,7 @@ EOF;
     $txt .= <<< EOF
 </table>
   </div>
-  <p><br/><a href="#top"><img alt="back to top" src="/img/arrow_up.png">back to top</a></p>
+  <p><br/><a href="#top"><img alt="back to top" src="http://wesunsolve.net/img/arrow_up.png">back to top</a></p>
   <h3><a id="cve_acc"></a>CVE fixed by accumulated patches</h3>
   <div class="ctable">
   <table id="tbl_cves" class="ctable">
@@ -188,7 +188,7 @@ EOF;
       $txt .= "<tr>\n";
       $txt .= '<td '.$p->color().'>';
       if ($p->isNew()) { 
-        $txt .= '<img class="newimg" src="/img/new.png" alt="New"/>'."\n";
+        $txt .= '<img class="newimg" src="http://wesunsolve.net/img/new.png" alt="New"/>'."\n";
       } 
       $txt .= $p->link();
       $txt .= "</td>\n";
@@ -203,7 +203,7 @@ EOF;
     $txt .= <<< EOF
 </table>
   </div>
-  <p><br/><a href="#top"><img alt="back to top" src="/img/arrow_up.png">back to top</a></p>
+  <p><br/><a href="#top"><img alt="back to top" src="http://wesunsolve.net/img/arrow_up.png">back to top</a></p>
 EOF;
 
     $txt .= "\n".$config['mlist']['footer']."\n";

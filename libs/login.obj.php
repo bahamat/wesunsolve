@@ -261,6 +261,22 @@ class Login extends mysqlObj
   }
   
 
+  public function delete() {
+
+    /* delete every dependancy first */
+    foreach($this->a_uclists as $l) {
+      $l->delete();
+    }
+    foreach($this->a_reports as $r) {
+      $r->delete();
+    }
+    foreach($this->a_servers as $s) {
+      $s->delete();
+    }
+    
+    parent::delete();
+  }
+
  /**
   * ctor
   */

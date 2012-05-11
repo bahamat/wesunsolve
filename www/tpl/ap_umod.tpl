@@ -32,6 +32,7 @@
         <tr><td></td><td><input type="submit" class="submit" name="save" value="Save changes"/></td></tr>
       </table>
      </form>
+     <p><a href="/ap_udel/id/<?php echo $l->id; ?>">Delete</a></p>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->
  </div><!-- d_content -->

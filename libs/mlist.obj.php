@@ -171,7 +171,7 @@ class MList extends mysqlObj
       $headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
       $headers .= "Content-Transfer-Encoding: 7bit\r\n";
       $headers .= "MIME-Version: 1.0\r\n";
-      mail($login->email, "[SUNSOLVE] ".$subject, $content, $headers);
+      mail($login->email, $config['mailSubject'].' '.$subject, $content, $headers);
     } else {
       $bound = '------------enig'.substr(strtoupper(md5(uniqid(rand()))), 0, 25);
       $headers .= "MIME-Version: 1.0\r\n";
@@ -191,7 +191,7 @@ class MList extends mysqlObj
       $mime .= $content."\r\n";
       $mime .= "--$bound--";
 
-      mail($login->email, "[SUNSOLVE] ".$subject, $mime, $headers);
+      mail($login->email, $config['mailSubject'].' '.$subject, $mime, $headers);
     }
 
     return true;

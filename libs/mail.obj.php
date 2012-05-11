@@ -51,7 +51,7 @@ class Mail
     $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
-    mail($l->email, "[SUNSOLVE] Reset your password", $msg, $headers);
+    mail($l->email, $config['mailSubject'].' Reset your password', $msg, $headers);
   }
 
   public static function sendConfirm2($l, $code) {
@@ -70,7 +70,7 @@ class Mail
     $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
-    mail($l->email, "[SUNSOLVE] Confirm your account", $msg, $headers);
+    mail($l->email, $config['mailSubject'].' Confirm your account', $msg, $headers);
   }
 
   public static function sendConfirm($l, $code) {
@@ -87,13 +87,13 @@ class Mail
     $headers .= "Reply-to: admin@wesunsolve.net";
     $headers .= "Content-Type: text/plain; charset=\"utf-8\""; 
 
-    mail($l->email, "[SUNSOLVE] Confirm your account", $msg, $headers);
+    mail($l->email, $config['mailSubject'].' Confirm your account', $msg, $headers);
   }
 
   public static function sendAdmin($subject, $msg, $from="") {
     global $config;
     $from = '"'.$config['mailName'].'" <'.$config['mailFrom'].">";
-    mail($config['admin'], "[SUNSOLVE] $subject", "--\n".$msg."\n\n--\n", "From: $from");
+    mail($config['admin'], $config['mailSubject']." $subject", "--\n".$msg."\n\n--\n", "From: $from");
   }
 }
 

@@ -29,11 +29,11 @@
       <tr><td>Comment</td><td><input type="text" value="<?php if (isset($comment)) echo $comment; ?>" name="comment"></td></tr>
       <tr><td>Current ?</td><td><input type="checkbox" <?php if (isset($current) && $current) echo "checked"; ?> name="is_current"></td></tr>
       <tr><td>Applied ?</td><td><input type="checkbox" <?php if (isset($applied) && $applied) echo "checked"; ?> name="is_applied"></td></tr>
-      <tr><td>showrev-p.out</td>
-	  <td><input type="file" name="showrev"/></td>
-      </tr>
       <tr><td>pkginfo-l.out</td>
 	  <td><input type="file" name="pkginfo"/></td>
+      </tr>
+      <tr><td>showrev-p.out</td>
+	  <td><input type="file" name="showrev"/></td>
       </tr>
       <tr><td></td><td><input type="submit" value="Register" name="save"></td></tr>
     </table>

@@ -19,7 +19,7 @@
        <div class="clear clearfix"></div>
     <p>You can see here details of changes made</p>
     <pre>
-<?php passthru("cd /srv/sunsolve/;/usr/bin/git log"); ?>
+<?php passthru("cd /srv/sunsolve/;/usr/bin/git log --shortstat"); ?>
     </pre>
    </div><!-- d_content_box -->
   </div><!-- grid_19 -->

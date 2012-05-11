@@ -33,14 +33,20 @@
    if (isset($_GET['filter']) && !empty($_GET['filter'])) {
      $filter = $_GET['filter'];
    }
+   if (isset($_GET['efilter']) && !empty($_GET['efilter'])) {
+     $efilter = $_GET['efilter'];
+   }
 
    $patches = array();
    $table = "`login`";
    $index = "`id`";
    $icount = "count(`id`) as c";
-   $where = '';
+   $where = 'WHERE 1=1 ';
    if (isset($filter)) {
-     $where .= ' WHERE `username` LIKE \'%'.$filter.'%\'';
+     $where .= ' AND `username` LIKE \'%'.$filter.'%\'';
+   }
+   if (isset($efilter)) {
+     $where .= ' AND `email` LIKE \'%'.$efilter.'%\'';
    }
    if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
    {
