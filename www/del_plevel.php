@@ -46,7 +46,7 @@
    goto screen;
  }
 
- if ($lm->o_login->id != $s->id_owner) {
+ if ($lm->o_login->id != $s->id_owner && !($lm->o_login->checkServerAccess($s) === true)) {
    $content = new Template("./tpl/error.tpl");
    $error = "You have no rights to view this server!";
    $content->set("error", $error);

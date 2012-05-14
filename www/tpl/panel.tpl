@@ -94,7 +94,7 @@
      <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
       <td><?php echo $srv->name; ?></td>
       <td><?php echo $srv->comment; ?></td>
-      <td style="text-align: center;"><?php echo count($srv->a_plevel); ?></td>
+      <td style="text-align: center;"><?php echo $srv->countPLevels(); ?></td>
       <td style="text-align: center;"><a href="/plevel/s/<?php echo $srv->id; ?>">View</a></td>
       <td style="text-align: center;"><a href="/add_plevel/s/<?php echo $srv->id; ?>">Add</a></td>
       <td style="text-align: center;"><a href="/del_srv/s/<?php echo $srv->id; ?>">Delete</a></td>

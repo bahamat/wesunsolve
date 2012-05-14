@@ -38,6 +38,14 @@
       echo '<option value="'.$p->id.'">'.$s->name.' - '.$p->name.'</option>\n';
     }
   }
+  foreach ($l->a_mgroups as $g) {
+    foreach($g->a_srv as $s) {
+      foreach($s->a_plevel as $p) {
+        echo '<option value="'.$p->id.'">'.$s->name.' - '.$p->name.'</option>\n';
+      }
+    }
+  }
+
 ?>
        </select>
        </td>

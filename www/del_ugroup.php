@@ -29,33 +29,33 @@
    goto screen;
  }
 
- if (!isset($_GET['r']) || empty($_GET['r'])) {
+ if (!isset($_GET['id']) || empty($_GET['id'])) {
    $content = new Template("./tpl/error.tpl");
-   $error = "No report id specified.";
+   $error = "No id of group specified.";
    $content->set("error", $error);
    goto screen;
  }
- $r = new UReport($_GET['r']);
- if ($r->fetchFromId()) {
+ $s = new UGroup();
+ $s->id = $_GET['id'];
+ if ($s->fetchFromId()) {
    $content = new Template("./tpl/error.tpl");
-   $error = "Report not found in database";
+   $error = "Group not found in database";
    $content->set("error", $error);
    goto screen;
  }
 
- if ($lm->o_login->id != $r->id_owner) {
+ if ($lm->o_login->id != $s->id_owner) {
    $content = new Template("./tpl/error.tpl");
-   $error = "You have no rights to view this report!";
+   $error = "You have no rights to view this group!";
    $content->set("error", $error);
    goto screen;
  }
  
- $r->run();
- $r->sendMail(true);
- IrcMsg::add("[WWW] ".$lm->o_login->username." sent $r", MSG_ADM);
+ IrcMsg::add("[WWW] ".$lm->o_login->username." removed user group $s from his account", MSG_ADM);
+ $s->delete();
 
  $content = new Template("./tpl/message.tpl");
- $content->set("msg", "Report has been sent.");
+ $content->set("msg", "Server has been removed.");
 
 screen:
   $back = array('name' => 'Panel', 'href' => '/panel');

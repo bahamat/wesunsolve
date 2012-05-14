@@ -41,7 +41,7 @@
      goto screen;
    }
    $pl->fetchServer();
-   if ($lm->o_login->id != $pl->o_server->id_owner) {
+   if ($lm->o_login->id != $pl->o_server->id_owner && !$lm->o_login->is_admin && $lm->o_login->checkServerAccess($pl->o_server) === null) {
      $content = new Template("./tpl/add_report.tpl");
      $content->set("error", "You don't own this patch level, you little hacker!");
      $lm->o_login->fetchServers();
@@ -112,13 +112,15 @@
 
  } else {
    $lm->o_login->fetchServers();
+   $lm->o_login->fetchMServers(true);
    $content = new Template("./tpl/add_report.tpl");
-   $content->set("as", $lm->o_login->a_servers);
+   $content->set('as', $lm->o_login->a_servers);
+   $content->set('l', $lm->o_login);
  }
 
 screen:
   $index->set("content", $content);
-  if (isset($s)) $content->set("s", $s);
+  if (isset($s)) $content->set('s', $s);
   $index->set("head", $head);
   $index->set("menu", $menu);
   $index->set("foot", $foot);

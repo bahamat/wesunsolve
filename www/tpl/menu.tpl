@@ -47,6 +47,7 @@
       <li class="m_element"><a href="/ap_ulist">User list</a></li>
 <?php   } ?>
       <li class="m_element"><a href="/panel">Panel</a></li>
+      <li class="m_element"><a href="/ugroups">My Groups</a></li>
       <li class="m_element"><a href="/mlist">Mail reports</a></li>
 <?php $pgpk = $lm->o_login->data('pgpKeyID');
      if (!empty($pgpk)) { ?>

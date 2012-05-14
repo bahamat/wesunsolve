@@ -50,7 +50,6 @@
    $str = '/panel';
 
    foreach($lo->a_uclists as $l) $l->fetchPatches(0);
-   foreach($lo->a_servers as $srv) $srv->fetchPLevels(0);
   
     $news = array();
     $table = "`rss_news`";

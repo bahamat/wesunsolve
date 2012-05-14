@@ -38,8 +38,8 @@
     <lastBuildDate><?php echo $now; ?></lastBuildDate>
     <docs>http://wesunsolve.net/rss/bundles</docs>
     <generator>We Sun Solve</generator>
-    <managingEditor>tgo@ians.be</managingEditor>
-    <webMaster>tgo@ians.be</webMaster>
+    <managingEditor>tgo@espix.net</managingEditor>
+    <webMaster>tgo@espix.net</webMaster>
 <?php foreach ($bundles as $p) { ?>
     <item>
      <title><?php echo $p->filename; ?>: <?php echo $p->synopsis; ?></title>

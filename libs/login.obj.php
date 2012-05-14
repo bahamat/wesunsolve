@@ -2,7 +2,7 @@
 /**
  * Login object
  *
- * @author Gouverneur Thomas <tgo@ians.be>
+ * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2011, Gouverneur Thomas
  * @version 1.0
  * @package objects
@@ -33,6 +33,95 @@ class Login extends mysqlObj
   public $a_uclists = array();
   public $a_mlists = array();
   public $a_reports = array();
+
+  public $a_mgroups = array(); // Groups that I own
+  public $a_ugroups = array(); // Groups that I'm part of
+
+  public function checkServerAccess($s) {
+/* select id_srv,w 
+   from 
+	jt_ugroup_srv, 
+	jt_ugroup_users, 
+	u_group 
+   where 
+	jt_ugroup_users.id_ugroup=jt_ugroup_srv.id_ugroup 
+   and  u_group.id=jt_ugroup_users.id_ugroup 
+   and  jt_ugroup_users.id_user=136 
+   and  jt_ugroup_srv.id_srv= 
+   ORDER BY `w` DESC
+   LIMIT 0,1
+ */
+    $table = '`jt_ugroup_srv`,`jt_ugroup_users`';
+    $index = '`id_srv`,`w`';
+    $where = ' WHERE `jt_ugroup_users`.`id_ugroup`=`jt_ugroup_srv`.`id_ugroup`';
+    $where .= ' AND jt_ugroup_users.id_user='.$this->id;
+    $where .= ' AND jt_ugroup_srv.id_srv='.$s->id;
+    $where .= ' ORDER BY `w` DESC';
+    $where .= ' LIMIT 0,1';
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      if (isset($idx[0])) {
+        if ($idx[0]['w']) {
+          return true;
+	} else {
+          return false;
+	}
+      }
+    }
+    return null;
+  }
+
+  public function fetchMServers() {
+    $table = '`jt_ugroup_srv`,`jt_ugroup_users`';
+    $index = 'distinct `id_srv`,`w`';
+    $where = ' WHERE `jt_ugroup_users`.`id_ugroup`=`jt_ugroup_srv`.`id_ugroup`';
+    $where .= ' AND jt_ugroup_users.id_user='.$this->id;
+    $where .= ' ORDER BY `id_srv` ASC';
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $s = new Server($t['id_srv']);
+        $s->fetchFromId();
+        $s->w = $t['w'];
+        array_push($this->a_servers, $s);
+      }
+    }
+    return null;
+  }
+
+  public function fetchMGroups() {
+    $this->a_mgroups  = array();
+    $table = "`u_group`";
+    $index = "`id`";
+    $where = " WHERE `id_owner`='".$this->id."' ORDER BY `name` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UGroup($t['id']);
+        $k->fetchFromId();
+        array_push($this->a_mgroups, $k);
+      }
+    }
+    return 0;
+  }
+
+  public function fetchUGroups() {
+    $this->a_ugroups  = array();
+    $table = "`u_group`,`jt_ugroup_users`";
+    $index = "`id`";
+    $where = " WHERE `id`=`id_ugroup` AND `id_user`='".$this->id."' ORDER BY `name` ASC";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new UGroup($t['id']);
+        $k->fetchFromId();
+        array_push($this->a_ugroups, $k);
+      }
+    }
+    return 0;
+  }
 
   public function countServers() {
     return MysqlCM::getInstance()->count("u_servers", " WHERE `id_owner`='".$this->id."'");
@@ -155,7 +244,7 @@ class Login extends mysqlObj
   public function fetchServers($start=0, $nb=65535) {
     $table = "`u_servers`";
     $index = "`id`";
-    $where = "WHERE `id_owner`='".$this->id."' LIMIT $start,$nb";
+    $where = "WHERE `id_owner`='".$this->id."' ORDER BY `name` ASC LIMIT $start,$nb";
 
     if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
     {

@@ -24,9 +24,21 @@ class Server extends mysqlObj
   public $o_owner = null;
   public $a_plevel = array();
 
+  /* n2n table attributes */
+  public $w = 0;
+  public $group = '';
+
   public function __toString() {
     return $this->name;
   }
+
+  public function countPLevels() {
+    $c = count($this->a_plevel);
+    if ($c) return $c;
+
+    return MysqlCM::getInstance()->count("u_plevel", " WHERE `id_server`='".$this->id."'");
+  }
+ 
 
   public function fetchPLevels($all=1) {
     $table = "`u_plevel`";
