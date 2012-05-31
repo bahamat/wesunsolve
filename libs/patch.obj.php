@@ -270,8 +270,8 @@ class Patch extends mysqlObj implements JSONizable
 
   public function link($full=0, $color=false) {
 
-    if ($this->added <= 0)
-      return $this->name();
+ //   if ($this->added <= 0)
+//      return $this->name();
 
     $link = "";
     $cl = "";

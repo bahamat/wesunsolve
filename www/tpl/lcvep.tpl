@@ -55,7 +55,7 @@
     <th>Patch release date</th>
    </tr>
 <?php $i=0; foreach($patches as $p) { ?>
-   <tr>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } echo $p->link(); ?></td>
     <td style="text-align: left"><?php echo $p->o_cve->affect; ?></td>
     <td <?php echo $p->o_cve->color(); ?>><?php echo $p->o_cve->link(); ?></td>

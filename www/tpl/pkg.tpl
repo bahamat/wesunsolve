@@ -4,7 +4,7 @@
 ?>
     <div id="d_content">
      <h2 class="grid_10 push_1 alpha omega">Package <?php echo $pkg->shortName(); ?></h2>
-     <p id="titlecomment" class="push_4 grid_5"><?php echo count($pkg->a_comments); ?> Comments | <a href="#comments">view</a> / <a href="/add_comment/id_on/<?php echo $pkg->id; ?>/type/pkg">add</a></p>
+     <p id="<?php if (count($pkg->a_comments)) { echo "titlecomment2"; } else { echo "titlecomment"; } ?>" class="push_4 grid_5"><?php echo count($pkg->a_comments); ?> Comment(s) | <a href="#comments">view</a> / <a href="/add_comment/id_on/<?php echo $pkg->name(); ?>/type/pkg">add</a></p>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">

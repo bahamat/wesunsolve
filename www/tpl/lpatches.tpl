@@ -54,7 +54,7 @@
     <th>Synopsis</th>
    </tr>
 <?php $i=0; foreach($patches as $p) { ?>
-   <tr>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <?php if (isset($l)) { ?><td><input type="checkbox" name="p[<?php echo $i; ?>]" value="<?php echo $p->name(); ?>"/></td><?php } ?>
     <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } ?><a href="/patch/id/<?php echo $p->name(); ?>"><?php echo $p->name(); ?></a></td>
     <td><?php echo date(HTTP::getDateFormat(), $p->releasedate); ?></td>

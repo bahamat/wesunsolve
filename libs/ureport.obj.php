@@ -190,10 +190,10 @@ EOF;
       if ($p->isNew()) { 
         $txt .= '<img class="newimg" src="http://wesunsolve.net/img/new.png" alt="New"/>'."\n";
       } 
-      $txt .= $p->link();
+      $txt .= $p->link(1);
       $txt .= "</td>\n";
       $txt .= '<td style="text-align: left">'.$p->o_cve->affect."</td>\n";
-      $txt .= '<td '.$p->o_cve->color().'>'.$p->o_cve->link()."</td>\n";
+      $txt .= '<td '.$p->o_cve->color().'>'.$p->o_cve->link(1)."</td>\n";
       $txt .= '<td>'.$p->o_cve->score."</td>\n";
       $txt .= '<td>'.date(HTTP::getDateFormat(), $p->releasedate)."</td>\n";
       $txt .= "</tr>\n";

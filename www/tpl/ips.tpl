@@ -47,7 +47,7 @@
     <th>Release date</th>
    </tr>
 <?php $i=0; foreach($pkgs as $p) { ?>
-   <tr>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <td><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } ?><a href="/pkg/id/<?php echo $p->id; ?>"><?php echo $p->name; ?></a></td>
     <td><?php echo $p->fmri; ?></td>
     <td><?php foreach($p->a_ips as $ips) { echo $ips->link().', '; } ?></td>

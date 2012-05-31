@@ -43,7 +43,7 @@
     <th>Revised date</th>
    </tr>
 <?php $i=0; foreach($cves as $p) { ?>
-   <tr>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
     <td <?php echo $p->color(); ?>><?php if ($p->isNew()) { ?><img class="newimg" src="/img/new.png" alt="New"/> <?php } echo $p->link(); ?></td>
     <td style="text-align: left"><?php echo $p->affect; ?></td>
     <td><?php echo $p->score; ?></td>

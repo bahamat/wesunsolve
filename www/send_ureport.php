@@ -29,6 +29,41 @@
    goto screen;
  }
 
+ if (isset($_GET['pl']) && isset($_GET['p']) &&
+     !empty($_GET['pl']) && !empty($_GET['p'])) {
+   $pl = new PLevel($_GET['pl']);
+   $pd = new Patchdiag($_GET['p']);
+   if ($pl->fetchFromId()) {
+     $content = new Template("./tpl/error.tpl");
+     $error = "Specified server patch level not found.";
+     $content->set("error", $error);
+     goto screen;
+   }
+   if ($pd->fetchFromId()) {
+     $content = new Template("./tpl/error.tpl");
+     $error = "Specified patchdiag not found.";
+     $content->set("error", $error);
+     goto screen;
+   }
+   $pl->fetchServer();
+   if ($lm->o_login->id != $pl->o_server->id_owner && !$lm->o_login->is_admin && $lm->o_login->checkServerAccess($pl->o_server) === null) {
+     $content = new Template("./tpl/error.tpl");
+     $content->set("error", "You don't own this patch level, you little hacker!");
+     goto screen;
+   }
+   $ur = new UReport();
+   $ur->id_owner = $lm->o_login->id;
+   $ur->id_plevel = $pl->id;
+   $ur->pdiag_delay = $pd->age();
+   $ur->lastrun = 0;
+   $ur->run();
+   $ur->sendMail(true);
+   IrcMsg::add("[WWW] ".$lm->o_login->username." sent $r", MSG_ADM);
+   $content = new Template("./tpl/message.tpl");
+   $content->set("msg", "Report has been sent.");
+   goto screen;
+ }
+
  if (!isset($_GET['r']) || empty($_GET['r'])) {
    $content = new Template("./tpl/error.tpl");
    $error = "No report id specified.";

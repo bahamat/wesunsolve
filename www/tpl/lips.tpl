@@ -37,13 +37,13 @@
     <th>Since</th>
     <th>Last Updated</th>
    </tr>
-<?php $i=0; foreach($ips as $i) { ?>
-   <tr>
-    <td><?php echo $i->link(); ?></td>
-    <td><?php echo $i->publisher; ?></td>
-    <td><?php echo count($i->a_pkgs); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $i->added); ?></td>
-    <td><?php echo date(HTTP::getDateFormat(), $i->updated); ?></td>
+<?php $i=0; foreach($ips as $ip) { ?>
+   <tr class="<?php if ($i % 2) { echo "tdp"; } else { echo "tdup"; } ?>">
+    <td><?php echo $ip->link(); ?></td>
+    <td><?php echo $ip->publisher; ?></td>
+    <td><?php echo count($ip->a_pkgs); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $ip->added); ?></td>
+    <td><?php echo date(HTTP::getDateFormat(), $ip->updated); ?></td>
    </tr>
 <?php $i++; } ?>
    </table>

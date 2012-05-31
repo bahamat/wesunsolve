@@ -17,7 +17,6 @@
         </div> 
        </div> 
        <div class="clear clearfix"></div>
-<p class="warning">We are currently moving some part of our infrastructure, please check <a href="http://wiki.wesunsolve.net/Moving">wiki</a> for details!</p>
        <p>This website is free of charge, without ads and not related nor associated with Oracle Corporation.</p>
        <p>Consider to <a href="/register">create an account</a> to <a href="http://wiki.wesunsolve.net/RegistrationProcess">take advantage of the website</a> for your daily sysadmin work!</p>
        <h3>Recent activity</h3>

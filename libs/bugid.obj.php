@@ -60,6 +60,10 @@ class Bugid extends mysqlObj
     return $ret;
   }
 
+  public function name() {
+    return $this->bugid;
+  }
+
   public function link($full=0) {
     $link = "";
     if ($full) {

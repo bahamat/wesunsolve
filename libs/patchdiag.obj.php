@@ -35,7 +35,6 @@ class Patchdiag extends mysqlObj
     $delta = $now - $this->date;
     $days = $delta / (24*3600);
     return round($days);
-
   }
 
   /* Fetch the first patchdiag.xref found $days ago */
@@ -214,25 +213,25 @@ class Patchdiag extends mysqlObj
 	}
 	if (!$op->pca_rec && $np->pca_rec) {
 	  $tEvent = $this->bEvent($np->patch, $np->revision);
-	  $tEvent->f_rec = 1; /* Not recommended anymore */
+	  $tEvent->f_rec = 1; /* recommended */
 	  $tEvent->insert();
 	  echo $tEvent->tell()."\n";
 	}
 	if (!$op->pca_obs && $np->pca_obs) {
 	  $tEvent = $this->bEvent($np->patch, $np->revision);
-	  $tEvent->f_obs = 1; /* Not obsolete anymore */
+	  $tEvent->f_obs = 1; /* obsolete */
 	  $tEvent->insert();
 	  echo $tEvent->tell()."\n";
 	}
 	if (!$op->pca_bad && $np->pca_bad) {
 	  $tEvent = $this->bEvent($np->patch, $np->revision);
-	  $tEvent->f_bad = 1; /* Not BAD anymore */
+	  $tEvent->f_bad = 1; /* BAD patch */
 	  $tEvent->insert();
 	  echo $tEvent->tell()."\n";
 	}
 	if (!$op->pca_y2k && $np->pca_y2k) {
 	  $tEvent = $this->bEvent($np->patch, $np->revision);
-	  $tEvent->f_y2k = 1; /* Not Y2K anymore */
+	  $tEvent->f_y2k = 1; /* Y2K */
 	  $tEvent->insert();
 	  echo $tEvent->tell()."\n";
 	}
@@ -661,6 +660,8 @@ class Patchdiag extends mysqlObj
 	    $o = exec($cmd, $out = array(), $ret);
 	    $pdiag->nb_patch = $o;
 	    $pdiag->update();
+            /* make the diff with previous one */
+	    $pdiag->diffPrevious2();
 	  }
 	}
       }

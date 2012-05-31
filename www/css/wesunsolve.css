@@ -616,6 +616,15 @@ ul.listtick {
   padding-bottom: 2px;
 }
 
+#titlecomment2 {
+  padding-top: 10px;
+  text-align: right;
+  font-size: 0.8em;
+  color: red;
+  font-weight: bold;
+}
+
+
 #titlecomment {
   padding-top: 10px;
   text-align: right;

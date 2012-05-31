@@ -55,6 +55,11 @@ class mysqlCM
   private $_affect = null;
 
   /**
+   * Should we try to reconnect in case of disconnection?
+   */
+  private $_reconnect = true;
+
+  /**
    * Debug mode
    */
   private $_debug = false;
@@ -422,10 +427,7 @@ class mysqlCM
     return $this->_query($q);
   }
 
-  /**
-   * Query database and handle errors
-   * @return 0 if ok, non-zero if any error
-   */
+/* OLD ONE: 
   private function _query($query, $args=null)
   {
     if ($this->_debug) $this->_time();
@@ -448,6 +450,52 @@ class mysqlCM
       return -1;
     }
   }
+
+*/
+
+
+  /**
+   * Query database and handle errors
+   * @return 0 if ok, non-zero if any error
+   */
+  private function _query($query, $args=null)
+  {
+    $attempts = 0;
+    if ($this->_debug) $this->_time();
+    if (!$this->_link) return -1;
+
+    do {
+      try {
+        $this->_res = $this->_link->prepare($query);
+        if ($this->_res->execute($args)) {
+
+          if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+
+          return 0;
+        } else {
+          $this->_error = $this->_res->errorInfo();
+          $this->_error = $this->_error[2];
+          if ($this->_debug) $this->_time();
+          if ($this->_errlog) {
+            $this->_eprint("[".time()."] Failed _query: $query\n");
+            $this->_eprint("\tError: ".$this->_error."\n");
+          }
+          return -1;
+        }
+      } catch (PDOException $e) {
+        if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
+           $this->reconnect();
+        }
+      }
+    } while ($attempts++ < 3);
+    return -1;
+  }
+
+  private function reconnect() {
+    $this->disconnect();
+    $this->connect();
+  }
+
   
 }
 
