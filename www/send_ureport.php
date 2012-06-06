@@ -58,7 +58,7 @@
    $ur->lastrun = 0;
    $ur->run();
    $ur->sendMail(true);
-   IrcMsg::add("[WWW] ".$lm->o_login->username." sent $r", MSG_ADM);
+   IrcMsg::add("[WWW] ".$lm->o_login->username." sent oneshot report: $ur", MSG_ADM);
    $content = new Template("./tpl/message.tpl");
    $content->set("msg", "Report has been sent.");
    goto screen;

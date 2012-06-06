@@ -40,6 +40,24 @@ class Job extends mysqlObj
   private $_icmid = null;
   private $_jlog = null;
 
+  public static function fetchLast($count = 10, $filter = '') {
+    $rc  = array();
+    $table = "`jobs`";
+    $index = "`id`";
+    $where = " ORDER BY `added` DESC LIMIT 0,$count";
+
+    if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $k = new Job($t['id']);
+        $k->fetchFromId();
+        array_push($rc, $k);
+      }
+    }
+    return $rc;
+
+  }
+
   /* Display fct */
 
   public function stateStr() {
