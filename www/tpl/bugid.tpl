@@ -54,7 +54,7 @@
 <?php if ($bug->d_created) { ?><b>Date Created</b>: <?php echo date(HTTP::getDateFormat(), $bug->d_created); ?><br/><?php } ?>
 <?php if ($bug->d_updated) { ?><b>Date Updated</b>: <?php echo date(HTTP::getDateFormat(), $bug->d_updated); ?><br/><?php } ?>
 <?php if (!empty($bug->commit_tf)) { ?><b>Commit to fix</b>: <?php echo $bug->commit_tf; ?><br/><?php } ?>
-<?php if (!empty($bug->duplicate_of)) { ?><b>Duplicate of</b>: <?php echo $bug->duplicate_of; ?><br/><?php } ?>
+<?php if (!empty($bug->duplicate_of)) { ?><b>Duplicate of</b>: <?php echo Bugid::linkize($bug->duplicate_of); ?><br/><?php } ?>
 <?php if (!empty($bug->first_reported_bug_id)) { ?><b>First reported bug ID</b>: <?php echo $bug->first_reported_bug_id; ?><br/><?php } ?>
 <?php if (!empty($bug->fixed_in)) { ?><b>Fixed in</b>: <?php echo $bug->fixed_in; ?><br/><?php } ?>
 <?php if (!empty($bug->introduced_in)) { ?><b>Introduced in</b>: <?php echo $bug->introduced_in; ?><br/><?php } ?>
