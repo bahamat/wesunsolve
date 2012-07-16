@@ -19,7 +19,7 @@
        <div class="clear clearfix"></div>
     <h3>Why such a website ?</h3>
     <p>When the merge of Sun and Oracle has been made, we lost a lot of tools that were present on the famous SunSolve. Like the ability
-       to search efficiently for patches, bugids, sun alerts and so on. This website has the aim to provide part of this informations by
+       to search efficiently for patches, bugids, sun alerts and so on. This website has the aim to provide part of this information by
        indexing all the patches and bugids that we could gather publicly. We want to allow easy search to ease the life of solaris sysadmins.
     </p>
 

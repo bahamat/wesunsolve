@@ -18,7 +18,7 @@ add_comment/id_on/<?php echo $bundle->id; ?>/type/bundle">add</a></p>
         </div>
        </div>
        <div class="clear clearfix"></div>
-	     <h3>General informations</h3>
+	     <h3>General information</h3>
 		<ul class="listinfo">
 		 <li>Synopsis: <?php echo $bundle->synopsis; ?></li>
 		 <li>Release date: <?php if($bundle->lastmod) echo date(HTTP::getDateFormat(), $bundle->lastmod); ?></li>

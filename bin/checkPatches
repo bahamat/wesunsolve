@@ -1,0 +1,57 @@
+#!/usr/bin/php
+<?php
+/**
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2011, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("../libs/config.inc.php");
+  require_once("../libs/autoload.lib.php");
+  require_once("../libs/functions.lib.php");
+
+  $shortopts = "p::r::hlfvam";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h'])) {
+    echo $argv[0]."\n";
+    exit();
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $table = "`patches`";
+  $index = "`patch`, `revision`";
+  $cindex = "COUNT(`patch`)";
+  $limit = time() - (3600*24*64); // 2 months ago
+  $where = "WHERE `releasedate`>".$limit;
+  if (isset($opts['i'])) {
+    $p = explode("-", $opts['i']);
+    if (count($p) != 2) { die("Malformed patch id\n"); }
+    $where .= "WHERE `patch`='".$p[0]."' AND `revision`='".$p[1]."'";
+  }
+  $where .= " ORDER BY `releasedate` DESC";
+
+  $it = new mIterator("Patch", $index, $table, $where, $cindex);
+  $fields = array("patch", "revision", "when");
+  while(($p = $it->next())) {
+    $p->fetchFromId();
+    $archive = $p->findArchive();
+    if (!$archive) {
+      echo "[!] $p hasn't been found in the archive\n";
+      echo "  > ".$p->synopsis."\n";
+      $config['MOSuser'] = 'yves.weber@oracle.com';
+      $config['MOSpass'] = 'Changeme123';
+      $p->tryDownload();
+    }
+  }
+
+
+?>

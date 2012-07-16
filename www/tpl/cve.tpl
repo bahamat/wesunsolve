@@ -22,7 +22,7 @@
     <h4><?php echo $cve->name; ?>: affect <?php echo $cve->affect; ?></h4>
 	     <h3>Description</h3>
 <p><?php echo $cve->desc; ?></p>
-	     <h3>General informations</h3>
+	     <h3>General information</h3>
 	      <ul class="listinfo">
 		 <li>Name: <?php echo $cve; ?></li>
 		 <li>First release: <?php echo date(HTTP::getDateFormat(), $cve->released); ?></li>
@@ -31,7 +31,7 @@
 		 <li>Score: <?php echo $cve->score; ?></li>
 		 <li>Severity: <?php echo $cve->severity; ?></li>
 		 <li>Added on: <?php echo date(HTTP::getDateFormat(), $cve->added); ?></li>
-		 <li><a href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=<?php echo $cve; ?>">External informations</a></li>
+		 <li><a href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=<?php echo $cve; ?>">External information</a></li>
 	       </ul>
              <h3>Patches fixing this alert:</h3>
 <?php if (count($cve->a_patches)) { ?>

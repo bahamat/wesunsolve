@@ -38,7 +38,7 @@
              <?php if (!strcmp($patch->status, 'OBSOLETE')) { ?>
 		<p class="warning">This patch is obsolete, consider upgrading to the latest release of this patch !</p>
              <?php } ?>
-	     <h3>General informations</h3>
+	     <h3>General information</h3>
 		<ul class="listinfo">
 <?php if ($patch->pca_rec) { ?>
 		 <li class="green">This is a recommended patch</li>

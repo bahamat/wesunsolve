@@ -23,7 +23,7 @@
              <?php if ($pkg->o_latest) { ?>
                 <p class="warning">There is a newer release of this package which may fixes some bugs, consider upgrading !</p>
              <?php } ?>
-	     <h3>General informations</h3>
+	     <h3>General information</h3>
 	      <ul class="listinfo">
 <?php if ($pkg->o_latest) { ?>
 		<li>Latest release: <?php echo $pkg->o_latest->link(); ?></li>

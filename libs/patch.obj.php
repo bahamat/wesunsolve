@@ -797,6 +797,9 @@ class Patch extends mysqlObj implements JSONizable
     $zipurl = $config['patchurl']."/".$this->name().".zip";
     $tarurl = $config['patchurl']."/".$this->name().".tar.Z";
 
+    /* Remove control file in beforehand */
+    @unlink($ctlfile);
+
     $cmdzip = "/usr/bin/wget -q --no-check-certificate --user=\"".$config['MOSuser']."\" --password=\"".$config['MOSpass']."\" -O \"$zipfile\" \"$zipurl\"";
     $cmdtar = "/usr/bin/wget -q --no-check-certificate --user=\"".$config['MOSuser']."\" --password=\"".$config['MOSpass']."\" -O \"$tarfile\" \"$tarurl\"";
 
