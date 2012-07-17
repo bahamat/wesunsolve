@@ -2,7 +2,7 @@
 /**
  * Ircnp object
  *
- * @author Gouverneur Thomas <tgo@ians.be>
+ * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2011, Gouverneur Thomas
  * @version 1.0
  * @package objects

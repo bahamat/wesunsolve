@@ -1,7 +1,7 @@
 <?php
 /**
  * Auto load of dependancies
- * @author Gouverneur Thomas <tgo@ians.be>
+ * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2009-2011, Gouverneur Thomas
  * @version 1.0
  * @package includes
