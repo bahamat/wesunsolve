@@ -56,9 +56,9 @@
   $patches = array();
   $table = "`patches`, `cve`, `jt_patches_cve`";
   $index = "`cve`.`id`, `patches`.`patch`, `patches`.`revision`";
-  $icount = "count(`id`) as c";
+  $icount = "count(*) as c";
 
-  if (($idx = mysqlCM::getInstance()->fetchIndex($icount, $table, $where)))
+  if (($idx = mysqlCM::getInstance()->fetchIndex($icount, "( SELECT $index FROM $table $where ) t", '')))
   {
     $nb = 0;
     if (isset($idx[0]) && isset($idx[0]['c'])) {

@@ -736,7 +736,6 @@ class Patchdiag extends mysqlObj
 	 continue; // skip this one @TODO raise a warning
        }
      }
-     $p->fetchRequired(0);
      if (isset($ret[$p->patch])) {
        if ($ret[$p->patch]->revision < $p->revision) {
 	 $ret[$p->patch] = $p;
@@ -744,7 +743,9 @@ class Patchdiag extends mysqlObj
      } else {
        $ret[$p->patch] = $p;
      }
+     $p->fetchRequired(0);
      Patchdiag::genFromPatches($p->a_depend, &$ret);
+     unset ($p->a_depend);
    }
    return $ret;
   }

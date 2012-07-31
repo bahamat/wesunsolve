@@ -59,7 +59,7 @@
    goto screen;
  }
  $pd->fetchFromId();
- $pd->fetchPatches(2);
+ $pd->fetchPatches(0);
 
  $ps = new PLevel();
  $ps->id = $_GET['is'];
@@ -78,7 +78,7 @@
    goto screen;
  }
  $ps->fetchFromId();
- $ps->fetchPatches(2);
+ $ps->fetchPatches(0);
 
  header("Content-type: text/plain");
  header("Content-Disposition: filename=plevel_".$ps->o_server->name."-to-".$pd->o_server->name."-patchdiag.xref");

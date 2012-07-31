@@ -10,7 +10,7 @@
   $patches = array();
   $table = "`patches`";
   $index = "`patch`, `revision`";
-  $where = " WHERE `releasedate`!='' ORDER BY `releasedate` DESC LIMIT 0,20";
+  $where = " WHERE `releasedate`!='' ORDER BY `releasedate` DESC LIMIT 0,80";
 
   if (($idx = mysqlCM::getInstance()->fetchIndex($index, $table, $where)))
   {

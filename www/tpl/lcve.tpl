@@ -11,7 +11,7 @@
   if (!$h->css) $h->fetchCSS();
 ?>
     <div id="d_content">
-     <h2 class="grid_10 push_1 alpha omega">Last security alerts</h2>
+     <h2 class="grid_10 push_1 alpha omega">Last security alerts for non-Oracle products</h2>
      <div class="clear"></div>
      <div class="grid_<?php echo ($h->css->s_total - $h->css->s_menu); ?> alpha omega">
       <div class="d_content_box">
@@ -26,7 +26,7 @@
        </div>
        <div class="clear clearfix"></div>
   <p><?php echo $title; ?></p>
-  <p>Check the <a href="http://wiki.wesunsolve.net/LastCVE">documentation</a>.</p>
+  <p>Check the <a href="http://wiki.wesunsolve.net/LastCVE">documentation</a>. Theses alerts concern non-Proprietary code from Oracle.</p>
   <div class="ctable">
    <table id="legend" class="ctable"><tr>
                                 <td class="greentd">LOW</td>

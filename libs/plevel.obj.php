@@ -130,7 +130,6 @@ class PLevel extends mysqlObj
             if ($k->o_latest && $k->o_latest->patch == $k->patch && $k->o_latest->revision == $k->revision) $k->o_latest = false;
 	  }
         }
-        
         array_push($this->a_patches, $k);
       }
     }

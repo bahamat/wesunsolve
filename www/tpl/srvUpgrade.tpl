@@ -32,7 +32,7 @@
   $choices = "";
   $choices .= '<option value="-1">Choose a patch level</option>\n';
   foreach($as as $s) {
-    $s->fetchPLevels();
+    $s->fetchPLevels(0);
     foreach($s->a_plevel as $p) {
       $choices .= '<option value="'.$p->id.'">'.$s->name.' - '.$p->name.'</option>\n';
     }

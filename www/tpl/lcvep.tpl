@@ -26,7 +26,7 @@
        </div>
        <div class="clear clearfix"></div>
   <p><?php echo $title; ?></p>
-  <p>Check the <a href="http://wiki.wesunsolve.net/LastCVE">documentation</a>.</p>
+  <p>Check the <a href="http://wiki.wesunsolve.net/LastCVE">documentation</a>. Theses alerts concern non-Proprietary code from Oracle.</p>
   <div class="ctable">
    <table id="legend" class="ctable">
 			<tr><td colspan="4">Patch color legend

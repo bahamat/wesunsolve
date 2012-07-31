@@ -41,7 +41,7 @@
     <webMaster><?php echo $config['mailFrom']; ?></webMaster>
 <?php foreach ($news as $n) { ?>
     <item>
-     <title><?php echo $n->synopsis; ?></title>
+     <title><?php echo htmlentities($n->synopsis); ?></title>
      <link><?php echo $n->link ?></link>
      <pubDate><?php if ($n->date) echo date("D, j M Y G:i:s T", $n->date); ?></pubDate>
     </item>

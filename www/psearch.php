@@ -132,7 +132,7 @@
       $where .= " `files`.`name` LIKE '$files' AND `jt_patches_files`.`fileid`=`files`.`id` ";
       $where .= " AND `patches`.`patch`=`jt_patches_files`.`patchid` AND `patches`.`revision`=`jt_patches_files`.`revision`";
     }
-    if ($_GET['form'] == 1) {
+    if ($_GET['form'] == 1 && empty($files)) {
       HTTP::redirect($str);
       exit();
     }
