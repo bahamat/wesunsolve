@@ -30,7 +30,7 @@
   $table = "`patches`";
   $index = "`patch`, `revision`";
   $cindex = "COUNT(`patch`)";
-  $limit = time() - (3600*24*64); // 2 months ago
+  $limit = time() - (3600*24*60); // 2 months ago
   $where = "WHERE `releasedate`>".$limit;
   if (isset($opts['i'])) {
     $p = explode("-", $opts['i']);

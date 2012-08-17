@@ -75,7 +75,7 @@ class Bugid extends mysqlObj
   }
 
   public function __toString() {
-    return $this->id;
+    return ''.$this->id;
   }
 
 
@@ -107,6 +107,7 @@ class Bugid extends mysqlObj
   /* Load bugids from MOS and store into db */
   public function dl($force = 0) {
     global $config;
+    @include_once($config['rootpath'].'/libs/shd.lib.php');
 
     $d = $config['bidpath']."/".substr($this->id, 0, 2);
     if (!is_dir($d)) {
@@ -137,10 +138,19 @@ class Bugid extends mysqlObj
     }
 
     if (!$there) {
+
+      /* First get the _afrLoop stuff */
+       
+      $cmdAfrLoop = "/usr/bin/wget -q --no-check-certificate -U \":-)\" ";
+      $cmdAfrLoop .= " --load-cookies /srv/sunsolve/tmp/cookies.txt ";
+      $cmdAfrLoop .= "--save-cookies /srv/sunsolve/tmp/cookies.txt --keep-session-cookies ";
+      $cmdAfrLoop .= " -O - \"".$config['bugurl'].$this->id."\" |grep '_afrLoop'|sed 's/.*_afrLoop\", \"//g;s/\");\$//g'";
+      $afrLoop = exec($cmdAfrLoop);
+      
       $cmd = "/usr/bin/wget -q --no-check-certificate -U \":-)\" ";
       $cmd .= " --load-cookies /srv/sunsolve/tmp/cookies.txt ";
       $cmd .= "--save-cookies /srv/sunsolve/tmp/cookies.txt --keep-session-cookies ";
-      $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."\"";
+      $cmd .= " -O \"".$fp."\" \"".$config['bugurl'].$this->id."&_afrLoop=$afrLoop\"";
       passthru($cmd);
     }
 
@@ -150,7 +160,7 @@ class Bugid extends mysqlObj
     if (file_exists($fp)) {
       $size = filesize($fp);
       echo "($size bytes)";
-      if (!$size || $size == 2009) {
+      if (!$size || $size == 2009||$size == 80011) {
 	unlink($fp);
         echo "403";
         return -1;
@@ -164,11 +174,14 @@ class Bugid extends mysqlObj
       return -1;
     }
     
-    // Load into database...
+    // load into database...
     $content = file_get_contents($fp);
-    if (preg_match("/Article or Bug cannot be displayed. Possible reasons are:/", $content))
+    if (preg_match("/The bug is not classified as publicly accessible/", $content))
       $content = "";
-    // Already remove some xhtml junk.
+    if (preg_match("/article or bug cannot be displayed. possible reasons are:/", $content))
+      $content = "";
+    // already remove some xhtml junk.
+/*
     $content = preg_replace('/(<style>.+?)+(<\/style>)/i', '', $content); 
     $content = preg_replace('/<html>/i', '', $content); 
     $content = preg_replace('/<\\/html>/i', '', $content); 
@@ -178,9 +191,9 @@ class Bugid extends mysqlObj
     $content = preg_replace('/<body .*>/i', '', $content); 
     $content = preg_replace('/<\\/body>/i', '', $content); 
     $content = preg_replace('/<link .*>/i', '', $content); 
-    $content = preg_replace('/<!DOCTYPE .*>/i', '', $content); 
+    $content = preg_replace('/<!doctype .*>/i', '', $content); 
     $content = preg_replace('/<!--.*-->/i', '', $content); 
-
+*/
     if (empty($content)) return -1;
 
     $this->is_raw = 1;
@@ -189,6 +202,131 @@ class Bugid extends mysqlObj
     return $this->update();
   }
  
+  public function parseRaw($force = 0) {
+    global $config;
+    if ($this->_ft) {
+      if ($this->is_raw) {
+        @include_once($config['rootpath'].'/libs/shd.lib.php');
+        $shd = str_get_html($this->_ft->raw);
+        $sbugH = $shd->find('h3[class=sbugH]');
+        if (count($sbugH)) {
+          $bugp = $sbugH[0]->parent();
+	} else {
+	  return -1;
+	}
+	$synopsis = $shd->find('span[id=pt1:r1:0:ol913]');
+	if (count($synopsis)) {
+	  $synopsis = $synopsis[0];
+	  $synopsis = $synopsis->plaintext;
+	  $junk = '/Bug '.$this.' : /';
+	  $synopsis = preg_replace($junk, '', $synopsis);
+	}
+        $fixreq = array();
+	$battr = $shd->find('table[id=pt1:r1:0:tl2]');
+	if (count($battr)) {
+	  $battr = $battr[0];
+	  $spans = $battr->find('span');
+	  $name = $value = null;
+	  foreach($spans as $span) {
+	    if ($span->attr['class'] == 'bugOutputLabel xq') {
+	      $name = $span->plaintext;
+	    } else if ($span->attr['class'] == 'bugOutputText') {
+	      $value = $span->plaintext;
+	    }
+	    if ($name && $value) {
+	      $fixreq[$name] = $value;
+	      $name = $value = null;
+	    }
+	  }
+	}
+	$description = $comment = $waround = '';
+	$d_flag = $c_flag = $w_flag = false;
+	foreach($bugp->nodes as $n) {
+	  if ($n->tag == 'h3') {
+	    switch($n->plaintext) {
+	      case 'Fix Request Attributes:':
+		$ftable = $n->next_sibling();
+		if ($ftable->tag == 'table' && $ftable->attr['class'] == 'sbugFRAttrTABLE') {
+		  $name = $value = null;
+		  foreach($ftable->nodes as $f) {
+		    if ($f->attr['class'] == 'sbugFRAttrTR') {
+		      $name = $f->find('td[class=sbugFRAttrNameTD]');
+		      $value = $f->find('td[class=sbugFRAttrValue]');
+		      if (count($name) && count($value)) {
+		        $name = $name[0]->plaintext;
+		        $value = $value[0]->plaintext;
+		        $fixreq[$name] = $value;
+		        $name = $value = null;
+		      }
+		    }
+  	  	  }
+		}
+	      break;
+	      case 'Description:':
+		$d_flag = true;
+	      break;
+	      case 'Work Around:':
+		$w_flag = true;
+	      break;
+	      case 'Public Comment:':
+		$c_flag = true;
+	      break;
+	    }
+	  } else if ($d_flag) {
+	    if ($n->tag == 'table') {
+	      $d_flag = false;
+	      continue;
+	    }
+	    $description .= $n->plaintext;
+	
+	  } else if ($w_flag) {
+	    if ($n->tag == 'table') {
+	      $w_flag = false;
+	      continue;
+	    }
+	    $waround .= $n->plaintext;
+	  } else if ($c_flag) {
+            if ($n->tag == 'span') {
+              $c_flag = false;
+              continue;
+            }
+            $comment .= $n->plaintext."\n";;
+          }
+	}
+	$this->setft("description", $description);
+	$this->setft("workaround", $waround);
+	$this->setft("comments", $comment);
+	$this->setft("synopsis", $synopsis);
+	if (isset($fixreq['Fixed Version'])) {
+	  $this->fixed_in = $fixreq['Fixed Version'];
+	}
+	if (isset($fixreq['Severity'])) {
+	  $this->severity = $fixreq['Severity'];
+	}
+	if (isset($fixreq['Customer Status'])) {
+	  $this->state = $fixreq['Customer Status'];
+	}
+	if (isset($fixreq['Duplicate Of'])) {
+	  $this->duplicate_of = $fixreq['Duplicate Of'];
+	}
+	if (isset($fixreq['Target'])) {
+	  $this->reported_against = $fixreq['Target'];
+	}
+	if (isset($fixreq['Type'])) {
+	  $this->type = $fixreq['Type'];
+	}
+	if (isset($fixreq['Created'])) {
+	  $this->createDate($fixreq['Created']);
+	}
+	if (isset($fixreq['Updated'])) {
+	  $this->updateDate($fixreq['Updated']);
+	}
+        $this->synopsis = $synopsis;
+	$this->update();
+      }
+    }
+  }
+/*
   public function parseRaw($force = 0) {
     if ($this->_ft) {
       if ($this->is_raw) {
@@ -202,7 +340,6 @@ class Bugid extends mysqlObj
 	if (!count($raw_lines)) {
 	  return false;
 	}
-/* @TODO ADD check for bugContent.XXX here */
         if (preg_match("/bugsContent.Sun/", $raw)) {
 	   $vendor = "Sun";
         } else if (preg_match("/bugsContent.Oracle/", $raw)) {
@@ -215,11 +352,6 @@ class Bugid extends mysqlObj
 	  if(empty($line)) {
 	    continue;
 	  }
-/*
-	  if (preg_match("/<b>Related bugs/",$line)) {
-            $rb = preg_replace('/.*<b>.*<\/b>:(.+)<br/>/i', '$1', $line);
-	  }
-*/
 	  if (preg_match("/^bugsContent.".$vendor."/", $line)) {
 	    $bcraw = preg_split("/bugsContent.".$vendor." = \"/", $line);
 	    $bcraw = $bcraw[1];
@@ -244,8 +376,6 @@ class Bugid extends mysqlObj
 	    }
 	  }
 	  if (preg_match('/<h3 class="sbugH">/', $line)) {
-	    /* on this line, we have almost every info we need... we're in the Fix Request */
-	    /* description */
 	    $lineDesc = preg_replace('/^.*<h3 class="sbugH">Description:<\/h3>/i', '', $line);
 	    $lineDesc = preg_replace('/<table class="sbugFRAttrTABLE">.*$/i', '', $lineDesc);
    	    if (!empty($lineDesc)) {
@@ -260,7 +390,6 @@ class Bugid extends mysqlObj
 	        echo "\t> Updated description\n";
 	      }
 	    }
-	    /* Various fields */
 	    $line2 = preg_replace('/<\/td>/', '', $line);
 	    $line2 = preg_replace('/<\/tr>/', '', $line2);
 	    $line2 = preg_replace('/<tr class="sbugFRAttrTR">/', '', $line2);
@@ -318,7 +447,6 @@ class Bugid extends mysqlObj
 		    break;
 		}
 	    }
-	    /* Determine if we should use raw report or separate fields */
 	    $this->update();
 	  }
 	}
@@ -326,6 +454,7 @@ class Bugid extends mysqlObj
     }
     return false;
   }
+*/
 
   private function p_date($str) {
     $d = explode("-", $str);
@@ -333,6 +462,27 @@ class Bugid extends mysqlObj
     $day = $d[2];
     $year = $d[0];
     $month = $d[1];
+    if ($year < 1000) {
+      $t = $year;
+      $year = $day;
+      $day = $t;
+    }
+    if (preg_match('/[a-zA-Z]*/', $month)) {
+      switch ($month) {
+	case 'Jan': $month = 1; break;
+	case 'Feb': $month = 2; break;
+	case 'Mar': $month = 3; break;
+	case 'Apr': $month = 4; break;
+	case 'May': $month = 5; break;
+	case 'Jun': $month = 6; break;
+	case 'Jul': $month = 7; break;
+	case 'Aug': $month = 8; break;
+	case 'Sep': $month = 9; break;
+	case 'Oct': $month = 10; break;
+	case 'Nov': $month = 11; break;
+	case 'Dec': $month = 12; break;
+      }
+    }
     if ($month > 12)
       return false;
     return mktime(0,0,0,$month, $day, $year);

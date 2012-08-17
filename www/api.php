@@ -1,34 +1,36 @@
 <?php
  require_once("../libs/autoload.lib.php");
  require_once("../libs/config.inc.php");
+ flush();
 
  $m = mysqlCM::getInstance();
  if ($m->connect()) {
-   die("SQL Error, please try again later or contact site admins");
+   die("SQL Error, please try again later or contact site admins\n");
  }
 
  $h = HTTP::getInstance();
  $h->parseUrl();
 
  if (!isset($_GET['u']) || empty($_GET['u'])) {
-   die("Username not provided");
+   die("Username not provided\n");
  }
 
  if (!isset($_GET['p']) || empty($_GET['p'])) {
-   die("Password not provided");
+   die("Password not provided\n");
  }
 
  $lm = loginCM::getInstance();
  if ($lm->login($_GET['u'], $_GET['p'])) {
-   die("Authentication failed");
+   die("Authentication failed\n");
  }
+ $lm->o_login->fetchData();
 
  if (!isset($lm->o_login) || !$lm->o_login->data("apiAccess")) {
-   die("Authorization failed");
+   die("Authorization failed\n");
  }
 
  if (!isset($_GET['action']) || empty($_GET['action'])) {
-   die("No action specified");
+   die("No action specified\n");
  }
 
  $arg = false;
@@ -64,14 +66,14 @@
        $srv->id_owner = $lm->o_login->id;
        $srv->name = $name;
        if (!$srv->fetchFromFields(array('name', 'id_owner'))) {
-	 die('Server Already exist');
+	 die("Server Already exist\n");
        } else {
 	 $srv->insert();
          IrcMsg::add("[API] User added server: ".$srv->name." to his account (".$lm->o_login->username.")", MSG_ADM);
-	 die('Added');
+	 die("Added\n");
        }
      } else {
-       die('Missing server name');
+       die("Missing server name\n");
      }
      break;
    case 'add_plevel':
@@ -83,7 +85,7 @@
 	$s->id_owner = $lm->o_login->id;
 	$s->name = $arg;
 	if ($s->fetchFromFields(array('name', 'id_owner'))) {
-	  die('Server not found');
+	  die("Server not found\n");
 	}
 	$showrev = explode(PHP_EOL, $_POST['showrev']);
 	$pkginfo = explode(PHP_EOL, $_POST['pkginfo']);
@@ -91,20 +93,19 @@
 	$pl->id_server = $s->id;
         $pl->name = $_POST['name'];
         if (!$pl->fetchFromFields(array('id_server', 'name'))) {
-          die('Patch level name already taken for this server');
+          die("Patch level name already taken for this server\n");
         }
         $pl->comment = 'Imported from API on '.time();
         $pl->insert();
 	$pl->buildFromFiles($showrev, $pkginfo);
-	IrcMsg::add("[API] User added Patch level: ".$pl->name." to his account (".$lm->o_login->username.")", MSG_ADM);
-        echo "Level $pl added to $s with ".count($pl->a_patches)." patches and ".count($pl->a_srv4pkgs)." pkgs";
-	die();
+	IrcMsg::add("[API] ".$lm->o_login." added Patch level: ".$pl->name." to server $s", MSG_ADM);
+        die("Level $pl added to $s with ".count($pl->a_patches)." patches and ".count($pl->a_srv4pkgs)." pkgs\n");
      } else {
-       die('Missing Field');
+       die("Missing Field\n");
      }
      break;
    default:
-     die("Unknown function");
+     die("Unknown function\n");
      break;
  }
 

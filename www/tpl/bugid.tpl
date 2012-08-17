@@ -44,6 +44,7 @@
 <p>
 <?php if (!empty($bug->type)) { ?><b>Type</b>: <?php echo $bug->type; ?><br/><?php } ?>
 <?php if (!empty($bug->category)) { ?><b>Category</b>: <?php echo $bug->category; ?><br/><?php } ?>
+<?php if (!empty($bug->severity)) { ?><b>Severity</b>: <?php echo $bug->severity; ?><br/><?php } ?>
 <?php if (!empty($bug->subcat)) { ?><b>Sub Category</b>: <?php echo $bug->subcat; ?><br/><?php } ?>
 <?php if (!empty($bug->product)) { ?><b>Product</b>: <?php echo $bug->product; ?><br/><?php } ?>
 <?php if (!empty($bug->state)) { ?><b>State</b>: <?php echo $bug->state; ?><br/><?php } ?>
@@ -83,7 +84,16 @@
 <?php echo $co; ?>
 </pre>
 <?php } else { 
-  echo $raw;
+  global $config;
+  @include_once($config['rootpath'].'/libs/shd.lib.php');
+  $shd = str_get_html($raw, false);
+?>
+<pre>
+<?php
+  echo $shd->plaintext;
+?>
+</pre>
+<?php
 } ?>
 	     </div>
                 <p><br/><a href="#top"><img src="/img/arrow_up.png">back to top</a></p>
