@@ -3,6 +3,7 @@
 ## What is this?
 
 This repository holds down the code that has been used from the begining on http://wesunsolve.net website.
+The RIP page lies there: https://espix.net/~wildcat//wss/
 
 ## ???
 
